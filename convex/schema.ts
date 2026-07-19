@@ -1,0 +1,273 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  users: defineTable({
+    user_id: v.string(),
+    username: v.string(),
+    avatar: v.optional(v.string()),
+    email: v.optional(v.string()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_username", ["username"]),
+
+  friends: defineTable({
+    user_id: v.string(),
+    friend_id: v.string(),
+    friend_username: v.optional(v.string()),
+    friend_avatar: v.optional(v.string()),
+    status: v.union(v.literal("pending"), v.literal("accepted")),
+    last_msg: v.optional(v.string()),
+    last_msg_sender: v.optional(v.string()),
+    updated_at: v.optional(v.number()),
+    notificationPreference: v.optional(v.string()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_friend_id", ["friend_id"])
+    .index("by_user_id_status", ["user_id", "status"]),
+
+  rooms: defineTable({
+    room_id: v.string(),
+    room_name: v.string(),
+    is_group: v.boolean(),
+  }).index("by_room_id", ["room_id"]),
+
+  roomMembers: defineTable({
+    room_id: v.string(),
+    user_id: v.string(),
+    username: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    role: v.optional(v.string()),
+    notificationPreference: v.optional(v.string()),
+  })
+    .index("by_room_id", ["room_id"])
+    .index("by_user_id", ["user_id"])
+    .index("by_user_room", ["user_id", "room_id"]),
+
+  messages: defineTable({
+    conversation_id: v.string(),
+    conversation_type: v.union(v.literal("room"), v.literal("direct")),
+    sender_id: v.string(),
+    sender_username: v.optional(v.string()),
+    sender_avatar: v.optional(v.string()),
+    content: v.union(v.string(), v.null()),
+    file_storage_id: v.optional(v.id("_storage")),
+    file_url: v.union(v.string(), v.null()),
+    type: v.union(v.string(), v.null()),
+    file_name: v.union(v.string(), v.null()),
+    file_size: v.optional(v.number()),
+    edited: v.optional(v.boolean()),
+    mentions: v.optional(v.array(v.string())),
+  })
+    .index("by_conversation", ["conversation_id"])
+    .searchIndex("search_content", {
+      searchField: "content",
+      filterFields: ["conversation_id"],
+    }),
+
+  chatNotifications: defineTable({
+    user_id: v.string(),
+    message_id: v.string(),
+    source_type: v.union(v.literal("room"), v.literal("direct")),
+    source_id: v.string(),
+    conversation_id: v.optional(v.string()),
+    source_name: v.string(),
+    sender_id: v.string(),
+    sender_name: v.string(),
+    sender_avatar: v.optional(v.string()),
+    message: v.string(),
+    notification_type: v.optional(
+      v.union(v.literal("message"), v.literal("call")),
+    ),
+    call_id: v.optional(v.id("calls")),
+    call_status: v.optional(v.union(v.literal("active"), v.literal("ended"))),
+    read_at: v.optional(v.number()),
+    hasMentions: v.optional(v.boolean()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_message_id", ["message_id"])
+    .index("by_call_id", ["call_id"])
+    .index("by_user_conversation", ["user_id", "conversation_id"]),
+
+  unreadCounters: defineTable({
+    user_id: v.string(),
+    conversation_id: v.string(),
+    source_type: v.union(v.literal("room"), v.literal("direct")),
+    source_id: v.string(),
+    unread_count: v.number(),
+    updated_at: v.number(),
+    has_unread_mentions: v.optional(v.boolean()),
+  })
+    .index("by_user_id", ["user_id"])
+    .index("by_user_conversation", ["user_id", "conversation_id"]),
+
+  presence: defineTable({
+    user_id: v.string(),
+    status: v.union(v.literal("online"), v.literal("away")),
+    updated_at: v.number(),
+  }).index("by_user_id", ["user_id"])
+    .index("by_updated_at", ["updated_at"]),
+
+  presenceCleanupScheduler: defineTable({
+    jobId: v.id("_scheduled_functions"),
+  }),
+
+  gameSessionCleanupScheduler: defineTable({
+    jobId: v.id("_scheduled_functions"),
+  }),
+
+  // F1a: singleton tracker for the game-presence staleness sweep, same
+  // shape/reasoning as the two schedulers above — its own row rather than
+  // reusing either of them, since it runs on a different cadence (10s, not
+  // 1min/5min) and scans a different table.
+  gamePresenceCleanupScheduler: defineTable({
+    jobId: v.id("_scheduled_functions"),
+  }),
+
+  typingIndicators: defineTable({
+    room_id: v.string(),
+    user_id: v.string(),
+    updated_at: v.number(),
+  })
+    .index("by_room_id", ["room_id"])
+    .index("by_user_id", ["user_id"])
+    .index("by_user_room", ["user_id", "room_id"]),
+
+  reactions: defineTable({
+    message_id: v.id("messages"),
+    user_id: v.string(),
+    emoji: v.string(),
+  }).index("by_message_id", ["message_id"]),
+
+  calls: defineTable({
+    roomId: v.string(),
+    startedAt: v.number(),
+    endedAt: v.optional(v.number()),
+    participants: v.array(v.string()),
+    allParticipants: v.array(v.string()),
+    activePeerIds: v.optional(
+      v.array(
+        v.object({
+          userId: v.string(),
+          peerId: v.string(),
+        }),
+      ),
+    ),
+    mediaStates: v.optional(
+      v.array(
+        v.object({
+          userId: v.string(),
+          isMuted: v.boolean(),
+          isVideoOn: v.boolean(),
+          isScreenSharing: v.optional(v.boolean()),
+        }),
+      ),
+    ),
+    initiatorId: v.string(),
+    isActive: v.boolean(),
+  })
+    .index("by_room_id", ["roomId"])
+    .index("by_active", ["roomId", "isActive"])
+    .index("by_status", ["isActive"]),
+
+  gameSessions: defineTable({
+    session_id: v.string(),
+    room_id: v.string(), // links to an existing Portal room_id (private mode)
+                          // or a generated public-lobby room_id (public mode)
+    mode: v.union(v.literal("private"), v.literal("public")),
+    status: v.union(
+      v.literal("waiting"), // open for joins
+      v.literal("in_progress"),
+      v.literal("locked"), // full or started, not accepting joiners
+      v.literal("ended"),
+    ),
+    capacity: v.number(), // default 10 for public rooms
+    min_players_to_start: v.optional(v.number()), // default 4 for public rooms
+    countdown_started_at: v.optional(v.number()), // set once min_players reached
+    current_round: v.number(),
+    created_at: v.number(),
+    last_emptied_at: v.optional(v.number()), // set when player count hits 0;
+                                               // drives recycle-vs-retire policy
+  })
+    .index("by_room_id", ["room_id"])
+    .index("by_status_mode", ["status", "mode"])
+    .index("by_session_id", ["session_id"]),
+
+  gamePlayers: defineTable({
+    session_id: v.string(),
+    user_id: v.string(),
+    username: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    score: v.number(),
+    is_off_signal: v.optional(v.boolean()), // per-round, reset each round
+    connected: v.optional(v.boolean()), // false while disconnected mid-round
+    last_heartbeat_at: v.optional(v.number()), // F1a: last gamePresence.heartbeat
+                                                 // (or seat/reconnect) timestamp;
+                                                 // drives markStaleDisconnected
+    active_connection_id: v.optional(v.string()), // F1b: tab-scoped id of
+      // whichever client currently "owns" this player's connected state.
+      // Written by heartbeat and by seatPlayerInSession's reconnect branch;
+      // checked by goOffline so a stale beforeunload/pagehide signal from a
+      // tab that's already been superseded by a fresher connection can't
+      // clobber it back to disconnected. See gamePresence.ts's header.
+  })
+    .index("by_session_id", ["session_id"])
+    .index("by_user_session", ["user_id", "session_id"])
+    // F1a: lets the staleness sweep find only currently-`connected: true`
+    // rows whose heartbeat is older than its cutoff, without a full-table
+    // scan — mirrors presence.ts's own `by_updated_at` index for the same
+    // reason.
+    .index("by_connected_heartbeat", ["connected", "last_heartbeat_at"])
+    // F2a: `by_user_session` needs a specific session_id already in hand,
+    // so it can't answer "which session(s), if any, is this user currently
+    // seated in" — exactly the question `findOrCreatePublicSession` needs
+    // to ask *before* matchmaking, to dedup a double-click join / a
+    // refresh-mid-match landing the same user in a second session. See
+    // `publicMatchmaking.ts`'s `findActivePublicSessionForUser`.
+    .index("by_user_id", ["user_id"]),
+
+  gameRounds: defineTable({
+    session_id: v.string(),
+    round_number: v.number(),
+    word_main: v.string(),
+    word_offsignal: v.string(),
+    offsignal_user_id: v.string(),
+    speaking_order: v.array(v.string()),
+    current_speaker_index: v.optional(v.number()),
+    turn_expires_at: v.optional(v.number()), // server-authoritative timer deadline
+    votes: v.array(v.object({ voter_id: v.string(), voted_for_id: v.string() })),
+    status: v.union(
+      v.literal("speaking"),
+      v.literal("voting"),
+      v.literal("revealed"),
+    ),
+  }).index("by_session_id", ["session_id"]),
+
+  // G1 — raw event log feeding the PRD's §8 Success Metrics. See
+  // convex/gameEvents.ts's file header for the full per-metric mapping;
+  // this table only needs to hold enough to reconstruct each metric later,
+  // not compute any of them itself.
+  gameEvents: defineTable({
+    event_type: v.union(
+      v.literal("session_created"), // a gameSessions row was just inserted (private or public)
+      v.literal("public_join_requested"), // findOrCreatePublicSession seated someone (fresh or reconnect)
+      v.literal("round_started"), // beginRound landed a round, either mode, manual or autostart
+      v.literal("player_left_public_session"), // leaveSession on a public-mode session
+    ),
+    session_id: v.string(),
+    room_id: v.string(),
+    mode: v.union(v.literal("private"), v.literal("public")),
+    user_id: v.optional(v.string()), // absent for system-triggered events (autostart job)
+    round_number: v.optional(v.number()),
+    // Small stringified-JSON bag for event-specific extras that don't
+    // warrant their own column (e.g. round_started's trigger, or
+    // player_left_public_session's reconnected flag) — kept optional and
+    // deliberately loose rather than growing this table's own column list
+    // every time a downstream metrics query wants one more crumb of context.
+    metadata: v.optional(v.string()),
+    created_at: v.number(),
+  })
+    .index("by_session_id", ["session_id"])
+    .index("by_event_type_created_at", ["event_type", "created_at"])
+    .index("by_room_id", ["room_id"]),
+});
