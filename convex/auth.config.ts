@@ -1,7 +1,7 @@
 const authConfig = {
   providers: [
     {
-      domain: "https://funny-tiger-24.clerk.accounts.dev",
+      domain: "https://balanced-puma-33.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],

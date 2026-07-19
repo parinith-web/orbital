@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "grateful-fly-712.eu-west-1.convex.cloud",
+        hostname: "grandiose-nightingale-413.eu-west-1.convex.cloud",
         pathname: "/api/storage/**",
       },
       {
