@@ -17,6 +17,7 @@ import {
   WORD_BANK,
   type RandomSource,
 } from "./wordAssignment";
+import { WINNING_SCORE } from "./lobbyConfig";
 import {
   advanceSpeaker,
   computeTurnExpiry,
@@ -332,6 +333,62 @@ function scenarioDeterminism(): void {
 }
 
 // ---------------------------------------------------------------------------
+// Scenario 7 — imposter pick is a plain uniform random draw every round,
+// with no weighting toward players who've been imposter less often (the
+// earlier fair-rotation design was reverted — offsignal_count is tracked
+// as an informational stat only, never fed into selection). Also checks
+// H2's WINNING_SCORE, the fixed threshold gameRounds.ts's performReveal
+// checks scores against.
+// ---------------------------------------------------------------------------
+function scenarioRandomImposterPick(): void {
+  section("Scenario 7: uniform-random imposter pick + score-threshold constant (H2)");
+
+  const roster = ["alice", "bob", "carol", "dave", "erin"];
+
+  // Draw many times from one evolving RNG (state advances each call, same
+  // as production's defaultRandomSource across a real game's rounds) and
+  // confirm every player in the roster turns up at least once — nothing
+  // structurally excluded or favored.
+  const drawRng = makeSeededRandomSource(42);
+  const picked = new Set<string>();
+  for (let i = 0; i < 200; i++) {
+    picked.add(pickOffSignalPlayer(roster, drawRng));
+  }
+  check(
+    "pickOffSignalPlayer's picks cover the whole roster across many draws (no structural bias)",
+    roster.every((id) => picked.has(id)),
+  );
+
+  // Same evolving RNG, first several draws -> not always the same player
+  // (i.e. not silently deterministic).
+  const varietyRng = makeSeededRandomSource(1);
+  const firstFewPicks = Array.from({ length: 10 }, () => pickOffSignalPlayer(roster, varietyRng));
+  check(
+    "pickOffSignalPlayer doesn't always return the same player across successive draws",
+    new Set(firstFewPicks).size > 1,
+  );
+
+  // assignRound (no fairness override anymore) should defer straight to
+  // pickOffSignalPlayer's pure-random pick, reading from the same rng
+  // sequence (assignRound draws a word pair first, then the off-signal
+  // player — so compare against the *second* draw of an equivalent
+  // standalone sequence, not the first).
+  const rngForAssignRound = makeSeededRandomSource(7);
+  const rngForDirectComparison = makeSeededRandomSource(7);
+  pickWordPair(WORD_BANK, rngForDirectComparison); // burn one call, same as assignRound's internal pickWordPair
+  const directPick = pickOffSignalPlayer(roster, rngForDirectComparison);
+  const assignment = assignRound(roster, WORD_BANK, rngForAssignRound);
+  check(
+    "assignRound's off-signal pick matches a direct pickOffSignalPlayer call under the same seed sequence",
+    assignment.offSignalUserId === directPick,
+  );
+
+  // H2: the win-condition constant itself — just guards against someone
+  // silently retuning it without updating the plan doc / product decision.
+  check("WINNING_SCORE is the documented 10-point threshold", WINNING_SCORE === 10);
+}
+
+// ---------------------------------------------------------------------------
 // Run everything.
 // ---------------------------------------------------------------------------
 console.log("A5 test harness — A2 (word assignment) + A3 (turn order) + A4 (voting)\n" + "=".repeat(72));
@@ -342,6 +399,7 @@ scenarioWrongAccusationEvades();
 scenarioCumulativeScoring();
 scenarioDefensiveGuards();
 scenarioDeterminism();
+scenarioRandomImposterPick();
 
 console.log("\n" + "=".repeat(72));
 console.log(`${passCount} passed, ${failCount} failed`);

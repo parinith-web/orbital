@@ -11,7 +11,9 @@ import { TooltipWrapper } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { RoundView } from "./RoundView";
+import { Leaderboard } from "./Leaderboard";
 import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
+import { useCurrentUser } from "@/hooks";
 
 /**
  * C2 — game overlay/panel shell. C3 — now hosts real round content.
@@ -35,17 +37,21 @@ import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
  * gameSessions.endSession — behind a ConfirmDialog since it's irreversible
  * and affects every player in the session, not just this client (same
  * "irreversible, confirm first" treatment LeaveDialog.tsx already gives
- * leaving/deleting a room). On success, this client's own
- * signalSessionId/isSignalPanelOpen are cleared immediately so the call
- * bar's "Play Signal" button reverts and a later click starts a fresh
- * session rather than reopening the now-ended one.
+ * leaving/deleting a room). H3 UPDATE: on success this client's state is
+ * NOT cleared anymore — the live `session` query below observes
+ * `status === "ended"` (same as it would for a score-threshold auto-end)
+ * and the body swaps to <Leaderboard>, same as every other client still
+ * watching this session. `signalSessionId`/`isSignalPanelOpen` are only
+ * ever cleared now by the player explicitly closing the panel (X) or by
+ * the session's row genuinely disappearing/mismatching room (G2 below) —
+ * see that effect for the full "ended no longer auto-closes" reasoning.
  *
  * Also subscribes to the session's own status (getSessionById) so that if
- * *another* client ends the session (or it's ended by any means), this
- * client's local state quietly resets too — panel closes, session id
- * clears — without that client having clicked anything itself. Reads only;
- * ending the session for real always goes through the endSession mutation
- * above, never through this effect.
+ * *another* client ends the session (or it's ended by any means — H2's
+ * score-threshold auto-end included), this client sees the same
+ * <Leaderboard> everyone else does, without having clicked anything
+ * itself. Reads only; ending the session for real always goes through the
+ * endSession mutation above, never through this effect.
  *
  * G2: signalSessionId is a single global value in uiStore, not scoped per
  * room — nothing about it says "this session belongs to room A." Before
@@ -77,6 +83,7 @@ export const SignalPanel = () => {
   const setSignalPanelOpen = useUIStore((state) => state.setSignalPanelOpen);
   const setSignalSessionId = useUIStore((state) => state.setSignalSessionId);
   const actualRoomId = useCallStore((state) => state.actualRoomId);
+  const { user: currentUser } = useCurrentUser();
 
   const session = useQuery(
     api.gameSessions.getSessionById,
@@ -93,16 +100,22 @@ export const SignalPanel = () => {
   // is still meant to read as connected while their client is around.
   useGameSessionPresence(sessionId);
 
-  // Passive cleanup: this session has ended (by this client's own action
-  // below, by another client's, or any other path), OR it belongs to a
-  // room the player is no longer actively in (G2, see header) — reset
+  // Passive cleanup: this session's row is genuinely gone, OR it belongs to
+  // a room the player is no longer actively in (G2, see header) — reset
   // local state so the call bar's button reverts to "Play Signal" instead
-  // of reopening a dead or wrong-room session. `session === null` (query
-  // resolved, row genuinely gone) is treated the same as `status ===
-  // "ended"`; `undefined` (still loading) is left alone.
+  // of reopening a dead or wrong-room session. `undefined` (still loading)
+  // is left alone.
+  //
+  // H3: a session reaching `status === "ended"` is deliberately NOT
+  // included here anymore — that used to auto-close the panel and clear
+  // signalSessionId the instant a session ended, so an ended session was
+  // never actually seen by anyone ("panel just closes"). Now the render
+  // below swaps in <Leaderboard> for that status instead, and the panel
+  // stays open (still holding its sessionId) until the player dismisses it
+  // themselves via the existing Close/X button, same as any other state.
   useEffect(() => {
     if (session === undefined) return;
-    if (session === null || session.status === "ended") {
+    if (session === null) {
       setSignalPanelOpen(false);
       setSignalSessionId(null);
       return;
@@ -122,8 +135,11 @@ export const SignalPanel = () => {
         toast.error((result && "error" in result && result.error) || "Couldn't end Signal");
         return;
       }
-      setSignalPanelOpen(false);
-      setSignalSessionId(null);
+      // H3: leave the panel open and signalSessionId intact — the live
+      // `session` query above will observe `status === "ended"` and the
+      // render below swaps in <Leaderboard> for this same sessionId, same
+      // as it would for any other client watching this session end.
+      setIsConfirmOpen(false);
       if (!result.alreadyEnded) toast.success("Signal ended");
     } catch {
       toast.error("Couldn't end Signal");
@@ -143,15 +159,17 @@ export const SignalPanel = () => {
             <span className="text-sm font-medium">Signal</span>
           </div>
           <div className="flex items-center gap-1">
-            <TooltipWrapper content="End Signal for everyone">
-              <button
-                onClick={() => setIsConfirmOpen(true)}
-                disabled={isEnding}
-                className="w-8 h-8 flex items-center justify-center hover:bg-theme-hover cursor-pointer duration-100 transition-all ease-in-out rounded-lg text-gray-400 disabled:opacity-50"
-              >
-                <HugeiconsIcon icon={StopIcon} className="w-4 h-4" />
-              </button>
-            </TooltipWrapper>
+            {session?.status !== "ended" && (
+              <TooltipWrapper content="End Signal for everyone">
+                <button
+                  onClick={() => setIsConfirmOpen(true)}
+                  disabled={isEnding}
+                  className="w-8 h-8 flex items-center justify-center hover:bg-theme-hover cursor-pointer duration-100 transition-all ease-in-out rounded-lg text-gray-400 disabled:opacity-50"
+                >
+                  <HugeiconsIcon icon={StopIcon} className="w-4 h-4" />
+                </button>
+              </TooltipWrapper>
+            )}
             <TooltipWrapper content="Close">
               <button
                 onClick={() => setSignalPanelOpen(false)}
@@ -164,7 +182,11 @@ export const SignalPanel = () => {
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col items-center justify-center">
-          <RoundView sessionId={sessionId} />
+          {session?.status === "ended" ? (
+            <Leaderboard sessionId={sessionId} currentUserId={currentUser?.user_id} />
+          ) : (
+            <RoundView sessionId={sessionId} />
+          )}
         </div>
       </div>
 

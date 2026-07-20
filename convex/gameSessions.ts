@@ -170,6 +170,57 @@ export const getSessionPlayers = query({
   },
 });
 
+/**
+ * H3 — leaderboard for a (typically just-ended, per H2) session. Scoped to
+ * this session's own `gamePlayers` rows only (same index as
+ * `getSessionPlayers` above) — a leaderboard never reaches across sessions,
+ * even for the same room/public-lobby `room_id`, since a recycled or
+ * rematch session starts every player back at 0 anyway.
+ *
+ * RANKING: sorted by `score` descending. Ties share a rank rather than an
+ * arbitrary secondary sort deciding who's "really" first (portal_1.md's
+ * own H3 line — "two players both at 10 both show as '#1'"), using
+ * standard competition ranking (1, 1, 3 — not dense 1, 1, 2): the next
+ * distinct score's rank is its 1-indexed position in the sorted list, so a
+ * two-way tie for 1st is followed by rank 3, not rank 2. `offsignal_count`
+ * rides along as supporting context only (see schema.ts's own field
+ * comment) — it never affects sort order or rank.
+ *
+ * Not gated on `session.status === "ended"` here — that's a UI display
+ * decision (Leaderboard.tsx is only ever mounted once the caller has
+ * already observed `"ended"`), not something this read needs to enforce
+ * itself. A mid-game "standings so far" caller could reuse this same query
+ * without needing a second near-identical one.
+ */
+export const getLeaderboard = query({
+  args: { session_id: v.string() },
+  handler: async (ctx, args) => {
+    const players = await ctx.db
+      .query("gamePlayers")
+      .withIndex("by_session_id", (q) => q.eq("session_id", args.session_id))
+      .collect();
+
+    const sorted = [...players].sort((a, b) => b.score - a.score);
+
+    let rank = 0;
+    let lastScore: number | null = null;
+    return sorted.map((player, index) => {
+      if (lastScore === null || player.score !== lastScore) {
+        rank = index + 1;
+        lastScore = player.score;
+      }
+      return {
+        user_id: player.user_id,
+        username: player.username,
+        avatar: player.avatar,
+        score: player.score,
+        offsignal_count: player.offsignal_count ?? 0,
+        rank,
+      };
+    });
+  },
+});
+
 // ---------------------------------------------------------------------------
 // Mutations
 // ---------------------------------------------------------------------------

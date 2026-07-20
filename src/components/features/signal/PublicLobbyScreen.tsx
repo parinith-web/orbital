@@ -15,6 +15,7 @@ import Image from "next/image";
 import { RoundView } from "./RoundView";
 import { PublicLobbyVoice } from "./PublicLobbyVoice";
 import { PostGameActions } from "./PostGameActions";
+import { Leaderboard } from "./Leaderboard";
 import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
 
 /**
@@ -80,6 +81,15 @@ import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
  * "(away)" label — `players` already carried the raw `gamePlayers.connected`
  * field via `getSessionPlayers` before this session (no query change
  * needed here), it just wasn't rendered anywhere yet.
+ *
+ * H3 UPDATE — third state, checked ahead of the round/lobby switch above:
+ * once `session.status === "ended"` (H2's score-threshold auto-end applies
+ * to public sessions same as private ones), this screen renders
+ * `<Leaderboard>` instead of handing off into `RoundView`/`PostGameActions`
+ * — "Play again" there would just call `startRound` into an already-ended
+ * session and get rejected. `Leaderboard`'s own `actions` slot carries this
+ * screen's existing `onLeave`/`isLeaving` "Leave" button, reused unchanged
+ * rather than inventing a second leave path for the post-game state.
  */
 
 type SessionSummary = {
@@ -140,6 +150,13 @@ export const PublicLobbyScreen = ({
   // A round is on the board — hand off to the same round UI Feature 1 uses.
   const hasRound = roundView !== undefined && roundView !== null;
   const isLoadingLobby = session === undefined || players === undefined || roundView === undefined;
+  // H3: once the session has ended (H2's score-threshold auto-end, same as
+  // any other path to "ended"), stop handing off into RoundView/
+  // PostGameActions altogether — "Play again" there would just call
+  // startRound into an already-`"ended"` session and get rejected. Checked
+  // ahead of `hasRound` below so this wins even though a `"revealed"`
+  // round (the reveal that triggered the end) is still on the board.
+  const hasEnded = session?.status === "ended";
 
   const capacity = session?.capacity ?? 10;
   const minToStart = session?.min_players_to_start;
@@ -158,7 +175,23 @@ export const PublicLobbyScreen = ({
     <>
       {session && <PublicLobbyVoice roomId={session.room_id} roomName="Signal Lobby" />}
 
-      {hasRound ? (
+      {hasEnded ? (
+        <Leaderboard
+          sessionId={sessionId}
+          currentUserId={user?.user_id}
+          actions={
+            <Button
+              variant="secondary"
+              size="md"
+              className="w-full"
+              disabled={isLeaving}
+              onClick={onLeave}
+            >
+              {isLeaving ? "Leaving..." : "Leave"}
+            </Button>
+          }
+        />
+      ) : hasRound ? (
         <RoundView
           sessionId={sessionId}
           postGameActions={({ onPlayAgain, isStarting }) => (

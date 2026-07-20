@@ -11,8 +11,8 @@
 import type * as calls from "../calls.js";
 import type * as chatNotifications from "../chatNotifications.js";
 import type * as crons from "../crons.js";
-import type * as friends from "../friends.js";
 import type * as gamePresence from "../gamePresence.js";
+import type * as gameRoomCode from "../gameRoomCode.js";
 import type * as gameRounds from "../gameRounds.js";
 import type * as gameSessions from "../gameSessions.js";
 import type * as lib_conversations from "../lib/conversations.js";
@@ -36,8 +36,8 @@ declare const fullApi: ApiFromModules<{
   calls: typeof calls;
   chatNotifications: typeof chatNotifications;
   crons: typeof crons;
-  friends: typeof friends;
   gamePresence: typeof gamePresence;
+  gameRoomCode: typeof gameRoomCode;
   gameRounds: typeof gameRounds;
   gameSessions: typeof gameSessions;
   "lib/conversations": typeof lib_conversations;

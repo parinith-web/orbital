@@ -2,11 +2,6 @@ import { query, mutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { createChatNotification } from "./chatNotifications";
-import { extractFriendId } from "./lib/conversations";
-
-function isDirectConversationId(roomId: string): boolean {
-  return roomId.startsWith("direct_");
-}
 
 function getCallNotificationKey(callId: Id<"calls">): string {
   return `call:${callId}`;
@@ -31,29 +26,6 @@ async function createCallNotifications(
 ) {
   const sender = await getUserSummary(ctx, args.initiatorId);
   const notificationKey = getCallNotificationKey(args.callId);
-
-  if (isDirectConversationId(args.roomId)) {
-    const recipientId = extractFriendId(args.roomId, args.initiatorId);
-    if (recipientId) {
-      await createChatNotification(ctx, {
-        user_id: recipientId,
-        message_id: notificationKey,
-        source_type: "direct",
-        source_id: args.initiatorId,
-        conversation_id: args.roomId,
-        source_name: sender.name,
-        sender_id: args.initiatorId,
-        sender_name: sender.name,
-        sender_avatar: sender.avatar,
-        message: `${sender.name} started a call`,
-        notification_type: "call",
-        call_id: args.callId,
-        call_status: "active",
-      });
-    }
-
-    return;
-  }
 
   const room = await ctx.db
     .query("rooms")
@@ -322,15 +294,10 @@ export const listAllActiveCalls = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
-    const [roomMemberships, friendships, activeCalls] = await Promise.all([
+    const [roomMemberships, activeCalls] = await Promise.all([
       ctx.db
         .query("roomMembers")
         .withIndex("by_user_id", (q) => q.eq("user_id", identity.subject))
-        .collect(),
-      ctx.db
-        .query("friends")
-        .withIndex("by_user_id", (q) => q.eq("user_id", identity.subject))
-        .filter((q) => q.eq(q.field("status"), "accepted"))
         .collect(),
       ctx.db
         .query("calls")
@@ -338,13 +305,9 @@ export const listAllActiveCalls = query({
         .collect(),
     ]);
 
-    const visibleConversationIds = new Set<string>([
-      ...roomMemberships.map((membership) => membership.room_id),
-      ...friendships.map(
-        (friendship) =>
-          `direct_${[identity.subject, friendship.friend_id].sort().join("_")}`,
-      ),
-    ]);
+    const visibleConversationIds = new Set<string>(
+      roomMemberships.map((membership) => membership.room_id),
+    );
 
     return activeCalls.filter((call) =>
       visibleConversationIds.has(call.roomId),

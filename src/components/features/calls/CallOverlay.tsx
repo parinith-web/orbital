@@ -17,14 +17,7 @@ export const CallOverlay = () => {
   const isOnCorrectPage = (() => {
     if (!actualRoomId) return false;
 
-    if (pathname.includes(`/portal/room/${actualRoomId}`)) return true;
-
-    if (actualRoomId.startsWith("direct_")) {
-      const parts = actualRoomId.split("_");
-      return parts.some(id => id && id !== "direct" && pathname.includes(`/portal/friend/${id}`));
-    }
-
-    return false;
+    return pathname.includes(`/portal/room/${actualRoomId}`);
   })();
 
   if (!isCallOverlayOpen || !isActive || !isOnCorrectPage) {

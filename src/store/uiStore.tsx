@@ -1,11 +1,7 @@
 import { create } from "zustand";
 
 export type ModalType =
-  | "CREATE_ROOM"
-  | "JOIN_ROOM"
   | "LOGOUT"
-  | "ADD_FRIEND"
-  | "REMOVE_FRIEND"
   | "LEAVE_ROOM"
   | "INFO"
   | "COLOR"
@@ -13,6 +9,8 @@ export type ModalType =
   | "PROFILE"
   | "ROOM_SETTINGS"
   | "SWITCH_CALL"
+  | "CREATE_ROOM"
+  | "JOIN_ROOM"
   | null;
 
 type UIState = {

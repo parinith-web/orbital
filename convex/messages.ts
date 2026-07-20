@@ -2,7 +2,6 @@ import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
 import {
-  extractFriendId,
   toPreview,
   updateConversationMetadata,
 } from "./lib/conversations";
@@ -167,43 +166,6 @@ export const sendMessage = mutation({
     );
 
     // to handle notification creation
-    if (args.conversation_type === "direct") {
-      const friendId = extractFriendId(args.conversation_id, identity.subject);
-      if (friendId) {
-        // Check friend's notification preference
-        const friendPreference = await ctx.db
-          .query("friends")
-          .withIndex("by_friend_id", (q) => q.eq("friend_id", identity.subject))
-          .filter((q) => q.eq(q.field("user_id"), friendId))
-          .first();
-
-        const shouldNotify = shouldCreateNotification(
-          friendPreference?.notificationPreference ?? "all",
-          mentions.length > 0,
-        );
-
-        if (shouldNotify) {
-          const isMentioned = mentionedUserIds.has(friendId);
-
-          await createChatNotification(ctx, {
-            user_id: friendId,
-            message_id: insertedMessageId,
-            source_type: "direct",
-            source_id: identity.subject,
-            conversation_id: args.conversation_id,
-            source_name: sender?.username || "Unknown user",
-            sender_id: identity.subject,
-            sender_name: sender?.username || "Unknown user",
-            sender_avatar: sender?.avatar || "",
-            message: notificationMessage,
-            notification_type: "message",
-            hasMentions: isMentioned,
-          });
-        }
-      }
-      return { success: true };
-    }
-
     if (args.conversation_type === "room") {
       const [room, members] = await Promise.all([
         ctx.db

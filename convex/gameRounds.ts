@@ -10,7 +10,7 @@ import {
   hasTurnExpired,
 } from "./games/turnOrder";
 import { applyScoreDeltas, computeRoundResult, tallyVotes } from "./games/voting";
-import { AUTOSTART_COUNTDOWN_MS } from "./games/lobbyConfig";
+import { AUTOSTART_COUNTDOWN_MS, WINNING_SCORE } from "./games/lobbyConfig";
 import { logGameEvent } from "./gameEvents";
 
 /**
@@ -325,6 +325,13 @@ async function beginRound(
 
   const playerIds = connectedPlayers.map((p) => p.user_id);
 
+  // Imposter pick is a plain, uniform-random draw from every connected
+  // player each round — no weighting toward players who've been imposter
+  // less often. `assignRound` with no 4th arg falls through to
+  // `pickOffSignalPlayer`'s pure-random pick internally.
+  // `gamePlayers.offsignal_count` is still tracked below purely as an
+  // informational per-player stat (surfaced on the leaderboard, H3) — it
+  // has no bearing on who gets picked.
   const assignment = assignRound(playerIds);
   const speakingOrder = generateSpeakingOrder(playerIds);
 
@@ -350,6 +357,18 @@ async function beginRound(
     status: "speaking",
   });
   await scheduleAutoAdvance(ctx, roundId, turnExpiresAt);
+
+  // Record that this player was just dealt the off-signal role. Purely a
+  // per-player stat now (surfaced on the leaderboard, H3) — imposter
+  // selection above is a uniform random draw and never reads this value.
+  const offSignalPlayerDoc = connectedPlayers.find(
+    (p) => p.user_id === assignment.offSignalUserId,
+  );
+  if (offSignalPlayerDoc) {
+    await ctx.db.patch(offSignalPlayerDoc._id, {
+      offsignal_count: (offSignalPlayerDoc.offsignal_count ?? 0) + 1,
+    });
+  }
 
   // LOCK-ON-START (D2b): what a "waiting" session promotes *to* here
   // depends on mode. Public sessions go straight to "locked" — per the
@@ -716,6 +735,43 @@ async function performReveal(
       ? `Round ${round.round_number} result: ${offSignalName} was off-signal and got caught! The word was "${round.word_main}" (off-signal: "${round.word_offsignal}").`
       : `Round ${round.round_number} result: ${offSignalName} was off-signal and evaded! The word was "${round.word_main}" (off-signal: "${round.word_offsignal}").`,
   );
+
+  // H2 — score-threshold game end: the moment any player's cumulative
+  // score reaches WINNING_SCORE, the session is over. Checked against the
+  // *whole* roster (not just this reveal's affected players/currently-
+  // connected players) since a score, once earned, counts toward the
+  // threshold regardless of connection state — only `updatedScores` (this
+  // reveal's fresh values) needs to override the stale `p.score` read for
+  // whichever players this round actually touched.
+  const allPlayers = await ctx.db
+    .query("gamePlayers")
+    .withIndex("by_session_id", (q) => q.eq("session_id", session.session_id))
+    .collect();
+  const winners = allPlayers
+    .map((p) => ({ player: p, finalScore: updatedScores[p.user_id] ?? p.score }))
+    .filter(({ finalScore }) => finalScore >= WINNING_SCORE);
+
+  if (winners.length > 0 && session.status !== "ended") {
+    await ctx.db.patch(session._id, { status: "ended" });
+
+    await logGameEvent(ctx, {
+      event_type: "session_ended",
+      session: { session_id: session.session_id, room_id: session.room_id, mode: session.mode },
+      user_id: winners[0].player.user_id,
+      round_number: round.round_number,
+      metadata: { reason: "winning_score_reached", winning_score: winners[0].finalScore },
+    });
+
+    // H3's Leaderboard.tsx renders any time session.status === "ended", so
+    // this message is a heads-up in chat, not the leaderboard's own UI.
+    await postSystemMessage(
+      ctx,
+      session,
+      winners.length === 1
+        ? `${winners[0].player.username || "A player"} reached ${WINNING_SCORE} points — game over! Check the leaderboard.`
+        : `The winning score of ${WINNING_SCORE} points has been reached — game over! Check the leaderboard.`,
+    );
+  }
 
   return { alreadyRevealed: false as const, result };
 }

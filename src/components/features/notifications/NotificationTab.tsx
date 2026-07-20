@@ -6,7 +6,7 @@ import { useUIStore } from "@/store/uiStore";
 
 import { usePathname } from "next/navigation";
 
-import { useNotifications, useNotificationActions, useFriends } from "@/hooks";
+import { useNotifications, useNotificationActions } from "@/hooks";
 import { useRooms } from "@/contexts/roomContext";
 import { Skeleton } from "@/components/skeletons/Skeleton";
 import { useQuery } from "convex/react";
@@ -29,8 +29,6 @@ export default function NotificationTab() {
     clearAllNotifications: clearAllNotificationsAction,
   } = useNotificationActions();
   const { rooms } = useRooms();
-  const { friends } = useFriends();
-
 
   const isLoading = isNotificationsLoading && notifications.length === 0;
 

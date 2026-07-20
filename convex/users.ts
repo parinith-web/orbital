@@ -129,20 +129,6 @@ export const deleteUserAccount = mutation({
 
     if (!user) return { error: "User not found" };
 
-    const friendsAsUser = await ctx.db
-      .query("friends")
-      .withIndex("by_user_id", (q) => q.eq("user_id", userId))
-      .collect();
-
-    const friendsAsFriend = await ctx.db
-      .query("friends")
-      .withIndex("by_friend_id", (q) => q.eq("friend_id", userId))
-      .collect();
-
-    for (const f of [...friendsAsUser, ...friendsAsFriend]) {
-      await ctx.db.delete(f._id);
-    }
-
     const memberships = await ctx.db
       .query("roomMembers")
       .withIndex("by_user_id", (q) => q.eq("user_id", userId))

@@ -87,6 +87,13 @@ export interface RoundAssignment {
 /**
  * Full assignment for one round: pick a word pair, pick the off-signal
  * player, and produce the per-player word map the client will render from.
+ *
+ * Off-signal player selection is a plain uniform-random draw
+ * (`pickOffSignalPlayer`) from the connected roster every round — no
+ * weighting by how often a player has been picked before. `gameRounds.ts`'s
+ * `beginRound` separately tracks `gamePlayers.offsignal_count` purely as an
+ * informational per-player stat (surfaced on the leaderboard), never as an
+ * input to this selection.
  */
 export function assignRound(
   playerIds: string[],

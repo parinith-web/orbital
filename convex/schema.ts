@@ -11,21 +11,6 @@ export default defineSchema({
     .index("by_user_id", ["user_id"])
     .index("by_username", ["username"]),
 
-  friends: defineTable({
-    user_id: v.string(),
-    friend_id: v.string(),
-    friend_username: v.optional(v.string()),
-    friend_avatar: v.optional(v.string()),
-    status: v.union(v.literal("pending"), v.literal("accepted")),
-    last_msg: v.optional(v.string()),
-    last_msg_sender: v.optional(v.string()),
-    updated_at: v.optional(v.number()),
-    notificationPreference: v.optional(v.string()),
-  })
-    .index("by_user_id", ["user_id"])
-    .index("by_friend_id", ["friend_id"])
-    .index("by_user_id_status", ["user_id", "status"]),
-
   rooms: defineTable({
     room_id: v.string(),
     room_name: v.string(),
@@ -188,10 +173,34 @@ export default defineSchema({
     created_at: v.number(),
     last_emptied_at: v.optional(v.number()), // set when player count hits 0;
                                                // drives recycle-vs-retire policy
+    // H5 — room-code backend for game rooms. All three are optional
+    // because they only apply to sessions minted via `gameRoomCode.ts`'s
+    // `createGameRoom` — `createSession` (an existing Portal room's
+    // in-room "Play Signal") and `publicMatchmaking`'s
+    // `findOrCreatePublicSession` never set any of these, same as they
+    // never set each other's mode-specific fields
+    // (`min_players_to_start`/`countdown_started_at` are public-only,
+    // symmetrically).
+    host_user_id: v.optional(v.string()), // the user who ran `createGameRoom`;
+      // distinct from "any current room member" — used for H8's host-only
+      // controls (end game, etc.), which a plain roomMembers `role` lookup
+      // doesn't cleanly answer once a room is game-first rather than a
+      // persistent chat room with an "owner".
+    join_code: v.optional(v.string()), // short shareable code (see
+      // gameRoomCode.ts's JOIN_CODE_LENGTH/JOIN_CODE_ALPHABET) a second
+      // player types into `joinGameRoomByCode` to be seated. Always
+      // uppercase-normalized at write time so lookups are a plain
+      // case-sensitive index match.
+    game_type: v.optional(v.string()), // "signal" today; a plain string
+      // rather than a literal union so H6's hub can add a second game
+      // tile later without a schema migration — this table has no
+      // validation opinion on which `game_type` values are "real," that
+      // lives in the hub UI / whichever mutation reads it.
   })
     .index("by_room_id", ["room_id"])
     .index("by_status_mode", ["status", "mode"])
-    .index("by_session_id", ["session_id"]),
+    .index("by_session_id", ["session_id"])
+    .index("by_join_code", ["join_code"]),
 
   gamePlayers: defineTable({
     session_id: v.string(),
@@ -199,6 +208,16 @@ export default defineSchema({
     username: v.optional(v.string()),
     avatar: v.optional(v.string()),
     score: v.number(),
+    // Number of rounds this player has been dealt the off-signal role in
+    // this session, incremented once by `beginRound` (gameRounds.ts) each
+    // time they're picked. Purely an informational per-player stat —
+    // surfaced on the leaderboard (H3) as supporting context — and NOT
+    // used to influence which player gets picked next: imposter selection
+    // (`wordAssignment.ts`'s `pickOffSignalPlayer`) is a plain
+    // uniform-random draw from the connected roster every round.
+    // Undefined/missing counts as 0, same convention as `is_off_signal`/
+    // `connected` below.
+    offsignal_count: v.optional(v.number()),
     is_off_signal: v.optional(v.boolean()), // per-round, reset each round
     connected: v.optional(v.boolean()), // false while disconnected mid-round
     last_heartbeat_at: v.optional(v.number()), // F1a: last gamePresence.heartbeat
@@ -253,6 +272,13 @@ export default defineSchema({
       v.literal("public_join_requested"), // findOrCreatePublicSession seated someone (fresh or reconnect)
       v.literal("round_started"), // beginRound landed a round, either mode, manual or autostart
       v.literal("player_left_public_session"), // leaveSession on a public-mode session
+      // H2 — a player's cumulative score crossed WINNING_SCORE right after
+      // a reveal; performReveal flips the session to "ended" and logs this
+      // in the same breath. `user_id` is the winner (or the first player
+      // found over the line, if a round's score deltas push more than one
+      // player past it simultaneously); `metadata` carries their final
+      // score. See gameRounds.ts's performReveal for the actual check.
+      v.literal("session_ended"),
     ),
     session_id: v.string(),
     room_id: v.string(),

@@ -1,6 +1,5 @@
 export * from "./useMessageActions";
 export * from "./useRoom";
-export * from "./useFriends";
 export * from "./useNotifications";
 export * from "./useSearchMessages";
 export * from "./useMediaFiles";

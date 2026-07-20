@@ -103,7 +103,13 @@ export type GameEventType =
   | "session_created"
   | "public_join_requested"
   | "round_started"
-  | "player_left_public_session";
+  | "player_left_public_session"
+  // H2 — logged once by gameRounds.ts's performReveal, the instant any
+  // player's score crosses lobbyConfig.ts's WINNING_SCORE right after a
+  // reveal. `metadata` carries `{"reason":"winning_score_reached",
+  // "winning_score": <final score>}`; `user_id` is the winner (or the
+  // first player found over the line on a multi-winner reveal).
+  | "session_ended";
 
 export async function logGameEvent(
   ctx: MutationCtx,

@@ -25,11 +25,7 @@ export function useNotificationHandlers() {
         console.error(error);
       }
 
-      if (notification.sourceType === "direct") {
-        router.push(`/portal/friend/${notification.sourceId}`);
-      } else {
-        router.push(`/portal/room/${notification.sourceId}`);
-      }
+      router.push(`/portal/room/${notification.sourceId}`);
       if (notification.notificationType === "call") {
         setSidebarOpen(true);
         setSidebarTab("calls");
