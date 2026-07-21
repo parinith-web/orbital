@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useCallStore } from "@/store/callStore";
 import { useUIStore } from "@/store/uiStore";
 import { useCallSessionActions } from "@/hooks";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
 import {
   Button,
   Popover,
@@ -24,9 +21,22 @@ import {
   ComputerScreenShareIcon,
   ComputerRemoveIcon,
   Settings02Icon,
-  GameController01Icon,
 } from "@hugeicons/core-free-icons";
 
+/**
+ * H7.2 — the old "Play Signal" button (and its `signalSessionId`/
+ * `isStartingSignal`/`createSignalSession` plumbing) is gone. It used to
+ * be the only way to surface Signal at all (opening `SignalPanel` as a
+ * modal over the call), which made sense before H7 gave the game a
+ * permanent home. Now that `GameStage` shows the room's live session the
+ * instant you're in the room — call joined or not — a second button here
+ * that reopened a duplicate, independently-mutating view of the same
+ * session would just be confusing (and race-prone: two clients of the
+ * same `session_id` calling `createSession`/`endSession` from two
+ * different panels). `useUIStore`'s `signalSessionId`/`isSignalPanelOpen`
+ * fields and `SignalPanel.tsx` itself are untouched, just no longer
+ * reachable from anywhere — see `CallOverlay.tsx`'s comment for the rest.
+ */
 export const CallControls = () => {
   const {
     isMuted,
@@ -36,7 +46,6 @@ export const CallControls = () => {
     isScreenSharing,
     toggleScreenShare,
     callId,
-    actualRoomId,
     availableDevices,
     refreshDevices,
     setAudioSource,
@@ -46,11 +55,6 @@ export const CallControls = () => {
   } = useCallStore();
   const { setCallOverlayOpen } = useUIStore();
   const { leaveCurrentSession } = useCallSessionActions();
-  const createSignalSession = useMutation(api.gameSessions.createSession);
-  const signalSessionId = useUIStore((state) => state.signalSessionId);
-  const setSignalSessionId = useUIStore((state) => state.setSignalSessionId);
-  const setSignalPanelOpen = useUIStore((state) => state.setSignalPanelOpen);
-  const [isStartingSignal, setIsStartingSignal] = useState(false);
   // F2c: CallControls had no pending-guard on any of its non-Signal buttons
   // before this audit, unlike every Signal-feature button (RoundView's
   // isStarting, VotingPanel's pendingFor, SignalPanel's isEnding, this
@@ -111,35 +115,6 @@ export const CallControls = () => {
     }
   };
 
-  // C1 launches the session; C2 adds the panel on top of it. If we already
-  // know about a live session for this call client-side, re-clicking just
-  // reopens the panel — no need to round-trip the (idempotent) mutation
-  // again for something we already have the id for.
-  const handlePlaySignal = async () => {
-    if (signalSessionId) {
-      setSignalPanelOpen(true);
-      return;
-    }
-    if (!actualRoomId || isStartingSignal) return;
-    setIsStartingSignal(true);
-    try {
-      const result = await createSignalSession({ room_id: actualRoomId });
-      if (!result || "error" in result) {
-        toast.error((result && "error" in result && result.error) || "Couldn't start Signal");
-        return;
-      }
-      setSignalSessionId(result.session_id);
-      setSignalPanelOpen(true);
-      toast.success(
-        result.alreadyExists ? "Rejoined Signal session" : "Signal session started",
-      );
-    } catch {
-      toast.error("Couldn't start Signal");
-    } finally {
-      setIsStartingSignal(false);
-    }
-  };
-
   const audioDevices = availableDevices.filter((d) => d.kind === "audioinput");
   const videoDevices = availableDevices.filter((d) => d.kind === "videoinput");
 
@@ -187,18 +162,6 @@ export const CallControls = () => {
           icon={isScreenSharing ? ComputerRemoveIcon : ComputerScreenShareIcon}
           className="w-5 h-5"
         />
-      </Button>
-
-      <Button
-        variant={signalSessionId ? "primary" : "other"}
-        size="iconLg"
-        className="rounded-2xl"
-        onClick={handlePlaySignal}
-        disabled={isStartingSignal || !actualRoomId}
-        tooltip={signalSessionId ? "Open Signal" : "Play Signal"}
-        tooltipSide="top"
-      >
-        <HugeiconsIcon icon={GameController01Icon} className="w-5 h-5" />
       </Button>
 
       <Popover onOpenChange={(open) => open && refreshDevices()}>

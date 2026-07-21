@@ -109,7 +109,23 @@ export type GameEventType =
   // reveal. `metadata` carries `{"reason":"winning_score_reached",
   // "winning_score": <final score>}`; `user_id` is the winner (or the
   // first player found over the line on a multi-winner reveal).
-  | "session_ended";
+  | "session_ended"
+  // H8 — logged once by gameSessions.ts's `rematchSession`, the moment a
+  // fresh `gameSessions` row replaces an ended one in the same room.
+  // Deliberately NOT folded into `session_created` above, even though the
+  // insert shape is identical (a fresh session + an auto-enrolled
+  // roster): metric #1 counts `session_created` events to answer "did
+  // this room ever try Signal at all" — a second, third, Nth rematch in
+  // the same room isn't a new room adopting Signal, and logging it as
+  // another `session_created` would overstate raw event volume for
+  // anything downstream that counts events rather than distinct rooms
+  // (see #1's own note above for why that distinction already mattered
+  // once, for D3's recycled public rows). `metadata` carries
+  // `{"previous_session_id": <the ended session's session_id>}` so a
+  // rematch chain can be walked backward if ever needed; `user_id` is
+  // whoever triggered the rematch (the host, or the disconnected-host
+  // fallback caller — see `rematchSession`'s own doc comment).
+  | "session_rematched";
 
 export async function logGameEvent(
   ctx: MutationCtx,

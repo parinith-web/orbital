@@ -641,20 +641,84 @@ export const leaveSession = mutation({
 });
 
 /**
+ * H8 — shared authorization check for the two host-only controls
+ * (`endSession`, `rematchSession`): may `userId` act as this session's
+ * host right now?
+ *
+ * NO HOST AT ALL (`session.host_user_id` undefined — a plain in-room
+ * `createSession` or a `publicMatchmaking` session): always `true`. There
+ * is no host concept for these, so this is the same "any current player"
+ * rule both mutations had before H8 — see `endSession`'s own doc comment
+ * for why that's correct rather than a gap.
+ *
+ * THE HOST THEMSELVES: always `true`, obviously.
+ *
+ * DISCONNECTED-HOST FALLBACK: if `userId` isn't the host, this still
+ * returns `true` when the host's own `gamePlayers` row is missing or
+ * `connected: false`. Without this, a host whose tab crashes, loses
+ * network, or force-quits mid-game would permanently strand every other
+ * player in the room — nobody could end a stuck game or start a rematch,
+ * since the one person authorized to do either is gone and isn't coming
+ * back. This is the exact edge case the plan's H8 line ("handle
+ * host-disconnect-mid-game") calls out. `connected` is the same flag
+ * `gamePresence.ts`'s heartbeat/`goOffline`/`markStaleDisconnected` already
+ * maintain for every other disconnect-aware check in this codebase
+ * (F1a–F1d) — reused here rather than inventing a second liveness signal
+ * just for the host.
+ *
+ * Deliberately does NOT reassign `host_user_id` to whoever acts under
+ * this fallback, and does NOT persist "the host is away" anywhere — this
+ * is checked fresh on every call, so a host who reconnects mid-game
+ * immediately regains exclusive control again on their very next click,
+ * with nothing left over from the fallback to undo. A real
+ * host-migration feature (permanently handing the role to someone else)
+ * would need its own UI (who's the new host, a way to see that changed)
+ * and wasn't asked for — this is the minimum that keeps a room from
+ * getting stuck, not a reassignment system.
+ */
+async function canActAsHost(
+  ctx: MutationCtx,
+  session: Doc<"gameSessions">,
+  userId: string,
+): Promise<boolean> {
+  if (!session.host_user_id) return true;
+  if (session.host_user_id === userId) return true;
+
+  const hostPlayer = await ctx.db
+    .query("gamePlayers")
+    .withIndex("by_user_session", (q) =>
+      q.eq("user_id", session.host_user_id!).eq("session_id", session.session_id),
+    )
+    .first();
+
+  return !hostPlayer || !hostPlayer.connected;
+}
+
+/**
  * Ends a Signal session outright — the explicit "End Signal" action from
  * Feature 1's flow (C7), as opposed to `leaveSession` (one player stepping
  * out while the game continues for everyone else) or the panel's own X
  * button (C2's pure UI dismissal, doesn't touch this table at all).
  *
- * Authorization mirrors `startRound`/`revealRound`: any current player in
- * the session can end it — there's no separate "host" concept anywhere in
- * this schema, and requiring the room owner specifically would be a new
- * permission axis not asked for by the PRD.
+ * AUTHORIZATION (H8): host-only when the session has one.
+ * `session.host_user_id` is only ever set for a room minted via
+ * `gameRoomCode.ts`'s `createGameRoom` (see schema.ts's own field
+ * comment) — a plain in-room session (`createSession`, this file) or a
+ * public-lobby session (`publicMatchmaking.ts`) never sets it, and for
+ * those this keeps the original "any current player may end it" rule:
+ * there's no host concept for them to gate on, and requiring one would be
+ * a permission axis nothing asked for outside the room-code flow. See
+ * `canActAsHost` below for the disconnected-host fallback that keeps a
+ * room-code room from getting stuck if its host goes dark mid-game.
  *
  * Idempotent: ending an already-ended session is a no-op that returns
  * `{ alreadyEnded: true }` rather than erroring, since two players could
  * plausibly race to be the one who ends it (mirrors `performReveal`'s own
- * `alreadyRevealed` idempotency in gameRounds.ts).
+ * `alreadyRevealed` idempotency in gameRounds.ts). Checked before the
+ * authorization check below on purpose — a non-host re-clicking a stale
+ * "End Signal" button after someone else's click already landed should
+ * see the same harmless no-op everyone else does, not a permission error
+ * for an action that's already moot.
  *
  * Deliberately does NOT touch `gamePlayers`, `gameRounds`, `calls`, or
  * `roomMembers` — only patches this session's own `status` and posts one
@@ -688,10 +752,162 @@ export const endSession = mutation({
       .first();
     if (!caller) return { error: "Only players in this session can end it" };
 
+    if (!(await canActAsHost(ctx, session, identity.subject))) {
+      return { error: "Only the host can end this session" };
+    }
+
     await ctx.db.patch(session._id, { status: "ended" });
     await postSystemMessage(ctx, session, "Signal has ended for this room.");
 
     return { success: true, alreadyEnded: false as const };
+  },
+});
+
+/**
+ * H8 — "Rematch = fresh session + fresh leaderboard": replaces an ended
+ * session with a brand new one in the same room, rather than reusing the
+ * old `gameSessions` row. A fresh `session_id` means a fresh
+ * `gamePlayers` roster (everyone back to `score: 0`) and a fresh,
+ * initially-empty `gameRounds` history — exactly the same shape a genuinely
+ * new room gets from `createSession`, just re-entered from an ended
+ * session instead of a brand new Portal room. `getSessionByRoomId`'s own
+ * "any status other than ended" filter means the moment this inserts, every
+ * client already subscribed to it for this `room_id` (GameStage chief among
+ * them) picks the new row up automatically and swaps off the old
+ * Leaderboard — no separate "rematch broadcast" needed, same
+ * "rides on existing Convex realtime subscriptions" reasoning the plan's
+ * H8 line already calls for on the `endSession` side.
+ *
+ * PRIVATE MODE ONLY: public-lobby sessions have their own end-of-life path
+ * (D3's recycle/retire sweep) and no host to gate a rematch button on —
+ * matchmaking already hands a departing/returning player a fresh public
+ * session automatically, so "Rematch" as a distinct action doesn't apply
+ * there. Rejected with an explicit error rather than silently no-op'ing,
+ * so a caller bug that somehow reaches this for a public session fails
+ * loudly instead of quietly doing nothing.
+ *
+ * AUTHORIZATION: same `canActAsHost` rule `endSession` uses (host-only
+ * when the ended session had one, with the same disconnected-host
+ * fallback), checked against the *ended* session's own `host_user_id` —
+ * there's no "current live session" left to check membership against
+ * once status is `"ended"`, so this reads the host/roster facts straight
+ * off the row being replaced.
+ *
+ * CARRIES FORWARD `host_user_id`/`join_code`/`game_type`: a room-code
+ * room's second (third, Nth) game needs to still be reachable by the same
+ * code and still have the same person able to end/rematch it — losing
+ * either on rematch would quietly break both of H5's and this session's
+ * own features the very first time a group played twice in the same room.
+ * `capacity` also carries forward (floored at the current roster size,
+ * same reasoning `createSession` already uses), NOT reset to
+ * `DEFAULT_SESSION_CAPACITY` — a host who explicitly picked a smaller/
+ * larger capacity at creation shouldn't have that choice silently
+ * discarded on their first rematch.
+ *
+ * IDEMPOTENT the same way `createSession` already is: if some other path
+ * (a second player's own rematch click, a stale retry) already produced a
+ * live session for this room by the time this runs, hand back that one's
+ * `session_id` instead of minting a second, orphaned one.
+ *
+ * ROSTER SOURCE: re-enrolls from `roomMembers` (the persistent Portal room
+ * roster), not from the ended session's own `gamePlayers` rows — same
+ * source `createSession` already uses, and for the same reason: anyone
+ * who joined the room's chat/call after the previous game started (but
+ * was never seated as a `gamePlayers` row in that now-ended session)
+ * should still get seated into the rematch, not left out because they
+ * missed the last game.
+ */
+export const rematchSession = mutation({
+  args: { session_id: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return { error: "Not authenticated" };
+
+    const endedSession = await ctx.db
+      .query("gameSessions")
+      .withIndex("by_session_id", (q) => q.eq("session_id", args.session_id))
+      .first();
+    if (!endedSession) return { error: "Session not found" };
+    if (endedSession.status !== "ended") {
+      return { error: "This session hasn't ended yet" };
+    }
+    if (endedSession.mode !== "private") {
+      return { error: "Rematch isn't available for public lobbies" };
+    }
+
+    const caller = await ctx.db
+      .query("gamePlayers")
+      .withIndex("by_user_session", (q) =>
+        q.eq("user_id", identity.subject).eq("session_id", args.session_id),
+      )
+      .first();
+    if (!caller) {
+      return { error: "Only players in this session can start a rematch" };
+    }
+
+    if (!(await canActAsHost(ctx, endedSession, identity.subject))) {
+      return { error: "Only the host can start a rematch" };
+    }
+
+    // Idempotent, mirrors createSession's own existing-session check —
+    // two players racing to click "Rematch" both land on the one fresh
+    // session that actually gets created.
+    const alreadyLive = await ctx.db
+      .query("gameSessions")
+      .withIndex("by_room_id", (q) => q.eq("room_id", endedSession.room_id))
+      .filter((q) => q.neq(q.field("status"), "ended"))
+      .first();
+    if (alreadyLive) {
+      return { session_id: alreadyLive.session_id, alreadyExists: true as const };
+    }
+
+    const roomMembers = await ctx.db
+      .query("roomMembers")
+      .withIndex("by_room_id", (q) => q.eq("room_id", endedSession.room_id))
+      .collect();
+    const capacity = Math.max(endedSession.capacity, roomMembers.length);
+
+    const session_id = generateSessionId();
+    const insertedId = await ctx.db.insert("gameSessions", {
+      session_id,
+      room_id: endedSession.room_id,
+      mode: endedSession.mode,
+      status: "waiting",
+      capacity,
+      current_round: 0,
+      created_at: Date.now(),
+      host_user_id: endedSession.host_user_id,
+      join_code: endedSession.join_code,
+      game_type: endedSession.game_type,
+    });
+
+    await Promise.all(
+      roomMembers.map((member) =>
+        ctx.db.insert("gamePlayers", {
+          session_id,
+          user_id: member.user_id,
+          username: member.username,
+          avatar: member.avatar,
+          score: 0,
+          connected: true,
+          last_heartbeat_at: Date.now(), // F1a — see createSession's identical note above
+        }),
+      ),
+    );
+
+    const freshSession = await ctx.db.get(insertedId);
+    if (freshSession) {
+      await postSystemMessage(ctx, freshSession, "Rematch! A new Signal game has started.");
+    }
+
+    await logGameEvent(ctx, {
+      event_type: "session_rematched",
+      session: { session_id, room_id: endedSession.room_id, mode: endedSession.mode },
+      user_id: identity.subject,
+      metadata: { previous_session_id: args.session_id },
+    });
+
+    return { session_id, alreadyExists: false as const };
   },
 });
 

@@ -1,5 +1,5 @@
 "use client";
-import Room from "@/components/features/rooms/RoomChatUI";
+import { GameStage } from "@/components/features/signal/GameStage";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRoomMembers } from "@/hooks";
@@ -42,7 +42,7 @@ export default function Page({
 
   return (
     <Suspense fallback={null}>
-      <Room room_id={room_id} />
+      <GameStage room_id={room_id} />
     </Suspense>
   );
 }

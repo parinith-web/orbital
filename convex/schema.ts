@@ -279,6 +279,12 @@ export default defineSchema({
       // player past it simultaneously); `metadata` carries their final
       // score. See gameRounds.ts's performReveal for the actual check.
       v.literal("session_ended"),
+      // H8 — a fresh gameSessions row replaced an ended one in the same
+      // room via gameSessions.ts's rematchSession. metadata carries
+      // {"previous_session_id": <the ended session's session_id>}. See
+      // gameEvents.ts's own GameEventType comment for why this is a
+      // distinct type from "session_created" rather than reusing it.
+      v.literal("session_rematched"),
     ),
     session_id: v.string(),
     room_id: v.string(),

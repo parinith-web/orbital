@@ -11,7 +11,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useCallStore } from "@/store/callStore";
 import { useRouter } from "next/navigation";
-import { useUIStore } from "@/store/uiStore";
 import { useCallSessionActions, useCalls } from "@/hooks";
 import { memo } from "react";
 import { useQuery } from "convex/react";
@@ -23,7 +22,6 @@ import { PUBLIC_LOBBY_ROOM_ID_PREFIX } from "@/convex/games/lobbyConfig";
 const PersistentCallWidget = () => {
   const { status, roomName, actualRoomId, callId, isMuted, toggleMute, isVideoOn, toggleVideo, isScreenSharing, toggleScreenShare } =
     useCallStore();
-  const { setSidebarOpen, setSidebarTab } = useUIStore();
   const { leaveCurrentSession } = useCallSessionActions();
   const router = useRouter();
   const { activeCalls } = useCalls(actualRoomId || "");
@@ -68,11 +66,12 @@ const PersistentCallWidget = () => {
     if (actualRoomId.startsWith("direct_")) {
       router.push("/portal");
     } else {
+      // H7.2: no more setSidebarOpen/setSidebarTab("calls")/
+      // setCallOverlayOpen(true) here — the room page's call section
+      // (GameRoomSidePanel → CallOverlay) shows itself automatically once
+      // joined, it's not a details-tab or full-screen state to flip on.
       router.push(`/portal/room/${actualRoomId}`);
     }
-    setSidebarOpen(true);
-    setSidebarTab("calls");
-    useUIStore.getState().setCallOverlayOpen(true);
   };
 
   return (

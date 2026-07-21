@@ -37,32 +37,59 @@ import { useCurrentUser } from "@/hooks";
  * `getSessionByRoomId`'s own doc comment describes ("the room's current
  * live session, if any") — nothing about that query is call-scoped.
  *
- * NOT YET WIRED IN: H7.2 is where this actually replaces the room page's
- * center-stage content and sits alongside a permanently-docked chat/call
- * side panel. This session only builds and self-verifies the component
- * (tsc/eslint/vitest — see the plan's H7.1 notes for why there's no
- * frontend harness to click through with, same gap H6.1/H6.2/H6.3 already
- * flagged), matching how H6.1 built its modals against a temporary trigger
- * before H6.2 gave them a permanent home.
- *
  * NO-SESSION STATE: kept, not dropped, even though every room reachable
  * through H5/H6's Create Room / Join Room flow already has one from the
  * moment it's created. A defensive "Start Signal" fallback (reusing the
- * pre-existing `createSession` mutation `CallControls.tsx` already calls)
- * covers any room that predates H5 or otherwise has no session row yet,
- * rather than this component assuming a session always exists and having
- * nothing to render if that assumption is ever wrong.
+ * pre-existing `createSession` mutation `CallControls.tsx` used to call,
+ * before H7.2 retired that button) covers any room that predates H5 or
+ * otherwise has no session row yet, rather than this component assuming a
+ * session always exists and having nothing to render if that assumption
+ * is ever wrong.
+ *
+ * H8 — HOST-GATED CONTROLS: "End Signal" and (once the session has ended)
+ * "Rematch" only render for a user `canActAsHost` (derived below,
+ * mirroring `gameSessions.ts`'s own server-side `canActAsHost` helper) —
+ * no host at all, the host themselves, or a disconnected host's stand-in.
+ * This is a UX gate only, not the real authorization: `endSession`/
+ * `rematchSession` re-check on the backend regardless of what this
+ * component renders, so a stale client (someone who was host a moment
+ * ago, now isn't) gets a clean error toast from the mutation itself
+ * rather than a false sense of access from a button that shouldn't have
+ * been there. See `gameSessions.ts`'s `canActAsHost` for the full
+ * authorization rationale, including the host-disconnect-mid-game
+ * fallback this mirrors.
  */
 export const GameStage = ({ room_id }: { room_id: string }) => {
   const { user: currentUser } = useCurrentUser();
 
   const session = useQuery(api.gameSessions.getSessionByRoomId, { room_id });
+  const players = useQuery(
+    api.gameSessions.getSessionPlayers,
+    session ? { session_id: session.session_id } : "skip",
+  );
   const createSignalSession = useMutation(api.gameSessions.createSession);
   const endSession = useMutation(api.gameSessions.endSession);
+  const rematchSession = useMutation(api.gameSessions.rematchSession);
 
   const [isStarting, setIsStarting] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
+  const [isRematching, setIsRematching] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  // H8 — same rule gameSessions.ts's canActAsHost applies server-side: no
+  // host set (nothing to gate on), the current user IS the host, or the
+  // host's own gamePlayers row is missing/disconnected (the
+  // host-disconnect-mid-game fallback). `players` is undefined while
+  // still loading — canActAsHost defaults to false in that split second
+  // rather than flashing the controls on and then potentially off again
+  // once the real roster arrives.
+  const hostPlayer = players?.find((p) => p.user_id === session?.host_user_id);
+  const canActAsHost =
+    !!session &&
+    players !== undefined &&
+    (!session.host_user_id ||
+      session.host_user_id === currentUser?.user_id ||
+      !hostPlayer?.connected);
 
   // Same "heartbeat for as long as a session id is held" reasoning
   // SignalPanel.tsx's F1a comment already lays out — a player who's on the
@@ -111,6 +138,31 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
     }
   };
 
+  const handleRematch = async () => {
+    if (!session || isRematching) return;
+    setIsRematching(true);
+    try {
+      const result = await rematchSession({ session_id: session.session_id });
+      if (!result || "error" in result) {
+        toast.error(
+          (result && "error" in result && result.error) ||
+            "Couldn't start a rematch",
+        );
+        return;
+      }
+      // No navigation/state update needed here — getSessionByRoomId above
+      // is already subscribed to this room_id and picks up the fresh
+      // session the instant it's inserted (see rematchSession's own doc
+      // comment for why this "rides on existing Convex realtime
+      // subscriptions", same as endSession's leaderboard broadcast).
+      if (!result.alreadyExists) toast.success("Rematch started!");
+    } catch {
+      toast.error("Couldn't start a rematch");
+    } finally {
+      setIsRematching(false);
+    }
+  };
+
   // undefined = still loading; render nothing rather than flash the
   // no-session fallback for a session that's actually just en route.
   if (session === undefined) return null;
@@ -143,7 +195,7 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
           <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
           <span className="text-sm font-medium">Signal</span>
         </div>
-        {session.status !== "ended" && (
+        {session.status !== "ended" && canActAsHost && (
           <TooltipWrapper content="End Signal for everyone">
             <button
               onClick={() => setIsConfirmOpen(true)}
@@ -161,6 +213,19 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
           <Leaderboard
             sessionId={session.session_id}
             currentUserId={currentUser?.user_id}
+            actions={
+              canActAsHost ? (
+                <Button
+                  variant="primary"
+                  onClick={handleRematch}
+                  disabled={isRematching}
+                  className="flex items-center gap-2"
+                >
+                  <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
+                  Rematch
+                </Button>
+              ) : undefined
+            }
           />
         ) : (
           <RoundView sessionId={session.session_id} />
