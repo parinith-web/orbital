@@ -18,6 +18,7 @@ import { api } from "@/convex/_generated/api";
 import AvatarStack from "@/components/ui/AvatarStack";
 import { Button } from "@/components/ui/button/Button";
 import { PUBLIC_LOBBY_ROOM_ID_PREFIX } from "@/convex/games/lobbyConfig";
+import { ROUTES } from "@/lib/constants/routes";
 
 const PersistentCallWidget = () => {
   const { status, roomName, actualRoomId, callId, isMuted, toggleMute, isVideoOn, toggleVideo, isScreenSharing, toggleScreenShare } =
@@ -50,16 +51,16 @@ const PersistentCallWidget = () => {
   const handleClick = () => {
     if (!actualRoomId) return;
 
-    // G2: a public Signal lobby's call is keyed to a synthetic room_id
+    // G2: a public Anomaly lobby's call is keyed to a synthetic room_id
     // (`generateSessionId(PUBLIC_LOBBY_ROOM_ID_PREFIX)`, in
     // convex/publicMatchmaking.ts) that has no corresponding row in the
     // `rooms` table — routing there like a real room 404s/breaks. That
-    // call's own UI lives inline on /portal/signal (PublicLobbyVoice,
+    // call's own UI lives inline on /portal/anomaly (PublicLobbyVoice,
     // mounted by PublicLobbyScreen), not behind CallOverlay the way a real
     // room's call is, so this also skips the room-call-specific sidebar/
     // overlay side effects below, which don't apply to it.
     if (actualRoomId.startsWith(`${PUBLIC_LOBBY_ROOM_ID_PREFIX}_`)) {
-      router.push("/portal/signal");
+      router.push(ROUTES.PORTAL_ANOMALY);
       return;
     }
 

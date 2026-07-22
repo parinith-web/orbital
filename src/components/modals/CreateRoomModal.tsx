@@ -63,7 +63,7 @@ export function CreateRoomModal() {
     >
       <Input
         label="Room name (optional)"
-        placeholder="e.g. Friday Night Signal"
+        placeholder="e.g. Friday Night Anomaly"
         value={roomName}
         onChange={(e) => setRoomName(e.target.value)}
         maxLength={60}

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui";
  * PUBLIC-LOBBY ONLY: passed into `RoundView` as its `postGameActions` render
  * prop (see that file's own E4 doc comment) only from `PublicLobbyScreen`.
  * Feature 1's `SignalPanel` doesn't pass this — in-room sessions already
- * have C7's explicit "End Signal" action, and don't need a second, competing
+ * have C7's explicit "End Anomaly" action, and don't need a second, competing
  * "leave" affordance appearing on every single reveal.
  *
  * Deliberately thin / stateless: both buttons' actual logic already lives

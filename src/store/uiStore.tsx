@@ -71,16 +71,16 @@ type UIState = {
   } | null;
   setEditingMessage: (msg: { id: string; content: string } | null) => void;
 
-  // Signal game session
+  // Anomaly game session
   // C1 only launches the session — no overlay/panel yet (that's C2), so this
   // just tracks "is there a live session for the current call" for now.
   // C2 will read this to decide whether to mount the game panel.
   signalSessionId: string | null;
   setSignalSessionId: (id: string | null) => void;
 
-  // C2: whether the Signal panel shell is currently shown over the call UI.
+  // C2: whether the Anomaly panel shell is currently shown over the call UI.
   // Independent from signalSessionId on purpose — closing the panel is just
-  // a UI dismissal, not "ending Signal" (that's C7's job), so the session id
+  // a UI dismissal, not "ending Anomaly" (that's C7's job), so the session id
   // stays put and the panel can be reopened without relaunching anything.
   isSignalPanelOpen: boolean;
   setSignalPanelOpen: (v: boolean) => void;

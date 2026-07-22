@@ -24,9 +24,9 @@ import {
 } from "@hugeicons/core-free-icons";
 
 /**
- * H7.2 — the old "Play Signal" button (and its `signalSessionId`/
+ * H7.2 — the old "Play Anomaly" button (and its `signalSessionId`/
  * `isStartingSignal`/`createSignalSession` plumbing) is gone. It used to
- * be the only way to surface Signal at all (opening `SignalPanel` as a
+ * be the only way to surface Anomaly at all (opening `SignalPanel` as a
  * modal over the call), which made sense before H7 gave the game a
  * permanent home. Now that `GameStage` shows the room's live session the
  * instant you're in the room — call joined or not — a second button here
@@ -36,6 +36,13 @@ import {
  * different panels). `useUIStore`'s `signalSessionId`/`isSignalPanelOpen`
  * fields and `SignalPanel.tsx` itself are untouched, just no longer
  * reachable from anywhere — see `CallOverlay.tsx`'s comment for the rest.
+ *
+ * Session 4 (CallPanel port) — was an `absolute bottom-2` floating pill
+ * centered over the participant grid, a holdover from when this sat over
+ * a full-bleed video area. Now that `CallOverlay` is a real flex column
+ * (see that file's comment), this renders as a normal-flow bottom dock
+ * bar — full-width, bordered on top — matching the mockup's `CallPanel`
+ * control dock. Same buttons, same handlers, just no longer floating.
  */
 export const CallControls = () => {
   const {
@@ -55,8 +62,8 @@ export const CallControls = () => {
   } = useCallStore();
   const { setCallOverlayOpen } = useUIStore();
   const { leaveCurrentSession } = useCallSessionActions();
-  // F2c: CallControls had no pending-guard on any of its non-Signal buttons
-  // before this audit, unlike every Signal-feature button (RoundView's
+  // F2c: CallControls had no pending-guard on any of its non-Anomaly buttons
+  // before this audit, unlike every Anomaly-feature button (RoundView's
   // isStarting, VotingPanel's pendingFor, SignalPanel's isEnding, this
   // file's own isStartingSignal). Two of these three were genuine gaps,
   // not just missing polish:
@@ -119,25 +126,25 @@ export const CallControls = () => {
   const videoDevices = availableDevices.filter((d) => d.kind === "videoinput");
 
   return (
-    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 md:scale-100 scale-90 bg-theme-surface p-3 rounded-2xl flex items-center gap-2 md:gap-3 border border-theme-border">
+    <div className="w-full shrink-0 flex items-center justify-center gap-2 md:gap-3 px-4 py-3 border-t border-theme-border bg-theme-surface">
       <Button
         variant={isMuted ? "destructive2" : "other"}
-        size={"iconLg"}
-        className="rounded-2xl"
+        size={"iconMd"}
+        className="rounded-xl"
         onClick={toggleMute}
         tooltip={isMuted ? "Unmute" : "Mute"}
         tooltipSide="top"
       >
         <HugeiconsIcon
           icon={isMuted ? MicOff02Icon : Mic02Icon}
-          className="w-5 h-5"
+          className="w-4 h-4"
         />
       </Button>
 
       <Button
         variant={isVideoOn ? "other" : "destructive2"}
-        size="iconLg"
-        className="rounded-2xl"
+        size="iconMd"
+        className="rounded-xl"
         onClick={handleToggleVideo}
         disabled={isTogglingVideo}
         tooltip={isVideoOn ? "Turn Off Video" : "Turn On Video"}
@@ -145,14 +152,14 @@ export const CallControls = () => {
       >
         <HugeiconsIcon
           icon={isVideoOn ? Video01Icon : VideoOffIcon}
-          className="w-5 h-5"
+          className="w-4 h-4"
         />
       </Button>
 
       <Button
         variant={isScreenSharing ? "destructive2" : "other"}
-        size="iconLg"
-        className="rounded-2xl"
+        size="iconMd"
+        className="rounded-xl"
         onClick={handleToggleScreenShare}
         disabled={isTogglingScreenShare}
         tooltip={isScreenSharing ? "Stop Sharing" : "Share Screen"}
@@ -160,7 +167,7 @@ export const CallControls = () => {
       >
         <HugeiconsIcon
           icon={isScreenSharing ? ComputerRemoveIcon : ComputerScreenShareIcon}
-          className="w-5 h-5"
+          className="w-4 h-4"
         />
       </Button>
 
@@ -168,12 +175,12 @@ export const CallControls = () => {
         <PopoverTrigger asChild>
           <Button
             variant="other"
-            size="iconLg"
-            className="rounded-2xl"
+            size="iconMd"
+            className="rounded-xl"
             tooltip="Settings"
             tooltipSide="top"
           >
-            <HugeiconsIcon icon={Settings02Icon} className="w-5 h-5" />
+            <HugeiconsIcon icon={Settings02Icon} className="w-4 h-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -256,14 +263,14 @@ export const CallControls = () => {
 
       <Button
         variant="destructive2"
-        size="iconLg"
-        className="rounded-2xl"
+        size="iconMd"
+        className="rounded-xl"
         onClick={handleLeave}
         disabled={isLeaving}
         tooltip="Leave Call"
         tooltipSide="top"
       >
-        <HugeiconsIcon icon={CallEnd01Icon} className="w-5 h-5" />
+        <HugeiconsIcon icon={CallEnd01Icon} className="w-4 h-4" />
       </Button>
     </div>
   );

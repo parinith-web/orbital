@@ -182,7 +182,7 @@ export const MessageItem = React.memo(
                     align="start"
                   >
                     <span
-                      className={`text-xs truncate min-w-0 max-w-[140px] text-gray-400 text-left ${!isCurrentUser ? "cursor-pointer" : ""}`}
+                      className={`text-xs truncate min-w-0 max-w-[140px] text-left ${isCurrentUser ? "text-theme-accent font-medium" : "text-gray-400"} ${!isCurrentUser ? "cursor-pointer" : ""}`}
                     >
                       {displayName}
                     </span>
@@ -198,7 +198,23 @@ export const MessageItem = React.memo(
               <div
                 id={`msg-${message._id}`}
                 style={{ color: isImage || isVideo ? undefined : textColor }}
-                className={`text-sm relative group ${isFile ? "px-0.5 py-0.5" : !showMeta ? "px-1 py-0" : "px-1 py-1"} rounded-[6px] ${isImage || isVideo ? "bg-transparent" : isCurrentUser ? "" : "text-white"}`}
+                className={`text-sm relative group ${
+                  isFile
+                    ? "px-0.5 py-0.5"
+                    : isImage || isVideo
+                      ? !showMeta
+                        ? "px-1 py-0"
+                        : "px-1 py-1"
+                      : "px-3 py-2"
+                } ${
+                  isImage || isVideo
+                    ? "bg-transparent rounded-[6px]"
+                    : isFile
+                      ? "text-white"
+                      : isCurrentUser
+                        ? "text-white rounded-xl rounded-tl-none border border-theme-accent/30 bg-theme-accent/10"
+                        : "text-white rounded-xl rounded-tl-none bg-theme-hover"
+                }`}
               >
                 {isImage && message.file_url && (
                   <div className="flex flex-col gap-1">

@@ -8,9 +8,13 @@ import { usePathname } from "next/navigation";
 
 /**
  * H7.2 — repurposed from a full-screen (`fixed inset-0 z-[9999]`) modal
- * takeover into a docked section of `GameRoomSidePanel`'s call slot.
+ * takeover into a docked section, originally `GameRoomSidePanel`'s call
+ * slot. Session 3's layout restructure moved that slot into its own
+ * `CallPanel.tsx` component (still the same call section, just no longer
+ * sharing a column with chat below it) — see `CallPanel.tsx` for where
+ * this mounts today.
  *
- * Pre-H7, this was the only place Signal ever rendered (`<SignalPanel />`
+ * Pre-H7, this was the only place Anomaly ever rendered (`<SignalPanel />`
  * mounted here, centered over the call UI) — see `GameStage.tsx`'s own
  * header comment for why that coupling was backwards for a game-first
  * room. Now that `GameStage` is the room page's permanent, call-
@@ -18,7 +22,7 @@ import { usePathname } from "next/navigation";
  * entirely rather than kept as a second, redundant place the same live
  * session could render (and duplicate-mutate) from. `SignalPanel.tsx`
  * itself is untouched, just no longer mounted anywhere — its own trigger
- * (`CallControls`'s old "Play Signal" button) is retired in this same
+ * (`CallControls`'s old "Play Anomaly" button) is retired in this same
  * session for the same reason; see that file's comment.
  *
  * `isCallOverlayOpen` (uiStore) is deliberately no longer part of the
@@ -30,10 +34,18 @@ import { usePathname } from "next/navigation";
  * whether the docked call section shows: joined (or joining) to THIS
  * room's call, full stop.
  *
- * Sized to a fixed `h-72` rather than filling all remaining vertical
- * space, since it shares its column with chat below it (see
- * `GameRoomSidePanel.tsx`) — unlike its old full-viewport life, it no
- * longer owns the whole screen to lay itself out in.
+ * Session 4 (CallPanel port) — resolves the sizing TODO above: instead of
+ * a fixed `h-72` box, this now fills whatever vertical space `CallPanel`
+ * has left after `RoomIdentityHeader` (`flex-1 min-h-0` on this
+ * component's own root, rendered directly as `RoomIdentityHeader`'s flex
+ * sibling in `CallPanel.tsx` — no wrapper div needed). `CallOverlayHeader`
+ * and `CallControls` are both normal (non-absolute) flow items now — top
+ * and bottom of this column respectively — with `ParticipantGrid` as the
+ * `flex-1 overflow-y-auto` middle. That's also why both of those
+ * components dropped their old `absolute` positioning and
+ * `ParticipantGrid` dropped its `pt-16`/`pb-20` spacing hacks: none of
+ * them need to leave clearance for an overlay anymore, they're just
+ * stacked in document flow.
  */
 export const CallOverlay = () => {
   const pathname = usePathname();
@@ -49,7 +61,7 @@ export const CallOverlay = () => {
   }
 
   return (
-    <div className="relative w-full h-72 shrink-0 bg-theme-base overflow-hidden">
+    <div className="relative w-full flex-1 min-h-0 flex flex-col bg-theme-base overflow-hidden">
       <CallOverlayHeader />
       <ParticipantGrid />
       <CallControls />

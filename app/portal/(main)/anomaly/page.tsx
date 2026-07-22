@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { PublicLobbyEntry } from "@/components/features/signal/PublicLobbyEntry";
+import { PublicLobbyEntry } from "@/components/features/anomaly/PublicLobbyEntry";
 import { ROUTES } from "@/lib/constants/routes";
 
 /**

@@ -17,7 +17,7 @@ import type { Doc } from "./_generated/dataModel";
  * FOUR EVENT TYPES, MAPPED TO THE PRD'S FOUR METRICS (re-read §8 fresh
  * before writing this, per SIGNAL_PROGRESS.md's own standing convention):
  *
- * 1. "% of active Portal rooms that try Signal at least once" (Feature 1
+ * 1. "% of active Portal rooms that try Anomaly at least once" (Feature 1
  *    adoption) <- `session_created` events where `mode === "private"`.
  *    Group by `room_id`, count distinct rooms with >=1 such event, divide
  *    by however "active Portal rooms" ends up being defined against the
@@ -65,12 +65,12 @@ import type { Doc } from "./_generated/dataModel";
  *    for a distinction this metric doesn't actually need (it wants
  *    "did rounds keep happening," not "who clicked which button").
  *
- * 4. "Whether Signal usage correlates with longer overall Portal session
+ * 4. "Whether Anomaly usage correlates with longer overall Portal session
  *    time" <- join any of the above three event types (by `user_id` and
  *    `created_at`) against the existing `presence` table's own
  *    `updated_at` activity trail. No new event type needed here — this
  *    metric is a cross-table correlation over data that already exists
- *    (Signal events from this table, overall activity from `presence`),
+ *    (Anomaly events from this table, overall activity from `presence`),
  *    not something that needs its own instrumentation.
  *
  * WHY ONE TABLE / ONE HELPER, NOT FOUR: every event type shares the same
@@ -115,8 +115,8 @@ export type GameEventType =
   // Deliberately NOT folded into `session_created` above, even though the
   // insert shape is identical (a fresh session + an auto-enrolled
   // roster): metric #1 counts `session_created` events to answer "did
-  // this room ever try Signal at all" — a second, third, Nth rematch in
-  // the same room isn't a new room adopting Signal, and logging it as
+  // this room ever try Anomaly at all" — a second, third, Nth rematch in
+  // the same room isn't a new room adopting Anomaly, and logging it as
   // another `session_created` would overstate raw event volume for
   // anything downstream that counts events rather than distinct rooms
   // (see #1's own note above for why that distinction already mattered

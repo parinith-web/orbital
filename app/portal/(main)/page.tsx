@@ -16,7 +16,7 @@ import { ROUTES } from "@/lib/constants/routes";
 
 /**
  * H6.2 — Game Hub, the real `/portal` home (replacing H4's placeholder
- * card). Structured as one game tile ("Signal") with three entry points —
+ * card). Structured as one game tile ("Anomaly") with three entry points —
  * Create Room / Join Room / Play Online — rather than a page-level layout
  * that only happens to fit one game, since the plan calls for more tiles
  * later.
@@ -24,7 +24,7 @@ import { ROUTES } from "@/lib/constants/routes";
  * Create Room / Join Room just open H6.1's modals (`setModal("CREATE_ROOM"
  * | "JOIN_ROOM")`) — this page owns no room-code/session logic itself, that
  * all already lives in `CreateRoomModal`/`JoinRoomModal` and the mutations
- * they call. Play Online reuses the existing `/portal/signal` route
+ * they call. Play Online reuses the existing `/portal/anomaly` route
  * (`PublicLobbyEntry`) untouched, exactly as H5's "no changes needed" note
  * said.
  */
@@ -48,7 +48,7 @@ export default function Page() {
             <HugeiconsIcon icon={GameController01Icon} className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-medium text-white">Signal</h1>
+            <h1 className="text-lg font-medium text-white">Anomaly</h1>
             <p className="text-sm text-gray-400 mt-1">
               A word-based imposter game. Create a room for your friends, join
               one with a code, or jump into a public match.
@@ -76,7 +76,7 @@ export default function Page() {
           <Button
             variant="ghost"
             className="w-full justify-center gap-2"
-            onClick={() => router.push(ROUTES.PORTAL_SIGNAL)}
+            onClick={() => router.push(ROUTES.PORTAL_ANOMALY)}
           >
             <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
             Play Online

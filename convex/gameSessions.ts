@@ -6,7 +6,7 @@ import { maybeCancelAutostartCountdown, postSystemMessage } from "./gameRounds";
 import { logGameEvent } from "./gameEvents";
 
 /**
- * Session + player lifecycle for Signal game sessions — B1.
+ * Session + player lifecycle for Anomaly game sessions — B1.
  *
  * SCOPE (per SIGNAL_PROGRESS.md's Phase B breakdown): this file covers
  * *private/in-room* session creation only. Public-lobby matchmaking
@@ -21,7 +21,7 @@ import { logGameEvent } from "./gameEvents";
  * `leaveSession` / `getSessionPlayers` remain mode-agnostic too, same
  * reasoning.
  *
- * END-SESSION (C7): `endSession` below is the explicit "stop this Signal
+ * END-SESSION (C7): `endSession` below is the explicit "stop this Anomaly
  * game" action from Feature 1's flow — distinct from `leaveSession` (one
  * player stepping out) and distinct from C2's panel close (a pure UI
  * dismissal that never touches this table at all). Ending only ever
@@ -57,7 +57,7 @@ import { logGameEvent } from "./gameEvents";
  * for the full design.
  */
 
-/** Shared across private + (future) public sessions — "Signal's supported range" per the PRD. */
+/** Shared across private + (future) public sessions — "Anomaly's supported range" per the PRD. */
 export const DEFAULT_SESSION_CAPACITY = 10;
 
 /**
@@ -116,12 +116,12 @@ export const RETIRE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes — portal_1.md d
  * `generateRoomCode()` pattern (Math.random-based) rather than assuming
  * `crypto.randomUUID` is available in the Convex runtime.
  *
- * `prefix` defaults to "signal" (session ids) but is exported/parameterized
+ * `prefix` defaults to "anomaly" (session ids) but is exported/parameterized
  * so D1's public matchmaking can reuse the exact same generator for a
  * public session's synthetic `room_id` too (e.g. `generateSessionId("public_room")`)
  * instead of a second copy of the same timestamp+random scheme.
  */
-export function generateSessionId(prefix: string = "signal"): string {
+export function generateSessionId(prefix: string = "anomaly"): string {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
@@ -249,7 +249,7 @@ export const createSession = mutation({
     if (!membership) return { error: "Not a member of this room" };
 
     // Idempotent: if this room already has a live session, hand back its id
-    // instead of erroring — covers double-clicking "Play Signal" and lets
+    // instead of erroring — covers double-clicking "Play Anomaly" and lets
     // the caller just route straight into the existing session.
     const existing = await ctx.db
       .query("gameSessions")
@@ -315,12 +315,12 @@ export const createSession = mutation({
     );
 
     // G1: private-mode session_created — the raw event Feature 1 adoption
-    // ("% of active Portal rooms that try Signal at least once") is
+    // ("% of active Portal rooms that try Anomaly at least once") is
     // computed from. Logged after the insert + roster enroll above rather
     // than before, so this never fires for a `createSession` call that
     // errored out earlier (not a member, room not found) or short-circuited
     // on the idempotent `alreadyExists` branch above (that's a re-entry
-    // into an existing session, not a new "this room tried Signal" fact).
+    // into an existing session, not a new "this room tried Anomaly" fact).
     await logGameEvent(ctx, {
       event_type: "session_created",
       session: { session_id, room_id: args.room_id, mode: "private" },
@@ -367,7 +367,7 @@ export const createSession = mutation({
  * or public, and private sessions get here rarely (their capacity is set
  * from the room roster at `createSession` time, before any room member has
  * had a chance to call this) but not never — a room that grows after its
- * Signal session was created can still fill it via `joinSession`. No
+ * Anomaly session was created can still fill it via `joinSession`. No
  * caller-side reason to special-case public here.
  *
  * Only transitions out of `"waiting"`, never out of `"in_progress"`: as of
@@ -483,7 +483,7 @@ export const joinSession = mutation({
         )
         .first();
       if (!membership) {
-        return { error: "Only members of this room can join its Signal session" };
+        return { error: "Only members of this room can join its Anomaly session" };
       }
     }
 
@@ -695,7 +695,7 @@ async function canActAsHost(
 }
 
 /**
- * Ends a Signal session outright — the explicit "End Signal" action from
+ * Ends an Anomaly session outright — the explicit "End Anomaly" action from
  * Feature 1's flow (C7), as opposed to `leaveSession` (one player stepping
  * out while the game continues for everyone else) or the panel's own X
  * button (C2's pure UI dismissal, doesn't touch this table at all).
@@ -716,7 +716,7 @@ async function canActAsHost(
  * plausibly race to be the one who ends it (mirrors `performReveal`'s own
  * `alreadyRevealed` idempotency in gameRounds.ts). Checked before the
  * authorization check below on purpose — a non-host re-clicking a stale
- * "End Signal" button after someone else's click already landed should
+ * "End Anomaly" button after someone else's click already landed should
  * see the same harmless no-op everyone else does, not a permission error
  * for an action that's already moot.
  *
@@ -757,7 +757,7 @@ export const endSession = mutation({
     }
 
     await ctx.db.patch(session._id, { status: "ended" });
-    await postSystemMessage(ctx, session, "Signal has ended for this room.");
+    await postSystemMessage(ctx, session, "Anomaly has ended for this room.");
 
     return { success: true, alreadyEnded: false as const };
   },
@@ -897,7 +897,7 @@ export const rematchSession = mutation({
 
     const freshSession = await ctx.db.get(insertedId);
     if (freshSession) {
-      await postSystemMessage(ctx, freshSession, "Rematch! A new Signal game has started.");
+      await postSystemMessage(ctx, freshSession, "Rematch! A new Anomaly game has started.");
     }
 
     await logGameEvent(ctx, {

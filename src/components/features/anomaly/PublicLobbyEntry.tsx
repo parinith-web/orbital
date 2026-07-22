@@ -126,7 +126,7 @@ export const PublicLobbyEntry = () => {
           <>
             <h1 className="text-lg font-medium text-white">Finding a game...</h1>
             <p className="text-sm text-gray-400">
-              Hang tight, we&apos;re placing you into a Signal lobby.
+              Hang tight, we&apos;re placing you into an Anomaly lobby.
             </p>
             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mt-2" />
           </>

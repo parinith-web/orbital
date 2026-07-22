@@ -8,7 +8,7 @@ import { useCallStore } from "@/store/callStore";
 import { useUserStore } from "@/store/useUserStore";
 
 /**
- * E3 — auto-triggers a PeerJS group call for a newly formed public Signal
+ * E3 — auto-triggers a PeerJS group call for a newly formed public Anomaly
  * room, per the PRD's own framing (§7): "the same PeerJS group-call flow
  * spun up for a newly formed public room, initialized the same way an ad
  * hoc group call is today, just auto-triggered on room fill rather than
@@ -30,8 +30,8 @@ import { useUserStore } from "@/store/useUserStore";
  * SCOPE: this is voice only — a compact status/mute bar, not a full call
  * UI. Video, screen-share, and device settings are Feature 1's in-room
  * `CallOverlay`/`CallControls`, which this deliberately does NOT reuse:
- * that component also renders the "Play Signal" button (which would try to
- * start a second, private-mode Signal session keyed to this synthetic
+ * that component also renders the "Play Anomaly" button (which would try to
+ * start a second, private-mode Anomaly session keyed to this synthetic
  * `room_id`, wrong for a session already public and already playing) and
  * `SignalPanel`'s own round UI (which `PublicLobbyScreen` already renders
  * directly via `RoundView`, so mounting `CallOverlay` here would double up

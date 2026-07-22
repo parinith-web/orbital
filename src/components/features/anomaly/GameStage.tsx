@@ -18,7 +18,7 @@ import { useCurrentUser } from "@/hooks";
  * H7.1 — game-first, call-independent replacement for the *content* that
  * used to live only inside `SignalPanel.tsx`'s centered modal.
  *
- * WHY THIS EXISTS: pre-H7, Signal only ever rendered nested inside
+ * WHY THIS EXISTS: pre-H7, Anomaly only ever rendered nested inside
  * `CallOverlay`, which itself only mounts once a player has joined the
  * room's voice/video call (`CallOverlay.tsx`'s `isActive` gate) — see
  * `SignalPanel.tsx`'s header comment for the full shape of that coupling.
@@ -39,14 +39,14 @@ import { useCurrentUser } from "@/hooks";
  *
  * NO-SESSION STATE: kept, not dropped, even though every room reachable
  * through H5/H6's Create Room / Join Room flow already has one from the
- * moment it's created. A defensive "Start Signal" fallback (reusing the
+ * moment it's created. A defensive "Start Anomaly" fallback (reusing the
  * pre-existing `createSession` mutation `CallControls.tsx` used to call,
  * before H7.2 retired that button) covers any room that predates H5 or
  * otherwise has no session row yet, rather than this component assuming a
  * session always exists and having nothing to render if that assumption
  * is ever wrong.
  *
- * H8 — HOST-GATED CONTROLS: "End Signal" and (once the session has ended)
+ * H8 — HOST-GATED CONTROLS: "End Anomaly" and (once the session has ended)
  * "Rematch" only render for a user `canActAsHost` (derived below,
  * mirroring `gameSessions.ts`'s own server-side `canActAsHost` helper) —
  * no host at all, the host themselves, or a disconnected host's stand-in.
@@ -67,7 +67,7 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
     api.gameSessions.getSessionPlayers,
     session ? { session_id: session.session_id } : "skip",
   );
-  const createSignalSession = useMutation(api.gameSessions.createSession);
+  const createAnomalySession = useMutation(api.gameSessions.createSession);
   const endSession = useMutation(api.gameSessions.endSession);
   const rematchSession = useMutation(api.gameSessions.rematchSession);
 
@@ -97,27 +97,27 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
   // below is mid-round or showing the ended leaderboard.
   useGameSessionPresence(session?.session_id ?? null);
 
-  const handleStartSignal = async () => {
+  const handleStartAnomaly = async () => {
     if (isStarting) return;
     setIsStarting(true);
     try {
-      const result = await createSignalSession({ room_id });
+      const result = await createAnomalySession({ room_id });
       if (!result || "error" in result) {
         toast.error(
           (result && "error" in result && result.error) ||
-            "Couldn't start Signal",
+            "Couldn't start Anomaly",
         );
         return;
       }
-      if (result.alreadyExists) toast.success("Rejoined Signal session");
+      if (result.alreadyExists) toast.success("Rejoined Anomaly session");
     } catch {
-      toast.error("Couldn't start Signal");
+      toast.error("Couldn't start Anomaly");
     } finally {
       setIsStarting(false);
     }
   };
 
-  const handleEndSignal = async () => {
+  const handleEndAnomaly = async () => {
     if (!session || isEnding) return;
     setIsEnding(true);
     try {
@@ -125,14 +125,14 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
       if (!result || "error" in result) {
         toast.error(
           (result && "error" in result && result.error) ||
-            "Couldn't end Signal",
+            "Couldn't end Anomaly",
         );
         return;
       }
       setIsConfirmOpen(false);
-      if (!result.alreadyEnded) toast.success("Signal ended");
+      if (!result.alreadyEnded) toast.success("Anomaly ended");
     } catch {
-      toast.error("Couldn't end Signal");
+      toast.error("Couldn't end Anomaly");
     } finally {
       setIsEnding(false);
     }
@@ -172,17 +172,17 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
       <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-6 text-center">
         <div className="flex items-center gap-2 text-gray-300">
           <HugeiconsIcon icon={GameController01Icon} className="w-5 h-5" />
-          <span className="text-sm font-medium">Signal</span>
+          <span className="text-sm font-medium">Anomaly</span>
         </div>
         <p className="text-sm text-gray-400 max-w-xs">
           No game running in this room yet.
         </p>
         <Button
           variant="primary"
-          onClick={handleStartSignal}
+          onClick={handleStartAnomaly}
           disabled={isStarting}
         >
-          Start Signal
+          Start Anomaly
         </Button>
       </div>
     );
@@ -193,10 +193,10 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
       <div className="flex items-center justify-between px-4 h-12 border-b border-theme-border shrink-0">
         <div className="flex items-center gap-2 text-gray-200">
           <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
-          <span className="text-sm font-medium">Signal</span>
+          <span className="text-sm font-medium">Anomaly</span>
         </div>
         {session.status !== "ended" && canActAsHost && (
-          <TooltipWrapper content="End Signal for everyone">
+          <TooltipWrapper content="End Anomaly for everyone">
             <button
               onClick={() => setIsConfirmOpen(true)}
               disabled={isEnding}
@@ -235,11 +235,11 @@ export const GameStage = ({ room_id }: { room_id: string }) => {
       <ConfirmDialog
         open={isConfirmOpen}
         onOpenChange={setIsConfirmOpen}
-        title="End Signal for everyone?"
+        title="End Anomaly for everyone?"
         description="This ends the game for the whole room. The call and chat aren't affected."
-        confirmText="End Signal"
+        confirmText="End Anomaly"
         variant="destructive"
-        onConfirm={handleEndSignal}
+        onConfirm={handleEndAnomaly}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { GameStage } from "@/components/features/signal/GameStage";
+import { GameStage } from "@/components/features/anomaly/GameStage";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRoomMembers } from "@/hooks";

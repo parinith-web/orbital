@@ -3,7 +3,7 @@ export const ROUTES = {
   PORTAL: "/portal",
   PORTAL_PROFILE: "/portal/profile",
   PORTAL_ROOM: (roomId: string) => `/portal/room/${roomId}`,
-  PORTAL_SIGNAL: "/portal/signal",
+  PORTAL_ANOMALY: "/portal/anomaly",
 } as const;
 
 export const ROUTE_KEYS = {
@@ -11,7 +11,7 @@ export const ROUTE_KEYS = {
   PORTAL: "PORTAL",
   PORTAL_PROFILE: "PORTAL_PROFILE",
   PORTAL_ROOM: "PORTAL_ROOM",
-  PORTAL_SIGNAL: "PORTAL_SIGNAL",
+  PORTAL_ANOMALY: "PORTAL_ANOMALY",
 } as const;
 
 export type RouteKey = (typeof ROUTE_KEYS)[keyof typeof ROUTE_KEYS];

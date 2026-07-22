@@ -33,6 +33,13 @@ import Image from "next/image";
  * CrownIcon stands in for the "players won" state, matching the visual
  * register other emphasis states in this codebase use (PlayerBadge's
  * ring-2 ring-theme-accent, etc.) without introducing a new one.
+ *
+ * Session 5 (GameStage port) — visual restyle only: rounded-2xl card
+ * treatment throughout, matching RoundView's restyled word card, and a
+ * theme-accent glow (`hsl(var(--theme-accent-hsl))`, Session 0's token)
+ * on the result card specifically for the "players won" state, mirroring
+ * the glow the mockup put on its word card. No data shape, query, or
+ * scoring logic touched.
  */
 
 type PlayerSummary = { user_id: string; username?: string; avatar?: string; score?: number };
@@ -84,13 +91,18 @@ export const RevealPanel = ({
   return (
     <div className="w-full flex flex-col gap-4 text-center">
       <div
-        className={`w-full flex flex-col items-center gap-1 rounded-xl border px-4 py-4 ${
+        className={`w-full flex flex-col items-center gap-1.5 rounded-2xl border px-4 py-5 ${
           playersWon ? "border-theme-accent bg-theme-hover" : "border-theme-border bg-theme-base"
         }`}
+        style={
+          playersWon
+            ? { boxShadow: "0 0 35px -8px hsl(var(--theme-accent-hsl) / 0.3)" }
+            : undefined
+        }
       >
         <HugeiconsIcon
           icon={playersWon ? CrownIcon : ViewOffIcon}
-          className={`w-6 h-6 ${playersWon ? "text-theme-accent" : "text-gray-500"}`}
+          className={`w-7 h-7 ${playersWon ? "text-theme-accent" : "text-gray-500"}`}
         />
         <div className="text-sm font-medium text-white">
           {playersWon
@@ -107,11 +119,11 @@ export const RevealPanel = ({
       </div>
 
       <div className="w-full grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-theme-border bg-theme-base px-3 py-2">
+        <div className="rounded-2xl border border-theme-border bg-theme-base px-3 py-3">
           <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Main word</div>
           <div className="text-sm text-white">{word_main}</div>
         </div>
-        <div className="rounded-xl border border-theme-border bg-theme-base px-3 py-2">
+        <div className="rounded-2xl border border-theme-border bg-theme-base px-3 py-3">
           <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Off-signal word</div>
           <div className="text-sm text-white">{word_offsignal}</div>
           <div className="text-[11px] text-gray-500 mt-0.5">
@@ -128,7 +140,7 @@ export const RevealPanel = ({
           return (
             <div
               key={player.user_id}
-              className="w-full flex items-center justify-between rounded-lg border border-theme-border px-3 py-1.5"
+              className="w-full flex items-center justify-between rounded-xl border border-theme-border px-3 py-1.5"
             >
               <div className="flex items-center gap-2">
                 {index === 0 && (player.score ?? 0) > 0 ? (

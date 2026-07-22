@@ -13,6 +13,13 @@ import { formatDuration } from "@/lib/utils/date";
  * beside chat that's always visible below it, there's nothing to "go
  * back" to — this is just the call's elapsed-time readout now. See
  * `CallOverlay.tsx`'s header comment for the rest of the H7.2 rationale.
+ *
+ * Session 4 (CallPanel port) — dropped the `absolute top-0 z-10` overlay
+ * positioning. That was needed when `CallOverlay` was a fixed `h-72` box
+ * with the participant grid filling the whole area behind it (hence
+ * `ParticipantGrid`'s old `pt-16` hack to avoid this header covering the
+ * top row). Now that `CallOverlay` is a real flex column (see that file's
+ * header comment), this is just a normal shrink-0 row above the grid.
  */
 export const CallOverlayHeader = () => {
   const { startedAt } = useCallStore();
@@ -31,8 +38,9 @@ export const CallOverlayHeader = () => {
   }, [startedAt]);
 
   return (
-    <div className="flex shrink-0 items-center justify-center px-4 h-12 w-full gap-4 border-b border-theme-border bg-theme-surface absolute top-0 left-0 z-10">
-      <div className="flex items-center gap-2 text-gray-200 text-sm">
+    <div className="flex shrink-0 items-center justify-center px-4 h-10 w-full gap-4 border-b border-theme-border bg-theme-surface">
+      <div className="flex items-center gap-2 text-gray-400 text-xs">
+        <span className="w-1.5 h-1.5 rounded-full bg-theme-accent animate-pulse" />
         <span>{elapsed}</span>
       </div>
     </div>

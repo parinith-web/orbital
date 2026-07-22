@@ -39,6 +39,18 @@ import { toast } from "sonner";
  * tappable (their prior vote, if any, still counts, and they could
  * reconnect and vote again), they just aren't counted toward "how many
  * more votes until reveal."
+ *
+ * Session 5 (GameStage port) — visual restyle only. The anomaly-ui
+ * mockup's voting screen shows generic "Submit vote"/"Skip vote" buttons,
+ * but those are placeholder UI with no candidate list or backing mutation
+ * behind them — there's no "skip" concept in `gameRounds.ts` at all. Real
+ * voting here is (and stays) tap-a-candidate-to-vote, wired to `castVote`
+ * above; this session applies the mockup's bolder rounded-2xl card
+ * language to that real list rather than swapping in non-functional
+ * buttons. Selected-candidate state now uses the theme-accent token
+ * (`bg-theme-accent/10`, enabled by Session 0's `--theme-accent-hsl`
+ * var) instead of the old plain `bg-theme-hover`, so "this is my pick"
+ * reads as accent-colored rather than just a generic hover shade.
  */
 
 type PlayerSummary = { user_id: string; username?: string; avatar?: string; connected?: boolean };
@@ -88,9 +100,9 @@ export const VotingPanel = ({
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex items-center justify-between text-xs text-gray-500 px-0.5">
+      <div className="flex items-center justify-between text-[10px] uppercase tracking-wide text-gray-500 px-0.5">
         <span>Who&apos;s off-signal?</span>
-        <span className="tabular-nums">
+        <span className="tabular-nums normal-case">
           {votedCount}/{votesNeeded} voted
         </span>
       </div>
@@ -110,9 +122,9 @@ export const VotingPanel = ({
               type="button"
               onClick={() => handleVote(userId)}
               disabled={isPending}
-              className={`w-full flex items-center justify-between rounded-xl border px-3 py-2 text-left transition-all duration-150 ease-in-out disabled:opacity-60 ${
+              className={`w-full flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-all duration-150 ease-in-out disabled:opacity-60 ${
                 isMyPick
-                  ? "border-theme-accent bg-theme-hover"
+                  ? "border-theme-accent bg-theme-accent/10"
                   : "border-theme-border hover:bg-theme-border"
               }`}
             >

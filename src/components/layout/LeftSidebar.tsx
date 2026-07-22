@@ -50,7 +50,7 @@ export default function LeftSidebar({
   const { leftMobileMenu, setLeftMobileMenu, setModal } = useUIStore();
 
   const isOnHubPage = /^\/portal$/.test(pathname);
-  const isOnSignalPage = /^\/portal\/signal$/.test(pathname);
+  const isOnAnomalyPage = /^\/portal\/anomaly$/.test(pathname);
 
   // H6.3 — a shared `/portal?join=CODE` link opens Join Room with the code
   // pre-filled, then drops the param from the URL so the modal doesn't
@@ -101,10 +101,10 @@ export default function LeftSidebar({
 
               <button
                 onClick={() => {
-                  router.push("/portal/signal");
+                  router.push("/portal/anomaly");
                   setLeftMobileMenu?.(false);
                 }}
-                className={`${isOnSignalPage ? "bg-theme-hover text-white" : "bg-theme-surface text-gray-200"} ease-in-out hover:bg-theme-hover hover:text-white duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]`}
+                className={`${isOnAnomalyPage ? "bg-theme-hover text-white" : "bg-theme-surface text-gray-200"} ease-in-out hover:bg-theme-hover hover:text-white duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]`}
               >
                 <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
                 <span>Play Online</span>

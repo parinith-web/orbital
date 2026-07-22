@@ -1,5 +1,5 @@
 /**
- * F1b — a single, stable id for "this browser tab's" Signal connection.
+ * F1b — a single, stable id for "this browser tab's" Anomaly connection.
  *
  * WHY THIS EXISTS: F1a's `goOffline` (fired from `beforeunload`/`pagehide`)
  * and F1a's `heartbeat` (fired on mount + on an interval) both write
@@ -17,7 +17,7 @@
  * `convex/gamePresence.ts`'s header for the server side of this.
  *
  * SCOPED TO THE TAB, NOT THE SESSION: generated once per page load (module
- * singleton) rather than per Signal session, so every mutation this tab
+ * singleton) rather than per Anomaly session, so every mutation this tab
  * ever makes for any session it touches — `heartbeat`, `goOffline`,
  * `joinSession`, `findOrCreatePublicSession` — carries the same id. That's
  * what makes "a newer connection took over" a meaningful check: a genuine

@@ -12,7 +12,7 @@ import { JOIN_CODE_ALPHABET, JOIN_CODE_LENGTH } from "./games/lobbyConfig";
 /**
  * H5 — room-code backend for game rooms.
  *
- * SCOPE: this is the third way a player ends up seated in a Signal
+ * SCOPE: this is the third way a player ends up seated in an Anomaly
  * session, alongside `gameSessions.ts`'s `createSession`/`joinSession`
  * (an *existing* Portal room's roster auto-enrolling into a session) and
  * `publicMatchmaking.ts`'s `findOrCreatePublicSession` ("Play Online",
@@ -100,7 +100,7 @@ async function getUserSummary(ctx: MutationCtx, userId: string) {
  */
 export const createGameRoom = mutation({
   args: {
-    game_type: v.optional(v.string()), // defaults to "signal" — the only
+    game_type: v.optional(v.string()), // defaults to "anomaly" — the only
       // game that exists today; kept optional/string (not required) so
       // this mutation doesn't need to change shape the day a second game
       // is added.
@@ -112,7 +112,7 @@ export const createGameRoom = mutation({
     if (!identity) return { error: "Not authenticated" };
 
     const summary = await getUserSummary(ctx, identity.subject);
-    const game_type = args.game_type ?? "signal";
+    const game_type = args.game_type ?? "anomaly";
 
     const room_id = generateSessionId("room");
     await ctx.db.insert("rooms", {
@@ -162,7 +162,7 @@ export const createGameRoom = mutation({
 
     // G1 — same event this file's private-session sibling
     // (`createSession`) already logs, for the same adoption metric; a
-    // room-code room is still "a Portal room trying Signal," it just
+    // room-code room is still "a Portal room trying Anomaly," it just
     // came into existence via this flow instead of an existing chat room.
     await logGameEvent(ctx, {
       event_type: "session_created",

@@ -10,6 +10,7 @@
   --theme-bg-hover: 252 70% 15%;
   --theme-border: 252 42% 14%;
   --theme-accent-color: #4a31b0;
+  --theme-accent-hsl: 252 56% 44%;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);

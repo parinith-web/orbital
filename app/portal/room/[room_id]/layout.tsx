@@ -3,30 +3,45 @@
 import { useParams } from "next/navigation";
 import { useUIStore } from "@/store/uiStore";
 import LeftSidebar from "@/components/layout/LeftSidebar";
-import { GameRoomSidePanel } from "@/components/features/rooms/GameRoomSidePanel";
+import { CallPanel } from "@/components/features/rooms/CallPanel";
+import { ChatPanel } from "@/components/features/rooms/ChatPanel";
 import { RoomCallProvider } from "@/contexts/CallContext";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
 
 /**
- * H7.2 — repurposed per the plan's H7 spec: the game (`GameStage`, H7.1,
- * mounted by `page.tsx`) is the center-stage content now, with
- * `GameRoomSidePanel` (chat + call, permanently docked / a mobile drawer)
- * standing in for what used to be three separate pieces of chat-app
- * chrome — `TopBar` (search + info/media/calls tab toggle), `RightSidebar`
- * (member list), and `DetailsSidebar` + its tab children, toggled via
- * `TopBar`'s buttons and shown/hidden via `isSidebarOpen`. None of those
- * three are imported here anymore, but none were deleted either — see
- * `GameRoomSidePanel.tsx`'s header comment for why (they're not reused,
- * just left as orphaned files for a later cleanup pass, matching this
- * codebase's own established "leave low-risk dead code, flag it" pattern
- * from H4). The old full-screen `CallOverlay` is gone too, replaced by
- * its H7.2-docked form living inside `GameRoomSidePanel`.
+ * Session 3 (layout restructure scaffold) — replaces the single docked
+ * `GameRoomSidePanel` (H7.2) with a true 3-column layout matching the
+ * Anomaly mockup's `CallPanel | GameStage | ChatPanel` order:
+ * `LeftSidebar | CallPanel | GameStage (children) | ChatPanel`.
  *
- * The mobile toggle button below (`rightMobileMenu`) is the only new bit
- * of chrome this session adds to this file — everywhere else, `TopBar`'s
- * "Room Members" button used to flip that same flag; now that `TopBar`
- * isn't part of this route, this button takes over that one job.
+ * `GameRoomSidePanel.tsx`, the single combined panel this replaced, was
+ * kept in place unrouted as a rollback reference through Session 5 and
+ * retired (deleted) in Session 6 once the split was confirmed to have
+ * full parity — see `CallPanel.tsx`'s header comment for the original
+ * combined-panel reasoning this replaces.
+ *
+ * RESPONSIVE: `flex-col` on mobile, `lg:flex-row` at the `lg` breakpoint,
+ * reusing the mockup's own breakpoint behavior. `CallPanel` stacks inline
+ * in that flow on mobile (full-width, above `GameStage`); `ChatPanel`
+ * deliberately does NOT — it keeps the old slide-in drawer treatment
+ * (`rightMobileMenu`) instead of stacking a third block below the game,
+ * since burying the game under a full call + chat stack on a phone would
+ * be a regression. See `ChatPanel.tsx`'s header comment for the full
+ * reasoning; flagged here too since it's a deviation from the mockup's
+ * literal `flex-col` stack.
+ *
+ * The mobile toggle button below (`rightMobileMenu`) is unchanged from
+ * before — it now opens `ChatPanel` specifically rather than the old
+ * combined call+chat panel.
+ *
+ * Session 4 (CallPanel port) — `CallPanel`'s desktop overflow changed from
+ * `lg:overflow-y-auto` to `lg:overflow-hidden`. That scaffold-era setting
+ * assumed unstyled content that just grew past the panel; now that
+ * `CallControls` docks to the bottom of the joined-call state (see
+ * `CallOverlay.tsx`), the panel itself needs a bounded height so that
+ * dock can pin in place while `ParticipantGrid` scrolls internally
+ * instead of the whole column scrolling underneath it.
  */
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams();
@@ -36,8 +51,12 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <RoomCallProvider roomId={room_id}>
       <section className="flex h-[100dvh] overflow-hidden">
-        <div className="flex-1 flex">
-          <LeftSidebar className="w-64 flex-shrink-0" />
+        <LeftSidebar className="w-64 flex-shrink-0" />
+        <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
+          <CallPanel
+            room_id={room_id}
+            className="w-full shrink-0 border-b lg:border-b-0 lg:border-r lg:w-80 lg:h-full lg:overflow-hidden"
+          />
           <div className="flex-1 flex flex-col min-w-0 bg-theme-surface">
             <div className="flex-1 overflow-hidden relative">
               {children}
@@ -49,7 +68,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
               </button>
             </div>
           </div>
-          <GameRoomSidePanel room_id={room_id} />
+          <ChatPanel room_id={room_id} className="lg:w-80 lg:flex-shrink-0 lg:border-l" />
         </div>
       </section>
     </RoomCallProvider>

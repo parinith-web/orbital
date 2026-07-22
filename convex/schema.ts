@@ -176,7 +176,7 @@ export default defineSchema({
     // H5 — room-code backend for game rooms. All three are optional
     // because they only apply to sessions minted via `gameRoomCode.ts`'s
     // `createGameRoom` — `createSession` (an existing Portal room's
-    // in-room "Play Signal") and `publicMatchmaking`'s
+    // in-room "Play Anomaly") and `publicMatchmaking`'s
     // `findOrCreatePublicSession` never set any of these, same as they
     // never set each other's mode-specific fields
     // (`min_players_to_start`/`countdown_started_at` are public-only,
@@ -191,7 +191,7 @@ export default defineSchema({
       // player types into `joinGameRoomByCode` to be seated. Always
       // uppercase-normalized at write time so lookups are a plain
       // case-sensitive index match.
-    game_type: v.optional(v.string()), // "signal" today; a plain string
+    game_type: v.optional(v.string()), // "anomaly" today; a plain string
       // rather than a literal union so H6's hub can add a second game
       // tile later without a schema migration — this table has no
       // validation opinion on which `game_type` values are "real," that

@@ -14,7 +14,7 @@ import { AUTOSTART_COUNTDOWN_MS, WINNING_SCORE } from "./games/lobbyConfig";
 import { logGameEvent } from "./gameEvents";
 
 /**
- * Round lifecycle for Signal game sessions — B2 (startRound / advanceSpeaker)
+ * Round lifecycle for Anomaly game sessions — B2 (startRound / advanceSpeaker)
  * + B3 (castVote / revealRound) + B4 (speaking-turn auto-advance timer) +
  * B5 (getRoundView subscription query), wired to the A2/A3/A4 pure engine.
  * All of it lives together on purpose, same reasoning as calls.ts holding
@@ -102,14 +102,14 @@ import { logGameEvent } from "./gameEvents";
  * DO name the off-signal player and both words, since by then the round is
  * `"revealed"` and that information is no longer secret to anyone.
  *
- * All three use a synthetic `SIGNAL_SYSTEM_SENDER` rather than attributing
+ * All three use a synthetic `ANOMALY_SYSTEM_SENDER` rather than attributing
  * the message to whichever player's action happened to trigger it (or, for
  * `autoAdvanceOnExpiry`, to no one — that job runs with no authenticated
  * identity at all, so there is no player to attribute it to even if we
- * wanted to). A consistent "Signal" byline reads better than messages that
+ * wanted to). A consistent "Anomaly" byline reads better than messages that
  * sometimes carry a player's name and sometimes don't depending on which
  * code path fired. Both are exported (not just used locally) so C7's
- * `endSession` (in gameSessions.ts) can post its own "Signal ended" message
+ * `endSession` (in gameSessions.ts) can post its own "Anomaly ended" message
  * through the exact same helper instead of a second copy of the same
  * `messages` insert shape.
  *
@@ -186,7 +186,7 @@ import { logGameEvent } from "./gameEvents";
  */
 
 /**
- * Every Signal round-event system message shares this byline rather than
+ * Every Anomaly round-event system message shares this byline rather than
  * attributing to whichever player's action triggered it — see the file
  * header's SYSTEM MESSAGES note for why. `sender_id` is a fixed sentinel,
  * not a real `users` row; the messages read path (`messages.ts`) builds
@@ -194,7 +194,7 @@ import { logGameEvent } from "./gameEvents";
  * `sender_avatar` fields rather than re-joining against `users`, so this
  * needs no matching user record to render correctly.
  */
-export const SIGNAL_SYSTEM_SENDER = { sender_id: "signal_system", sender_username: "Signal" };
+export const ANOMALY_SYSTEM_SENDER = { sender_id: "anomaly_system", sender_username: "Anomaly" };
 
 /**
  * Posts one system message into the room this session is scoped to,
@@ -208,8 +208,8 @@ export async function postSystemMessage(ctx: MutationCtx, session: Doc<"gameSess
   await ctx.db.insert("messages", {
     conversation_id: session.room_id,
     conversation_type: "room",
-    sender_id: SIGNAL_SYSTEM_SENDER.sender_id,
-    sender_username: SIGNAL_SYSTEM_SENDER.sender_username,
+    sender_id: ANOMALY_SYSTEM_SENDER.sender_id,
+    sender_username: ANOMALY_SYSTEM_SENDER.sender_username,
     sender_avatar: undefined,
     content,
     type: "system",

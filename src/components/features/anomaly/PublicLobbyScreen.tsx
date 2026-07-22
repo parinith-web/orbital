@@ -141,7 +141,7 @@ export const PublicLobbyScreen = ({
   const roundView = useQuery(api.gameRounds.getRoundView, { session_id: sessionId });
 
   // F1a: heartbeats for as long as this screen is mounted, i.e. as long as
-  // the player is on /portal/signal — see useGameSessionPresence.ts's own
+  // the player is on /portal/anomaly — see useGameSessionPresence.ts's own
   // header for why this differs from SignalPanel's unconditional-on-panel-
   // close behavior. Called before the early return below (hooks can't
   // follow a conditional return).
@@ -173,7 +173,7 @@ export const PublicLobbyScreen = ({
   // behavior): no `room_id` to hand it until the session query resolves.
   return (
     <>
-      {session && <PublicLobbyVoice roomId={session.room_id} roomName="Signal Lobby" />}
+      {session && <PublicLobbyVoice roomId={session.room_id} roomName="Anomaly Lobby" />}
 
       {hasEnded ? (
         <Leaderboard

@@ -8,7 +8,6 @@ import { DEFAULT_TURN_DURATION_MS } from "@/convex/games/turnOrder";
 import { useUserStore } from "@/store/useUserStore";
 import { getAvatarUrl } from "@/lib/utils/avatar";
 import { Button } from "@/components/ui";
-import { ProgressCircle } from "@/components/ui/ProgressCircle";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Mic01Icon } from "@hugeicons/core-free-icons";
@@ -58,7 +57,7 @@ import { RevealPanel } from "./RevealPanel";
  * Default behavior (prop omitted — e.g. Feature 1's `SignalPanel`) is
  * UNCHANGED: still the single "Start round"/"Next round" button, since
  * in-room sessions already have their own end-of-life action (C7's "End
- * Signal") and don't need a competing "leave" affordance on every reveal.
+ * Anomaly") and don't need a competing "leave" affordance on every reveal.
  *
  * When passed, `postGameActions` REPLACES the default button for the
  * `"revealed"` case only — the initial `roundView === null` "Start round"
@@ -78,6 +77,18 @@ import { RevealPanel } from "./RevealPanel";
  * connected-only roster) instead of the full `speaking_order`, so the
  * number on screen matches what actually triggers auto-reveal rather than
  * counting a disconnected player who's no longer required to vote.
+ *
+ * Session 5 (GameStage port) — visual restyle only, per the reskin plan:
+ * the round pill, word card, and currently-speaking row all got the
+ * mockup's card treatment (rounded-2xl, theme-accent glow on the word
+ * card). `TurnTimer`'s old `ProgressCircle` (a shared rounded-square
+ * component used elsewhere in the app) is replaced here with a local
+ * `CountdownRing` — a real circular ring modeled on the mockup's, with
+ * its stroke swapped from the mockup's hardcoded `#A855F7` to
+ * `hsl(var(--theme-accent-hsl))` so it follows the live accent color
+ * (Session 0's token) instead of a fixed purple. No query/mutation/prop
+ * shape changed — same data, same states, same `postGameActions`
+ * contract PublicLobbyScreen.tsx relies on.
  */
 
 type PlayerSummary = { user_id: string; username?: string; avatar?: string; connected?: boolean };
@@ -120,6 +131,69 @@ function PlayerBadge({
   );
 }
 
+/**
+ * Session 5 — modeled on the anomaly-ui mockup's own local `CountdownRing`
+ * (a real circular `<circle>` ring with `strokeDasharray`/`strokeDashoffset`
+ * progress), not the shared `ProgressCircle` component (a rounded-square
+ * shape used elsewhere in the app for unrelated progress UI — swapping
+ * its shape here would've changed it everywhere it's used). Per the plan's
+ * explicit color swap: the mockup's ring stroke was a hardcoded
+ * `#A855F7`; here it's `hsl(var(--theme-accent-hsl))` so it tracks the
+ * live accent color instead.
+ */
+function CountdownRing({
+  secondsLeft,
+  percent,
+  size = 40,
+}: {
+  secondsLeft: number;
+  percent: number;
+  size?: number;
+}) {
+  const strokeWidth = 3;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - percent / 100);
+
+  return (
+    <div
+      className="relative flex items-center justify-center shrink-0"
+      style={{ width: size, height: size }}
+    >
+      <svg
+        className="-rotate-90"
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+      >
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="hsl(var(--theme-border))"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="hsl(var(--theme-accent-hsl))"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          style={{ transition: "stroke-dashoffset 0.2s linear" }}
+        />
+      </svg>
+      <span className="absolute text-[10px] font-medium text-white tabular-nums">
+        {secondsLeft}
+      </span>
+    </div>
+  );
+}
+
 function TurnTimer({ turnExpiresAt }: { turnExpiresAt: number }) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -132,12 +206,7 @@ function TurnTimer({ turnExpiresAt }: { turnExpiresAt: number }) {
   const secondsLeft = Math.ceil(msLeft / 1000);
   const percent = Math.min(100, Math.max(0, (msLeft / DEFAULT_TURN_DURATION_MS) * 100));
 
-  return (
-    <div className="flex items-center gap-1.5 text-gray-400">
-      <ProgressCircle progress={percent} size={28} strokeWidth={3} color="currentColor" />
-      <span className="text-xs tabular-nums w-5 text-center">{secondsLeft}</span>
-    </div>
-  );
+  return <CountdownRing secondsLeft={secondsLeft} percent={percent} />;
 }
 
 export const RoundView = ({
@@ -197,9 +266,14 @@ export const RoundView = ({
   const showPostGameActions = isRevealed && !!postGameActions;
 
   return (
-    <div className="flex flex-col gap-5 items-center text-center w-full">
+    <div className="flex flex-col gap-5 items-center text-center w-full max-w-md mx-auto">
       {roundView && (
-        <div className="text-xs text-gray-500">Round {roundView.round_number}</div>
+        <div className="flex items-center gap-2 rounded-full border border-theme-border bg-theme-hover px-3.5 py-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+          <span className="text-xs font-semibold tracking-wide text-gray-300">
+            Round {roundView.round_number}
+          </span>
+        </div>
       )}
 
       {roundView === null && (
@@ -213,9 +287,14 @@ export const RoundView = ({
       )}
 
       {roundView && roundView.my_word && (
-        <div className="w-full rounded-xl border border-theme-border bg-theme-base px-4 py-3">
-          <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">Your word</div>
-          <div className="text-lg font-medium text-white">{roundView.my_word}</div>
+        <div
+          className="w-full rounded-2xl border border-theme-border bg-theme-base px-6 py-6 flex flex-col items-center gap-1.5"
+          style={{ boxShadow: "0 0 35px -8px hsl(var(--theme-accent-hsl) / 0.3)" }}
+        >
+          <div className="text-[10px] uppercase tracking-[0.2em] text-theme-accent font-medium">
+            Your word
+          </div>
+          <div className="text-2xl font-bold text-white">{roundView.my_word}</div>
         </div>
       )}
       {roundView && !roundView.my_word && (
@@ -223,9 +302,9 @@ export const RoundView = ({
       )}
 
       {roundView && roundView.status === "speaking" && (
-        <div className="w-full flex items-center justify-between rounded-xl border border-theme-border px-4 py-3">
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Mic01Icon} className="w-4 h-4 text-gray-500" />
+        <div className="w-full flex items-center justify-between rounded-2xl border border-theme-border bg-theme-hover px-4 py-3">
+          <div className="flex items-center gap-2.5">
+            <HugeiconsIcon icon={Mic01Icon} className="w-4 h-4 text-theme-accent" />
             <PlayerBadge
               player={
                 roundView.current_speaker_user_id
@@ -255,7 +334,7 @@ export const RoundView = ({
             playersById={playersById}
           />
         ) : (
-          <div className="w-full rounded-xl border border-theme-border px-4 py-3 text-xs text-gray-400">
+          <div className="w-full rounded-2xl border border-theme-border px-4 py-3 text-xs text-gray-400">
             Voting is underway ({roundView.voted_user_ids.length}/{roundView.required_voter_ids.length} voted) —
             you weren&apos;t in on this round.
           </div>

@@ -21,19 +21,19 @@ import { useCurrentUser } from "@/hooks";
  *
  * Mounts inside the call overlay's participant-grid area (see CallOverlay.tsx),
  * on top of the call UI but never covering the header or control bar — both
- * stay reachable so the underlying call/chat is untouched while Signal is
+ * stay reachable so the underlying call/chat is untouched while Anomaly is
  * open, per the Feature 1 requirement in the PRD.
  *
- * C2's static "Signal is warming up" placeholder is gone — the body is now
+ * C2's static "Anomaly is warming up" placeholder is gone — the body is now
  * <RoundView>, which reads B5's getRoundView and handles its own
  * loading/pre-round/in-round states (see RoundView.tsx for the breakdown).
  *
- * Closing the panel (X button) only hides it — it does NOT end the Signal
+ * Closing the panel (X button) only hides it — it does NOT end the Anomaly
  * session. signalSessionId in uiStore is left untouched, so re-clicking
- * "Play Signal" on the call bar reopens this same panel without relaunching
+ * "Play Anomaly" on the call bar reopens this same panel without relaunching
  * anything.
  *
- * "End Signal" (new, C7) is the genuine end-session action, wired to
+ * "End Anomaly" (new, C7) is the genuine end-session action, wired to
  * gameSessions.endSession — behind a ConfirmDialog since it's irreversible
  * and affects every player in the session, not just this client (same
  * "irreversible, confirm first" treatment LeaveDialog.tsx already gives
@@ -55,10 +55,10 @@ import { useCurrentUser } from "@/hooks";
  *
  * G2: signalSessionId is a single global value in uiStore, not scoped per
  * room — nothing about it says "this session belongs to room A." Before
- * this fix, leaving room A's call (while its Signal session was still
+ * this fix, leaving room A's call (while its Anomaly session was still
  * `"waiting"`/`"in_progress"`, i.e. never explicitly ended) and then
  * joining room B's call left `signalSessionId` pointing at room A's old
- * session. CallControls.tsx's own "Play Signal" button only checks
+ * session. CallControls.tsx's own "Play Anomaly" button only checks
  * `if (signalSessionId)` before deciding to reopen rather than create —
  * it has no way to know that id belongs to a different room — so clicking
  * it in room B's call silently reopened room A's game (and would have
@@ -102,7 +102,7 @@ export const SignalPanel = () => {
 
   // Passive cleanup: this session's row is genuinely gone, OR it belongs to
   // a room the player is no longer actively in (G2, see header) — reset
-  // local state so the call bar's button reverts to "Play Signal" instead
+  // local state so the call bar's button reverts to "Play Anomaly" instead
   // of reopening a dead or wrong-room session. `undefined` (still loading)
   // is left alone.
   //
@@ -126,13 +126,13 @@ export const SignalPanel = () => {
     }
   }, [session, actualRoomId, setSignalPanelOpen, setSignalSessionId]);
 
-  const handleEndSignal = async () => {
+  const handleEndAnomaly = async () => {
     if (!sessionId || isEnding) return;
     setIsEnding(true);
     try {
       const result = await endSession({ session_id: sessionId });
       if (!result || "error" in result) {
-        toast.error((result && "error" in result && result.error) || "Couldn't end Signal");
+        toast.error((result && "error" in result && result.error) || "Couldn't end Anomaly");
         return;
       }
       // H3: leave the panel open and signalSessionId intact — the live
@@ -140,9 +140,9 @@ export const SignalPanel = () => {
       // render below swaps in <Leaderboard> for this same sessionId, same
       // as it would for any other client watching this session end.
       setIsConfirmOpen(false);
-      if (!result.alreadyEnded) toast.success("Signal ended");
+      if (!result.alreadyEnded) toast.success("Anomaly ended");
     } catch {
-      toast.error("Couldn't end Signal");
+      toast.error("Couldn't end Anomaly");
     } finally {
       setIsEnding(false);
     }
@@ -156,11 +156,11 @@ export const SignalPanel = () => {
         <div className="flex items-center justify-between px-4 h-12 border-b border-theme-border shrink-0">
           <div className="flex items-center gap-2 text-gray-200">
             <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
-            <span className="text-sm font-medium">Signal</span>
+            <span className="text-sm font-medium">Anomaly</span>
           </div>
           <div className="flex items-center gap-1">
             {session?.status !== "ended" && (
-              <TooltipWrapper content="End Signal for everyone">
+              <TooltipWrapper content="End Anomaly for everyone">
                 <button
                   onClick={() => setIsConfirmOpen(true)}
                   disabled={isEnding}
@@ -193,11 +193,11 @@ export const SignalPanel = () => {
       <ConfirmDialog
         open={isConfirmOpen}
         onOpenChange={setIsConfirmOpen}
-        title="End Signal for everyone?"
+        title="End Anomaly for everyone?"
         description="This ends the game for the whole room. The call and chat aren't affected."
-        confirmText="End Signal"
+        confirmText="End Anomaly"
         variant="destructive"
-        onConfirm={handleEndSignal}
+        onConfirm={handleEndAnomaly}
       />
     </div>
   );

@@ -57,12 +57,13 @@ export function applyThemeToRoot(
   root: HTMLElement = document.documentElement,
 ) {
   try {
-    const [h, s] = hexToHsl(color);
+    const [h, s, l] = hexToHsl(color);
     root.style.setProperty("--theme-bg-base", `${h} ${s * 0.4}% 6.5%`);
     root.style.setProperty("--theme-bg-surface", `${h} ${s * 0.3}% 4%`);
     root.style.setProperty("--theme-bg-hover", `${h} ${s * 0.5}% 15%`);
     root.style.setProperty("--theme-border", `${h} ${s * 0.3}% 14%`);
     root.style.setProperty("--theme-accent-color", color);
+    root.style.setProperty("--theme-accent-hsl", `${h} ${s}% ${l}%`);
     root.style.setProperty("--theme-text-on-accent", getContrastColor(color));
     root.dataset.themeReady = "true";
   } catch (error) {

@@ -25,6 +25,7 @@ export default {
           primary: "var(--theme-accent-color)",
           accent: "var(--theme-accent-color)",
           "accent-color": "var(--theme-accent-color)",
+          "accent-hsl": "hsl(var(--theme-accent-hsl))",
           base: "hsl(var(--theme-bg-base))",
           surface: "hsl(var(--theme-bg-surface))",
           hover: "hsl(var(--theme-bg-hover))",

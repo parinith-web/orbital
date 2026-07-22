@@ -32,7 +32,7 @@ import Image from "next/image";
  *
  * `actions` is an optional slot for a caller-supplied action row (e.g.
  * `PublicLobbyEntry`'s "Leave" button) rendered below the standings —
- * `SignalPanel` already has its own header Close/End-Signal controls and
+ * `SignalPanel` already has its own header Close/End-Anomaly controls and
  * passes nothing; `PublicLobbyScreen` has no such chrome and passes its
  * existing leave affordance through here instead of inventing a second
  * one. Kept as a plain ReactNode (not a render-prop) since, unlike

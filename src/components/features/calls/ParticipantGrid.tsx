@@ -67,7 +67,7 @@ export const ParticipantGrid = () => {
   // - Participants are shown in a sidebar strip
   if (hasScreenShares) {
     return (
-      <div className="w-full h-full flex flex-col md:flex-row gap-3 p-2 md:p-4 pt-16 pb-20 md:pb-0">
+      <div className="w-full flex-1 min-h-0 overflow-y-auto flex flex-col md:flex-row gap-3 p-3">
         {/* Main area: Screen share cards (large) */}
         <div className="flex-1 min-h-0 flex flex-col gap-3">
           {screenShares.map(({ userId, stream }) => {
@@ -141,18 +141,13 @@ export const ParticipantGrid = () => {
     );
   }
 
-  // Standard grid layout (no screen shares)
-  const count = sortedParticipants.length;
-  let gridClass = "grid-cols-1";
-  if (count === 2) gridClass = "grid-cols-1 md:grid-cols-2";
-  else if (count >= 3 && count <= 4) gridClass = "grid-cols-2";
-  else if (count >= 5 && count <= 6) gridClass = "grid-cols-2 md:grid-cols-3";
-  else if (count >= 7) gridClass = "grid-cols-3 md:grid-cols-4";
-
+  // PlayerTile-style vertical stack (mockup's CallPanel layout) — a
+  // responsive multi-column grid made sense when this filled a full-width
+  // area (pre-Session-3), but `CallPanel` is now a narrow docked column
+  // (`lg:w-80`), so each participant gets a full-width, aspect-video tile
+  // stacked below the last rather than competing for column space.
   return (
-    <div
-      className={`w-full h-full p-4 md:p-4 pt-16 pb-20 grid gap-4 ${gridClass} auto-rows-fr`}
-    >
+    <div className="w-full flex-1 min-h-0 overflow-y-auto flex flex-col gap-3 p-3">
       {sortedParticipants.map((userId) => {
         const isLocal = userId === currentUserId;
         const stream = isLocal ? localStream : remoteStreams?.[userId];
@@ -160,16 +155,17 @@ export const ParticipantGrid = () => {
         const profile = participantProfiles?.[userId];
 
         return (
-          <ParticipantCard
-            key={userId}
-            userId={userId}
-            profile={profile}
-            isSpeaking={activeSpeakers?.includes(userId) || false}
-            videoStream={stream || null}
-            isLocal={isLocal}
-            isVideoOn={mediaState?.isVideoOn ?? false}
-            isMuted={mediaState?.isMuted ?? false}
-          />
+          <div key={userId} className="w-full aspect-video shrink-0">
+            <ParticipantCard
+              userId={userId}
+              profile={profile}
+              isSpeaking={activeSpeakers?.includes(userId) || false}
+              videoStream={stream || null}
+              isLocal={isLocal}
+              isVideoOn={mediaState?.isVideoOn ?? false}
+              isMuted={mediaState?.isMuted ?? false}
+            />
+          </div>
         );
       })}
     </div>

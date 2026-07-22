@@ -14,7 +14,7 @@ const HEARTBEAT_INTERVAL_MS = 10 * 1000;
 
 /**
  * F1a — keeps a player's `gamePlayers.connected` flag alive while they have
- * Signal's game UI mounted, and signals an instant disconnect when they
+ * Anomaly's game UI mounted, and signals an instant disconnect when they
  * close the tab/navigate away. Mirrors `useGlobalPresence.ts`'s two-layer
  * shape (instant `beforeunload`/`pagehide` call + interval fallback) at a
  * much tighter cadence — see `gamePresence.ts`'s file header for why this
@@ -30,7 +30,7 @@ const HEARTBEAT_INTERVAL_MS = 10 * 1000;
  *     open/closed state — closing the panel (C2's dismiss-only X button)
  *     is a UI dismissal, not leaving the game, so heartbeating continues.
  *   - `PublicLobbyScreen.tsx` (Feature 2) only renders (and therefore only
- *     heartbeats) while the player is actually on `/portal/signal` —
+ *     heartbeats) while the player is actually on `/portal/anomaly` —
  *     navigating away without calling `leaveSession` unmounts this hook
  *     (see the F2b update below for what that now does), since there's no
  *     equivalent "keep it open in the background" surface for the public
@@ -45,7 +45,7 @@ const HEARTBEAT_INTERVAL_MS = 10 * 1000;
  * not just from the `beforeunload`/`pagehide` listeners. Those two only
  * catch a real tab close/hard refresh — they never fire for an in-app SPA
  * navigation away (e.g. clicking "Friends" in the sidebar while on
- * `/portal/signal`, or leaving a room's call view while Signal was open),
+ * `/portal/anomaly`, or leaving a room's call view while Anomaly was open),
  * which just unmounts this hook's effect with no browser unload event at
  * all. Before this, that case was the literal gap this file's own header
  * and `PublicLobbyEntry`/`PublicLobbyScreen`'s doc comments flagged as "not
@@ -59,7 +59,7 @@ const HEARTBEAT_INTERVAL_MS = 10 * 1000;
  * disconnect instead of a stale-timeout-shaped delay — for both this
  * hook's call sites (SignalPanel unmounts when the call/room view itself
  * is left, not on the panel's own dismiss-only close; PublicLobbyScreen
- * unmounts on navigating off `/portal/signal`). Safe to call on every
+ * unmounts on navigating off `/portal/anomaly`). Safe to call on every
  * unmount, including a benign remount (e.g. React StrictMode's dev-mode
  * double-invoke): `goOffline`'s own `active_connection_id` check
  * (`gamePresence.ts`) already no-ops a disconnect signal that's been
@@ -70,7 +70,7 @@ const HEARTBEAT_INTERVAL_MS = 10 * 1000;
  * this only affects presence (`connected`), not the seat itself; the
  * player stays in `gamePlayers` and can resume normally (F1b's reconnect
  * path / F2a's cross-session dedup) if they come back. Actually vacating
- * the seat still requires the explicit "Leave"/"End Signal" actions this
+ * the seat still requires the explicit "Leave"/"End Anomaly" actions this
  * file's callers already have — that part of the original gap is
  * unchanged, and intentionally so (see this hook's own header above for
  * why "around but disconnected" and "gone for good" are different states).
