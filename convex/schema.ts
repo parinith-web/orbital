@@ -86,6 +86,55 @@ export default defineSchema({
     .index("by_user_id", ["user_id"])
     .index("by_user_conversation", ["user_id", "conversation_id"]),
 
+  // Friends: two users' relationship (pending or accepted request), keyed
+  // by the pair in canonical order (user_id_a < user_id_b as plain string
+  // comparison) so a relationship has exactly one row regardless of which
+  // user initiated it or which one a caller has "in hand." That
+  // canonicalization is an application-level invariant enforced by every
+  // mutation that writes these rows (see `canonicalPair` in
+  // convex/lib/friends.ts) — Convex has no schema-level uniqueness/check
+  // constraint to lean on here, so `by_pair` only pays off if every writer
+  // respects the ordering.
+  friends: defineTable({
+    user_id_a: v.string(), // canonically the lexicographically smaller user_id
+    user_id_b: v.string(), // canonically the lexicographically larger user_id
+    status: v.union(v.literal("pending"), v.literal("accepted")),
+    requested_by: v.string(), // which of user_id_a/user_id_b sent the request;
+      // lets listPendingRequests (Session 5) distinguish "incoming" from
+      // "outgoing" for a given viewer without a separate direction field
+    created_at: v.number(),
+    responded_at: v.optional(v.number()), // set when status flips to "accepted";
+      // absent for still-pending rows
+  })
+    // Canonical-pair lookup: "are these two users already related, and
+    // what's the status" in one indexed point lookup, given the pair
+    // already sorted into (user_id_a, user_id_b) order.
+    .index("by_pair", ["user_id_a", "user_id_b"])
+    // A user can land on either side of the canonical pair depending on
+    // how their id compares to the other user's, so listing "my
+    // relationships" needs both sides queried and merged by the caller
+    // (Session 5) rather than a single index — same two-sided shape as
+    // this table's `conversations` sibling below.
+    .index("by_user_id_a", ["user_id_a"])
+    .index("by_user_id_b", ["user_id_b"]),
+
+  // Session 4 — one row per accepted friendship's DM thread. Only created
+  // once the matching `friends` row reaches `"accepted"` (Session 5's
+  // respondToFriendRequest is responsible for that transition; this table
+  // makes no attempt to enforce it itself). `messages.conversation_id` for
+  // these threads is expected to be a deterministic string derived from
+  // the same canonical (user_id_a, user_id_b) pair — Session 5's concern,
+  // not this schema.
+  conversations: defineTable({
+    user_id_a: v.string(), // canonically the lexicographically smaller user_id
+    user_id_b: v.string(), // canonically the lexicographically larger user_id
+    last_message_preview: v.optional(v.string()),
+    last_message_at: v.optional(v.number()),
+  })
+    .index("by_pair", ["user_id_a", "user_id_b"])
+    .index("by_user_id_a", ["user_id_a"])
+    .index("by_user_id_b", ["user_id_b"]),
+
   presence: defineTable({
     user_id: v.string(),
     status: v.union(v.literal("online"), v.literal("away")),

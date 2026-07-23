@@ -6,6 +6,7 @@ import {
   updateConversationMetadata,
 } from "./lib/conversations";
 import { createChatNotification } from "./chatNotifications";
+import { parseDirectConversationId } from "./lib/friends";
 
 export const getAllMessages = query({
   args: {
@@ -111,6 +112,29 @@ export const sendMessage = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
+
+    // Session 5: defense in depth for direct conversations — reject a send
+    // if the pair isn't an accepted friendship, regardless of what the UI
+    // gate (Session 6) does or doesn't check. Room sends are unaffected.
+    if (args.conversation_type === "direct") {
+      const pair = parseDirectConversationId(args.conversation_id);
+      if (!pair) {
+        return { error: "Not a valid direct conversation" };
+      }
+      const [userIdA, userIdB] = pair;
+      if (identity.subject !== userIdA && identity.subject !== userIdB) {
+        return { error: "Unauthorized" };
+      }
+      const friendsRow = await ctx.db
+        .query("friends")
+        .withIndex("by_pair", (q) =>
+          q.eq("user_id_a", userIdA).eq("user_id_b", userIdB),
+        )
+        .first();
+      if (!friendsRow || friendsRow.status !== "accepted") {
+        return { error: "You must be friends to send messages" };
+      }
+    }
 
     const sender = await ctx.db
       .query("users")

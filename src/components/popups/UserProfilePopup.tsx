@@ -10,7 +10,7 @@ export interface User {
   id: string;
   username: string;
   avatarUrl?: string;
-  joinedAt: string;
+  joinedAt?: string;
 }
 
 export interface UserProfilePopupProps {
@@ -22,10 +22,13 @@ export interface UserProfilePopupProps {
 }
 
 /**
- * H4 — this used to show friend-request / DM / remove-friend actions.
- * Friends/DMs have been stripped out of the app (there's no destination to
- * send a DM to or friend a player toward), so this is now just a read-only
- * profile card: avatar, username, joined date.
+ * Read-only profile card: avatar, username, joined date. Deliberately
+ * carries no friend-request/DM actions itself — Find People
+ * (`src/components/features/friends/FindPeopleView.tsx`) renders its own
+ * "Add" button next to each result rather than inside this popup, so this
+ * component stays a plain viewer reusable everywhere a user might be
+ * clicked on (room member list, message sender, search results) without
+ * needing to know about friend-request state.
  */
 export function UserProfilePopup({
   user,
@@ -77,9 +80,11 @@ export function UserProfilePopup({
               <h3 className="text-base font-semibold text-white truncate max-w-[200px]">
                 {user.username}
               </h3>
-              <span className="text-xs text-gray-400">
-                Joined {formatDateFull(user.joinedAt)}
-              </span>
+              {user.joinedAt && (
+                <span className="text-xs text-gray-400">
+                  Joined {formatDateFull(user.joinedAt)}
+                </span>
+              )}
             </div>
           </div>
         </Popover.Content>

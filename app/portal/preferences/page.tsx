@@ -1,16 +1,14 @@
 "use client";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { UserIcon, Menu01Icon } from "@hugeicons/core-free-icons";
+import { Settings01Icon, Menu01Icon } from "@hugeicons/core-free-icons";
 import { useUIStore } from "@/store/uiStore";
-import { UserInfoTab } from "@/components/features/profile/ProfilePage/UserInfoTab";
+import { PreferencesTab } from "@/components/features/profile/ProfilePage/PreferencesTab";
 
-// Session 2 — standalone Profile route. UserInfoTab is fully self-contained
-// (reads/writes the user store itself, which app/portal/layout.tsx already
-// keeps in sync from useCurrentUser()), so this page just supplies the
-// shared header chrome and mounts it directly. The old tab-switcher
-// (ProfilePage.tsx) has been retired now that Profile and Preferences are
-// separate top-level destinations.
-export default function ProfilePage() {
+// Session 2 — standalone Preferences route. PreferencesTab is fully
+// self-contained (colorContext + PreferencesContext), so this page just
+// supplies the shared header chrome and mounts it directly, replacing the
+// Session 1 placeholder.
+export default function PreferencesPage() {
   const { setLeftMobileMenu, leftMobileMenu } = useUIStore();
 
   return (
@@ -29,13 +27,13 @@ export default function ProfilePage() {
               className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${leftMobileMenu ? "rotate-180" : ""}`}
             />
           </button>
-          <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
-          <h1 className="text-md">Profile</h1>
+          <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
+          <h1 className="text-md">Preferences</h1>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <UserInfoTab />
+        <PreferencesTab />
       </div>
     </div>
   );

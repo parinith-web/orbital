@@ -3,7 +3,10 @@ import { useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Home01Icon,
-  GameController01Icon,
+  UserGroupIcon,
+  HashtagIcon,
+  UserIcon,
+  Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -14,28 +17,84 @@ import { usePresence } from "@/contexts/presenceContext";
 import { ProfileButton } from "@/components/features/profile/ProfileButton";
 import { useUIStore } from "@/store/uiStore";
 import PersistentCallWidget from "@/components/features/calls/PersistentCallWidget";
+import { ROUTES } from "@/lib/constants/routes";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 /**
- * H4 — the chat-app nav (Friends / Create Room / Join Room / standalone
- * Rooms list) has been stripped out here: there's no Friends tab, no DMs,
- * and no generic Rooms list to reach outside a game anymore. What's left
- * is a light nav appropriate for a game-first app — just a way back to the
- * game hub, a way into the public "Play Online" lobby, and the
- * profile/call chrome. The Game Hub itself (Create Room / Join Room /
- * Play Online tiles) landed in H6.2 (`app/portal/(main)/page.tsx`).
+ * The left nav is 5 top-level destinations: Game Hub, Friends, Rooms,
+ * Profile, Preferences. This replaced the old game-first nav (Game Hub /
+ * Play Online only, with no Friends/DMs or standalone Rooms destination).
+ * Play Online isn't dropped from the app — it still lives as a tile inside
+ * the Game Hub page itself (app/portal/(main)/page.tsx), it's just no
+ * longer a top-level nav item now that Friends/Rooms/Profile/Preferences
+ * have taken those slots.
  *
- * H6.3 — the `?join=` deep-link is now wired to H6.1's Join Room modal
- * instead of being dropped: a shared link like `/portal?join=7K4RXP` opens
- * `JoinRoomModal` with the code pre-filled via `setModal("JOIN_ROOM",
- * { join_code })`, which `GlobalModals.tsx` already reads from
- * `modalData?.join_code`. The param is then stripped from the URL so a
- * refresh/back-nav doesn't reopen the modal.
+ * All 5 destinations are fully built: Friends (`/portal/friends` — Chats,
+ * Requests, Find people), Rooms (`/portal/rooms`), Profile
+ * (`/portal/profile`), and Preferences (`/portal/preferences`).
+ *
+ * The Friends nav item also carries a small badge showing the incoming
+ * pending-friend-request count (see `incomingRequestCount` below) — same
+ * `listPendingRequests` query the Friends page's Requests tab uses.
+ *
+ * H6.3 — the `?join=` deep-link is still wired to the Join Room modal:
+ * a shared link like `/portal?join=7K4RXP` opens `JoinRoomModal` with the
+ * code pre-filled via `setModal("JOIN_ROOM", { join_code })`, which
+ * `GlobalModals.tsx` already reads from `modalData?.join_code`. The param
+ * is then stripped from the URL so a refresh/back-nav doesn't reopen it.
  */
 
 type LeftSidebarProps = {
   className?: string;
   showPortalSkeletons?: boolean;
 };
+
+type NavItem = {
+  key: string;
+  label: string;
+  route: string;
+  icon: typeof Home01Icon;
+  isActive: (pathname: string) => boolean;
+};
+
+const NAV_ITEMS: NavItem[] = [
+  {
+    key: "game-hub",
+    label: "Game Hub",
+    route: ROUTES.PORTAL,
+    icon: Home01Icon,
+    isActive: (pathname) => /^\/portal$/.test(pathname),
+  },
+  {
+    key: "friends",
+    label: "Friends",
+    route: ROUTES.PORTAL_FRIENDS,
+    icon: UserGroupIcon,
+    isActive: (pathname) => /^\/portal\/friends/.test(pathname),
+  },
+  {
+    key: "rooms",
+    label: "Rooms",
+    route: ROUTES.PORTAL_ROOMS,
+    icon: HashtagIcon,
+    isActive: (pathname) => /^\/portal\/rooms/.test(pathname),
+  },
+  {
+    key: "profile",
+    label: "Profile",
+    route: ROUTES.PORTAL_PROFILE,
+    icon: UserIcon,
+    isActive: (pathname) => /^\/portal\/profile/.test(pathname),
+  },
+  {
+    key: "preferences",
+    label: "Preferences",
+    route: ROUTES.PORTAL_PREFERENCES,
+    icon: Settings01Icon,
+    isActive: (pathname) => /^\/portal\/preferences/.test(pathname),
+  },
+];
 
 export default function LeftSidebar({
   className = "",
@@ -48,9 +107,11 @@ export default function LeftSidebar({
   const user = useUserStore((s) => s.user);
   const { awayUsers } = usePresence();
   const { leftMobileMenu, setLeftMobileMenu, setModal } = useUIStore();
-
-  const isOnHubPage = /^\/portal$/.test(pathname);
-  const isOnAnomalyPage = /^\/portal\/anomaly$/.test(pathname);
+  const pendingRequests = useQuery(
+    api.friends.listPendingRequests,
+    user?.user_id ? {} : "skip",
+  );
+  const incomingRequestCount = pendingRequests?.incoming.length ?? 0;
 
   // H6.3 — a shared `/portal?join=CODE` link opens Join Room with the code
   // pre-filled, then drops the param from the URL so the modal doesn't
@@ -77,38 +138,39 @@ export default function LeftSidebar({
         >
           {!user?.user_id ? (
             <div className="flex flex-col gap-1 mt-2 text-sm items-center">
-              <div className="ease-in-out bg-theme-base text-white/90 duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]">
-                <HugeiconsIcon icon={Home01Icon} className="w-4 h-4" />
-                <span>Game Hub</span>
-              </div>
-              <div className="ease-in-out bg-theme-base text-white/90 duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]">
-                <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
-                <span>Play Online</span>
-              </div>
+              {NAV_ITEMS.map((item) => (
+                <div
+                  key={item.key}
+                  className="ease-in-out bg-theme-base text-white/90 duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]"
+                >
+                  <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </div>
+              ))}
             </div>
           ) : (
             <div className={`flex flex-col gap-1 mt-2 text-sm items-center`}>
-              <button
-                onClick={() => {
-                  router.push("/portal");
-                  setLeftMobileMenu?.(false);
-                }}
-                className={`${isOnHubPage ? "bg-theme-hover text-white" : "bg-theme-surface text-gray-200"} ease-in-out hover:bg-theme-hover hover:text-white duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]`}
-              >
-                <HugeiconsIcon icon={Home01Icon} className={`w-4 h-4`} />
-                <span>Game Hub</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  router.push("/portal/anomaly");
-                  setLeftMobileMenu?.(false);
-                }}
-                className={`${isOnAnomalyPage ? "bg-theme-hover text-white" : "bg-theme-surface text-gray-200"} ease-in-out hover:bg-theme-hover hover:text-white duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]`}
-              >
-                <HugeiconsIcon icon={GameController01Icon} className="w-4 h-4" />
-                <span>Play Online</span>
-              </button>
+              {NAV_ITEMS.map((item) => {
+                const active = item.isActive(pathname);
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => {
+                      router.push(item.route);
+                      setLeftMobileMenu?.(false);
+                    }}
+                    className={`${active ? "bg-theme-hover text-white" : "bg-theme-surface text-gray-200"} ease-in-out hover:bg-theme-hover hover:text-white duration-200 flex items-center px-3 gap-2 w-56 py-2 rounded-[8px]`}
+                  >
+                    <HugeiconsIcon icon={item.icon} className={`w-4 h-4`} />
+                    <span>{item.label}</span>
+                    {item.key === "friends" && incomingRequestCount > 0 && (
+                      <span className="ml-auto flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] leading-[18px] text-center">
+                        {incomingRequestCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
 

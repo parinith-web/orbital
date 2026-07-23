@@ -79,6 +79,13 @@ export interface TabsTriggerProps {
   isActive?: boolean;
   onClick?: () => void;
   className?: string;
+  /**
+   * Session 6a (Friends) — optional custom label content, e.g. a tab label
+   * plus a pending-count badge (`<>Requests <Badge/></>`). Falls back to
+   * the auto-capitalized `value` text when omitted so every pre-existing
+   * caller (SidebarMedia's images/videos/files tabs) renders identically.
+   */
+  children?: React.ReactNode;
 }
 
 export function TabsTrigger({
@@ -86,17 +93,18 @@ export function TabsTrigger({
   isActive,
   onClick,
   className,
+  children,
 }: TabsTriggerProps) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "px-3 py-1 rounded-[6px] text-sm text-gray-200 transition-colors",
+        "px-3 py-1 rounded-[6px] text-sm text-gray-200 transition-colors flex items-center gap-1.5",
         isActive ? "bg-theme-hover" : "hover:bg-theme-hover",
         className,
       )}
     >
-      {value.charAt(0).toUpperCase() + value.slice(1)}
+      {children ?? value.charAt(0).toUpperCase() + value.slice(1)}
     </button>
   );
 }

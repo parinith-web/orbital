@@ -185,6 +185,37 @@ export const deleteUserAccount = mutation({
       await ctx.db.delete(n._id);
     }
 
+    // Session 5: a user can sit on either side of a friends/conversations
+    // pair, so both indexes need checking — same shape as friends.ts's
+    // listFriendsRowsForUser/listConversationRowsForUser.
+    const [friendsAsA, friendsAsB] = await Promise.all([
+      ctx.db
+        .query("friends")
+        .withIndex("by_user_id_a", (q) => q.eq("user_id_a", userId))
+        .collect(),
+      ctx.db
+        .query("friends")
+        .withIndex("by_user_id_b", (q) => q.eq("user_id_b", userId))
+        .collect(),
+    ]);
+    for (const f of [...friendsAsA, ...friendsAsB]) {
+      await ctx.db.delete(f._id);
+    }
+
+    const [conversationsAsA, conversationsAsB] = await Promise.all([
+      ctx.db
+        .query("conversations")
+        .withIndex("by_user_id_a", (q) => q.eq("user_id_a", userId))
+        .collect(),
+      ctx.db
+        .query("conversations")
+        .withIndex("by_user_id_b", (q) => q.eq("user_id_b", userId))
+        .collect(),
+    ]);
+    for (const c of [...conversationsAsA, ...conversationsAsB]) {
+      await ctx.db.delete(c._id);
+    }
+
     await ctx.db.delete(user._id);
 
     return { success: true };

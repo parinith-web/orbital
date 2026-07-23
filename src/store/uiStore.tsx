@@ -31,8 +31,6 @@ type UIState = {
   setMenuOpen: (v: boolean) => void;
   setLeftMobileMenu: (v: boolean) => void;
   setRightMobileMenu: (v: boolean) => void;
-  notificationMenu: boolean;
-  setNotificationMenu: (v: boolean) => void;
 
   // Details Sidebar
   isSidebarOpen: boolean;
@@ -98,7 +96,6 @@ export const useUIStore = create<UIState>((set, get) => ({
   menuOpen: false,
   leftMobileMenu: false,
   rightMobileMenu: false,
-  notificationMenu: false,
 
   isSidebarOpen: false,
   sidebarTab: "info",
@@ -113,7 +110,6 @@ export const useUIStore = create<UIState>((set, get) => ({
   setMenuOpen: (v) => set({ menuOpen: v }),
   setLeftMobileMenu: (v) => set({ leftMobileMenu: v }),
   setRightMobileMenu: (v) => set({ rightMobileMenu: v }),
-  setNotificationMenu: (v) => set({ notificationMenu: v }),
 
   setSidebarOpen: (v) => set({ isSidebarOpen: v }),
   setSidebarTab: (v) => set({ sidebarTab: v }),
