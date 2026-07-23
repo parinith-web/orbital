@@ -65,12 +65,12 @@ export function FindPeopleView() {
     setSendingTo(targetUserId);
     try {
       const result = await sendRequest({ to_user_id: targetUserId });
-      if (result?.error) {
+      if ("error" in result) {
         toast.error(result.error);
       } else {
         setJustSent((prev) => new Set(prev).add(targetUserId));
         toast.success(
-          result?.status === "accepted"
+          result.status === "accepted"
             ? "You're now friends!"
             : "Friend request sent",
         );

@@ -29,7 +29,7 @@ export function RequestsView() {
     setActingOn(requestId);
     try {
       const result = await respond({ request_id: requestId, accept });
-      if (result?.error) {
+      if ("error" in result) {
         toast.error(result.error);
       } else if (accept) {
         toast.success("Friend request accepted");
