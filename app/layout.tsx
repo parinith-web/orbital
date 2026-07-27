@@ -16,7 +16,6 @@ import {
   SignInButton,
   SignUpButton,
   Show,
-  UserButton,
 } from "@clerk/nextjs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -109,9 +108,6 @@ export default function RootLayout({
                   Sign Up
                 </button>
               </SignUpButton>
-            </Show>
-            <Show when="signed-in">
-              <UserButton />
             </Show>
           </header>
           <div className="flex min-h-screen">
