@@ -29,7 +29,7 @@ export default function RoomsPage() {
   const { rooms, membersCount, activeCallRoomIds, isLoading } = useRooms();
 
   return (
-    <div className="w-full h-screen flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="flex justify-between w-full md:px-2 px-3 items-center bg-theme-surface border-b border-theme-border py-1 h-12">
         <div className="md:ml-3 flex items-center w-full gap-2 text-white/90">
           <button
