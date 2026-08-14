@@ -5,7 +5,6 @@ import {
   Home01Icon,
   UserGroupIcon,
   HashtagIcon,
-  UserIcon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
 import { useRouter } from "next/navigation";
@@ -22,17 +21,22 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 /**
- * The left nav is 5 top-level destinations: Game Hub, Friends, Rooms,
- * Profile, Preferences. This replaced the old game-first nav (Game Hub /
- * Play Online only, with no Friends/DMs or standalone Rooms destination).
- * Play Online isn't dropped from the app — it still lives as a tile inside
- * the Game Hub page itself (app/portal/(main)/page.tsx), it's just no
- * longer a top-level nav item now that Friends/Rooms/Profile/Preferences
- * have taken those slots.
+ * The left nav is 4 top-level destinations: Game Hub, Friends, Rooms,
+ * Settings. This replaced the old game-first nav (Game Hub / Play Online
+ * only, with no Friends/DMs or standalone Rooms destination). Play Online
+ * isn't dropped from the app — it still lives as a tile inside the Game Hub
+ * page itself (app/portal/(main)/page.tsx), it's just no longer a top-level
+ * nav item now that Friends/Rooms/Settings have taken those slots.
  *
- * All 5 destinations are fully built: Friends (`/portal/friends` — Chats,
- * Requests, Find people), Rooms (`/portal/rooms`), Profile
- * (`/portal/profile`), and Preferences (`/portal/preferences`).
+ * Settings (`/portal/settings`) merges what used to be two separate
+ * destinations — Profile and Preferences — into one tab with an internal
+ * sub-tab switcher. The old `/portal/profile` and `/portal/preferences`
+ * routes still exist as redirects to `/portal/settings` so old links/
+ * bookmarks don't 404.
+ *
+ * All destinations are fully built: Friends (`/portal/friends` — Chats,
+ * Requests, Find people), Rooms (`/portal/rooms`), and Settings
+ * (`/portal/settings` — Profile + Preferences).
  *
  * The Friends nav item also carries a small badge showing the incoming
  * pending-friend-request count (see `incomingRequestCount` below) — same
@@ -81,18 +85,13 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => /^\/portal\/rooms/.test(pathname),
   },
   {
-    key: "profile",
-    label: "Profile",
-    route: ROUTES.PORTAL_PROFILE,
-    icon: UserIcon,
-    isActive: (pathname) => /^\/portal\/profile/.test(pathname),
-  },
-  {
-    key: "preferences",
-    label: "Preferences",
-    route: ROUTES.PORTAL_PREFERENCES,
+    key: "settings",
+    label: "Settings",
+    route: ROUTES.PORTAL_SETTINGS,
     icon: Settings01Icon,
-    isActive: (pathname) => /^\/portal\/preferences/.test(pathname),
+    // Matches the old /portal/profile and /portal/preferences paths too,
+    // so this item still highlights while those routes redirect in.
+    isActive: (pathname) => /^\/portal\/(settings|profile|preferences)/.test(pathname),
   },
 ];
 

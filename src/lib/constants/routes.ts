@@ -3,7 +3,10 @@ export const ROUTES = {
   PORTAL: "/portal",
   PORTAL_FRIENDS: "/portal/friends",
   PORTAL_ROOMS: "/portal/rooms",
+  PORTAL_SETTINGS: "/portal/settings",
+  /** @deprecated use PORTAL_SETTINGS — Profile and Preferences were merged into one Settings tab. Kept only so old links redirect. */
   PORTAL_PROFILE: "/portal/profile",
+  /** @deprecated use PORTAL_SETTINGS — Profile and Preferences were merged into one Settings tab. Kept only so old links redirect. */
   PORTAL_PREFERENCES: "/portal/preferences",
   PORTAL_ROOM: (roomId: string) => `/portal/room/${roomId}`,
   PORTAL_ANOMALY: "/portal/anomaly",
@@ -14,6 +17,7 @@ export const ROUTE_KEYS = {
   PORTAL: "PORTAL",
   PORTAL_FRIENDS: "PORTAL_FRIENDS",
   PORTAL_ROOMS: "PORTAL_ROOMS",
+  PORTAL_SETTINGS: "PORTAL_SETTINGS",
   PORTAL_PROFILE: "PORTAL_PROFILE",
   PORTAL_PREFERENCES: "PORTAL_PREFERENCES",
   PORTAL_ROOM: "PORTAL_ROOM",
