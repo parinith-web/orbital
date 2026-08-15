@@ -11,6 +11,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { toast } from "sonner";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { useUserStore } from "@/store/useUserStore";
 import { useUIStore } from "@/store/uiStore";
 import { useCallStore } from "@/store/callStore";
@@ -69,6 +71,12 @@ function RoomIdentityHeader({ room_id }: { room_id: string }) {
   const owner = members?.find((m) => m.role === "owner");
   const owner_id = owner?.user_id ?? "";
   const isOwner = owner_id === (user?.user_id ?? "");
+  // Bugfix: this is the credential "Join Room" actually checks
+  // (`gameRoomCode.joinGameRoomByCode` matches on `join_code`, not
+  // `room_id`) — "Copy Room ID" below copies the wrong thing entirely, so
+  // this surfaces the real code for a host who needs to re-share it after
+  // create-time (see CreateRoomModal.tsx for the create-time share step).
+  const session = useQuery(api.gameSessions.getSessionByRoomId, { room_id });
 
   if (!user?.user_id || isLoading || !roomName) {
     return <Skeleton className="h-14 m-2 rounded-[8px]" />;
@@ -110,12 +118,26 @@ function RoomIdentityHeader({ room_id }: { room_id: string }) {
               align="end"
               className="w-auto min-w-[140px] bg-theme-surface border border-theme-border rounded-md z-[100] animate-in fade-in duration-100 outline-none"
             >
+              {session?.join_code && (
+                <DropdownMenu.Item
+                  onClick={() => {
+                    navigator.clipboard.writeText(session.join_code as string);
+                    toast.success("Room code copied to clipboard");
+                  }}
+                  className="px-3 py-2.5 text-xs text-gray-300 hover:bg-theme-hover flex items-center rounded-t-sm gap-2 cursor-pointer outline-none"
+                >
+                  <HugeiconsIcon icon={CopyIcon} className="w-4 h-4" />
+                  Copy Room Code
+                </DropdownMenu.Item>
+              )}
               <DropdownMenu.Item
                 onClick={() => {
                   navigator.clipboard.writeText(room_id);
                   toast.success("Room ID copied to clipboard");
                 }}
-                className="px-3 py-2.5 text-xs text-gray-300 hover:bg-theme-hover flex items-center rounded-t-sm gap-2 cursor-pointer outline-none"
+                className={`px-3 py-2.5 text-xs text-gray-300 hover:bg-theme-hover flex items-center gap-2 cursor-pointer outline-none ${
+                  session?.join_code ? "" : "rounded-t-sm"
+                }`}
               >
                 <HugeiconsIcon icon={CopyIcon} className="w-4 h-4" />
                 Copy Room ID
