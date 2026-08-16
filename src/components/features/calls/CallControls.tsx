@@ -18,8 +18,6 @@ import {
   Video01Icon,
   VideoOffIcon,
   CallEnd01Icon,
-  ComputerScreenShareIcon,
-  ComputerRemoveIcon,
   Settings02Icon,
 } from "@hugeicons/core-free-icons";
 
@@ -50,8 +48,6 @@ export const CallControls = () => {
     toggleMute,
     isVideoOn,
     toggleVideo,
-    isScreenSharing,
-    toggleScreenShare,
     callId,
     availableDevices,
     refreshDevices,
@@ -87,7 +83,6 @@ export const CallControls = () => {
   // assuming parity with video/screen-share.
   const [isLeaving, setIsLeaving] = useState(false);
   const [isTogglingVideo, setIsTogglingVideo] = useState(false);
-  const [isTogglingScreenShare, setIsTogglingScreenShare] = useState(false);
 
   const handleLeave = async () => {
     if (!callId || isLeaving) return;
@@ -109,16 +104,6 @@ export const CallControls = () => {
       await toggleVideo();
     } finally {
       setIsTogglingVideo(false);
-    }
-  };
-
-  const handleToggleScreenShare = async () => {
-    if (isTogglingScreenShare) return;
-    setIsTogglingScreenShare(true);
-    try {
-      await toggleScreenShare();
-    } finally {
-      setIsTogglingScreenShare(false);
     }
   };
 
@@ -152,21 +137,6 @@ export const CallControls = () => {
       >
         <HugeiconsIcon
           icon={isVideoOn ? Video01Icon : VideoOffIcon}
-          className="w-4 h-4"
-        />
-      </Button>
-
-      <Button
-        variant={isScreenSharing ? "destructive2" : "other"}
-        size="iconMd"
-        className="rounded-xl"
-        onClick={handleToggleScreenShare}
-        disabled={isTogglingScreenShare}
-        tooltip={isScreenSharing ? "Stop Sharing" : "Share Screen"}
-        tooltipSide="top"
-      >
-        <HugeiconsIcon
-          icon={isScreenSharing ? ComputerRemoveIcon : ComputerScreenShareIcon}
           className="w-4 h-4"
         />
       </Button>
