@@ -115,6 +115,22 @@ export const PublicLobbyEntry = () => {
     }
   };
 
+  // MATCHED state deliberately breaks out of the centered card the other
+  // two states use: it's no longer a small status message, it's the full
+  // 3-column Anomaly layout (video | game | chat) — see
+  // `PublicLobbyScreen.tsx`'s own LAYOUT comment for why. Squeezing that
+  // into an `max-w-md p-8` card would just add dead padding and cap the
+  // video/chat columns to a width they're not designed for.
+  if (state.status === "matched") {
+    return (
+      <PublicLobbyScreen
+        sessionId={state.session_id}
+        onLeave={handleLeave}
+        isLeaving={isLeaving}
+      />
+    );
+  }
+
   return (
     <div className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-theme-surface border border-theme-border rounded-2xl p-8 flex flex-col items-center text-center gap-4">
@@ -145,14 +161,6 @@ export const PublicLobbyEntry = () => {
               </Button>
             </div>
           </>
-        )}
-
-        {state.status === "matched" && (
-          <PublicLobbyScreen
-            sessionId={state.session_id}
-            onLeave={handleLeave}
-            isLeaving={isLeaving}
-          />
         )}
       </div>
     </div>

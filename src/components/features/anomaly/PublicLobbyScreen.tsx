@@ -13,10 +13,13 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
 import Image from "next/image";
 import { RoundView } from "./RoundView";
-import { PublicLobbyVoice } from "./PublicLobbyVoice";
+import { PublicCallPanel } from "./PublicCallPanel";
 import { PostGameActions } from "./PostGameActions";
 import { Leaderboard } from "./Leaderboard";
 import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
+import { useUIStore } from "@/store/uiStore";
+import { ChatPanel } from "@/components/features/rooms/ChatPanel";
+import { BubbleChatIcon } from "@hugeicons/core-free-icons";
 
 /**
  * E2 — public lobby screen: realtime joiners list + the 4-player/15s
@@ -46,12 +49,16 @@ import { useGameSessionPresence } from "@/hooks/useGameSessionPresence";
  *   4 threshold in some future retune, or players want the next round
  *   sooner than a fresh countdown would allow).
  *
- * E3 UPDATE: this screen now mounts `PublicLobbyVoice`, which auto-triggers
- * the same PeerJS group-call flow a room's own call button starts (see that
- * file's own header for the full reasoning), keyed to this session's
- * synthetic `room_id` — rendered in both the lobby state and the
- * hand-off-to-`RoundView` state below, since voice should stay live across
- * that transition, not just exist pre-round.
+ * E3 UPDATE: this screen mounts a voice panel auto-triggering the same
+ * PeerJS group-call flow a room's own call button starts, keyed to this
+ * session's synthetic `room_id` — present across both the lobby state and
+ * the hand-off-to-`RoundView` state below, since voice should stay live
+ * across that transition, not just exist pre-round. Originally
+ * `PublicLobbyVoice` (a compact mute-only status strip); superseded below
+ * by `PublicCallPanel` (see LAYOUT note further down), which keeps the
+ * same auto-join behavior but renders full participant video tiles +
+ * controls instead, as its own left-hand column rather than a strip
+ * embedded in this card.
  *
  * E4 UPDATE: the `RoundView` mounted below (in the round-exists branch) now
  * gets a `postGameActions` render prop, so once a round is `"revealed"` it
@@ -166,15 +173,68 @@ export const PublicLobbyScreen = ({
       ? Math.max(0, minToStart - players.length)
       : undefined;
 
+  const { setRightMobileMenu } = useUIStore();
+
   // G2: hoisted to one stable top-level position present on every render
   // (loading / lobby / round alike) — see this file's own header note for
   // why it used to live inside two separate `return`s instead and what
   // that broke. `session &&` is kept as the mount guard (unchanged
   // behavior): no `room_id` to hand it until the session query resolves.
-  return (
-    <>
-      {session && <PublicLobbyVoice roomId={session.room_id} roomName="Anomaly Lobby" />}
+  //
+  // LAYOUT: this used to be a bare fragment, rendered inside
+  // `PublicLobbyEntry`'s single centered `max-w-md` card — the same shape
+  // as the "finding a game"/error states, but wrong once actually seated:
+  // a private room gets a 3-column `CallPanel | GameStage | ChatPanel`
+  // layout for free from `[room_id]/layout.tsx` (matching the Anomaly
+  // mockup), while `/portal/anomaly` sits under the plain `(main)` shell
+  // (`LeftSidebar` + bare content, see that layout's own comment) and had
+  // no equivalent — no video panel, no chat, just this card's contents by
+  // themselves. Now that there's a seated session (this component only
+  // renders once `PublicLobbyEntry`'s matchmaking succeeds), it takes over
+  // the full content area itself and lays out the same three columns,
+  // keyed to this session's synthetic `room_id`:
+  //  - `PublicCallPanel` (left) — participant video tiles + call
+  //    controls, the video-panel gap `PublicLobbyVoice`'s old mute-only
+  //    strip left unfilled. See that file's own header for why `CallOverlay`
+  //    itself isn't reused directly.
+  //  - the lobby/round/leaderboard switch below (center) — unchanged
+  //    logic, just now the middle column instead of the only content.
+  //  - `ChatPanel` (right) — session chat. `publicMatchmaking.ts`'s own
+  //    doc comment already named this session's synthetic `room_id` as a
+  //    ready-made `conversation_id` for exactly this ("Phase E's
+  //    public-lobby UI is expected to read that same conversation_id for
+  //    its own chat view") — it just never got built. `ChatPanel` needs
+  //    nothing from the `rooms`/`roomMembers` tables (confirmed: `RoomChatUI`
+  //    → `ChatUI` → `MessageList`/`ChatInputBar` key everything off the
+  //    `room_id` string alone, and `messages.ts`'s `sendMessage` only
+  //    *optionally* looks up `roomMembers` for notification fan-out — an
+  //    empty result there is a no-op, not an error), so it works unmodified
+  //    against a public session's synthetic id with no backend changes.
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center gap-2 py-4">
+        <p className="text-xs text-gray-500">Loading lobby…</p>
+      </div>
+    );
+  }
 
+  return (
+    <section className="flex-1 flex flex-col lg:flex-row w-full h-full overflow-y-auto lg:overflow-hidden min-w-0">
+      <PublicCallPanel
+        roomId={session.room_id}
+        playerCount={players?.length ?? 0}
+        className="w-full shrink-0 border-b lg:border-b-0 lg:border-r lg:w-80 lg:h-full lg:overflow-hidden"
+      />
+
+      <div className="flex-1 min-w-0 flex flex-col items-center justify-center relative p-4">
+        <button
+          onClick={() => setRightMobileMenu(true)}
+          className="lg:hidden absolute top-3 right-3 z-40 w-9 h-9 flex items-center justify-center rounded-full bg-theme-surface border border-theme-border text-gray-300"
+        >
+          <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" />
+        </button>
+
+        <div className="w-full max-w-md flex flex-col items-center text-center gap-4">
       {hasEnded ? (
         <Leaderboard
           sessionId={sessionId}
@@ -270,6 +330,10 @@ export const PublicLobbyScreen = ({
           </Button>
         </>
       )}
-    </>
+        </div>
+      </div>
+
+      <ChatPanel room_id={session.room_id} className="lg:w-80 lg:flex-shrink-0 lg:border-l" />
+    </section>
   );
 };
