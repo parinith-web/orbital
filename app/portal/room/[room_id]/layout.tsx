@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { useUIStore } from "@/store/uiStore";
-import LeftSidebar from "@/components/layout/LeftSidebar";
 import { CallPanel } from "@/components/features/rooms/CallPanel";
 import { ChatPanel } from "@/components/features/rooms/ChatPanel";
 import { RoomCallProvider } from "@/contexts/CallContext";
@@ -51,7 +50,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <RoomCallProvider roomId={room_id}>
       <section className="flex h-[100dvh] overflow-hidden">
-        <LeftSidebar className="w-64 flex-shrink-0" />
         <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
           <CallPanel
             room_id={room_id}
