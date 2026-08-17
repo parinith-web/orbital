@@ -206,7 +206,7 @@ export default defineSchema({
 
   gameSessions: defineTable({
     session_id: v.string(),
-    room_id: v.string(), // links to an existing Portal room_id (private mode)
+    room_id: v.string(), // links to an existing Orbital room_id (private mode)
                           // or a generated public-lobby room_id (public mode)
     mode: v.union(v.literal("private"), v.literal("public")),
     status: v.union(
@@ -224,7 +224,7 @@ export default defineSchema({
                                                // drives recycle-vs-retire policy
     // H5 — room-code backend for game rooms. All three are optional
     // because they only apply to sessions minted via `gameRoomCode.ts`'s
-    // `createGameRoom` — `createSession` (an existing Portal room's
+    // `createGameRoom` — `createSession` (an existing Orbital room's
     // in-room "Play Anomaly") and `publicMatchmaking`'s
     // `findOrCreatePublicSession` never set any of these, same as they
     // never set each other's mode-specific fields

@@ -31,7 +31,7 @@ export default function Page({
         (m: { user_id: string }) => m.user_id === userId,
       );
       if (!isMember) {
-        router.replace("/portal");
+        router.replace("/orbital");
       } else {
         setChecking(false);
       }

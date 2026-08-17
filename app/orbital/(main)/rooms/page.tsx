@@ -16,7 +16,7 @@ import { ROUTES } from "@/lib/constants/routes";
 
 /**
  * Session 3 — Rooms tab. Reuses roomContext's `useRooms()` (already
- * populated by RoomsProvider in app/portal/layout.tsx, same data
+ * populated by RoomsProvider in app/orbital/layout.tsx, same data
  * RightSidebar reads for the in-room member list) so there's no new
  * data-fetching here. Create Room / Join Room reuse the exact same global
  * modals the Game Hub tile opens (`setModal("CREATE_ROOM" | "JOIN_ROOM")`)
@@ -96,7 +96,7 @@ export default function RoomsPage() {
               return (
                 <button
                   key={room.room_id}
-                  onClick={() => router.push(ROUTES.PORTAL_ROOM(room.room_id))}
+                  onClick={() => router.push(ROUTES.ORBITAL_ROOM(room.room_id))}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-left bg-theme-surface hover:bg-theme-hover transition-colors duration-200"
                 >
                   <RoomAvatar name={roomName} className="w-10 h-10 flex-none" />

@@ -65,12 +65,12 @@ export const DEFAULT_SESSION_CAPACITY = 10;
  *
  * SCOPE: the PRD's own "Room cleanup" section (§7, Technical Considerations)
  * frames this specifically as retiring "empty or long-idle **public** game
- * rooms" — private/in-room sessions belong to a persistent Portal room and
+ * rooms" — private/in-room sessions belong to a persistent Orbital room and
  * already have their own explicit end-of-life action (C7's `endSession`);
  * there's no matchmaking pool for them to leak into, so they're left alone
  * here. Every cleanup function below filters to `mode === "public"`.
  *
- * THE RULE (portal_1.md's locked-in default, restated in this file's own
+ * THE RULE (orbital_1.md's locked-in default, restated in this file's own
  * terms): once a public session's live player count hits 0 (tracked via
  * `last_emptied_at`, already stamped by `leaveSession` since B1),
  *   - if it's been empty for LESS than `RETIRE_THRESHOLD_MS` (5 min): RECYCLE
@@ -108,7 +108,7 @@ export const DEFAULT_SESSION_CAPACITY = 10;
  * cadence.
  */
 const CLEANUP_CHECK_INTERVAL_MS = 60 * 1000; // 1 minute — sweep cadence
-export const RETIRE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes — portal_1.md default
+export const RETIRE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes — orbital_1.md default
 
 /**
  * App-level id distinct from Convex's own auto `_id`, same reason
@@ -178,7 +178,7 @@ export const getSessionPlayers = query({
  * rematch session starts every player back at 0 anyway.
  *
  * RANKING: sorted by `score` descending. Ties share a rank rather than an
- * arbitrary secondary sort deciding who's "really" first (portal_1.md's
+ * arbitrary secondary sort deciding who's "really" first (orbital_1.md's
  * own H3 line — "two players both at 10 both show as '#1'"), using
  * standard competition ranking (1, 1, 3 — not dense 1, 1, 2): the next
  * distinct score's rank is its 1-indexed position in the sorted list, so a
@@ -315,7 +315,7 @@ export const createSession = mutation({
     );
 
     // G1: private-mode session_created — the raw event Feature 1 adoption
-    // ("% of active Portal rooms that try Anomaly at least once") is
+    // ("% of active Orbital rooms that try Anomaly at least once") is
     // computed from. Logged after the insert + roster enroll above rather
     // than before, so this never fires for a `createSession` call that
     // errored out earlier (not a member, room not found) or short-circuited
@@ -472,7 +472,7 @@ export const joinSession = mutation({
     if (!session) return { error: "Session not found" };
     if (session.status === "ended") return { error: "Session has ended" };
 
-    // Private sessions are scoped to the underlying Portal room's roster —
+    // Private sessions are scoped to the underlying Orbital room's roster —
     // only current room members may join, even if they know the session_id.
     // Public sessions (Phase D) have no such gate; that's the whole point.
     if (session.mode === "private") {
@@ -770,7 +770,7 @@ export const endSession = mutation({
  * `gamePlayers` roster (everyone back to `score: 0`) and a fresh,
  * initially-empty `gameRounds` history — exactly the same shape a genuinely
  * new room gets from `createSession`, just re-entered from an ended
- * session instead of a brand new Portal room. `getSessionByRoomId`'s own
+ * session instead of a brand new Orbital room. `getSessionByRoomId`'s own
  * "any status other than ended" filter means the moment this inserts, every
  * client already subscribed to it for this `room_id` (GameStage chief among
  * them) picks the new row up automatically and swaps off the old
@@ -809,7 +809,7 @@ export const endSession = mutation({
  * live session for this room by the time this runs, hand back that one's
  * `session_id` instead of minting a second, orphaned one.
  *
- * ROSTER SOURCE: re-enrolls from `roomMembers` (the persistent Portal room
+ * ROSTER SOURCE: re-enrolls from `roomMembers` (the persistent Orbital room
  * roster), not from the ended session's own `gamePlayers` rows — same
  * source `createSession` already uses, and for the same reason: anyone
  * who joined the room's chat/call after the previous game started (but

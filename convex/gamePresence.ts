@@ -59,10 +59,10 @@ import { maybeMarkSessionEmptiedByDisconnect } from "./gameSessions";
  * building a second one, since the shapes look similar. Rejected because
  * the two track genuinely different things on genuinely different
  * timescales: `presence` is "is this user's client open at all, anywhere in
- * Portal" on a multi-minute cadence (3min heartbeat / 5min stale) — fine
+ * Orbital" on a multi-minute cadence (3min heartbeat / 5min stale) — fine
  * for an online/away dot, far too slow for a game where a 30s turn timer
  * (turnOrder.ts's DEFAULT_TURN_DURATION_MS) is the unit of time that
- * matters. A player who's still globally "online" (browsing another Portal
+ * matters. A player who's still globally "online" (browsing another Orbital
  * tab, or just idle without having blurred/backgrounded this one) but whose
  * game client silently dropped its connection would sit "connected: true"
  * for minutes under presence.ts's cadence — long enough to stall an entire

@@ -14,10 +14,10 @@ import { JOIN_CODE_ALPHABET, JOIN_CODE_LENGTH } from "./games/lobbyConfig";
  *
  * SCOPE: this is the third way a player ends up seated in an Anomaly
  * session, alongside `gameSessions.ts`'s `createSession`/`joinSession`
- * (an *existing* Portal room's roster auto-enrolling into a session) and
+ * (an *existing* Orbital room's roster auto-enrolling into a session) and
  * `publicMatchmaking.ts`'s `findOrCreatePublicSession` ("Play Online",
  * no code, no host). This file covers "Create Room" / "Join Room" from
- * the game hub (H6): a host with no pre-existing Portal room spins one up
+ * the game hub (H6): a host with no pre-existing Orbital room spins one up
  * purely to play a game, gets a short code back, and shares it out of
  * band (voice call, text, whatever) for a second player to type into
  * "Join Room."
@@ -162,7 +162,7 @@ export const createGameRoom = mutation({
 
     // G1 — same event this file's private-session sibling
     // (`createSession`) already logs, for the same adoption metric; a
-    // room-code room is still "a Portal room trying Anomaly," it just
+    // room-code room is still "a Orbital room trying Anomaly," it just
     // came into existence via this flow instead of an existing chat room.
     await logGameEvent(ctx, {
       event_type: "session_created",

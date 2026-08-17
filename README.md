@@ -1,4 +1,4 @@
-# Portal
+# Orbital
 
 > A real-time communication platform with rooms, video calls, and seamless messaging
 
@@ -6,7 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
 
-Portal is a modern real-time communication platform. It enables users to create rooms, send direct messages, make video calls, and collaborate seamlessly with friends and teams.
+Orbital is a modern real-time communication platform. It enables users to create rooms, send direct messages, make video calls, and collaborate seamlessly with friends and teams.
 
 ---
 
@@ -91,8 +91,8 @@ Portal is a modern real-time communication platform. It enables users to create 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/portal.git
-cd portal
+git clone https://github.com/your-username/orbital.git
+cd orbital
 
 # Install dependencies
 npm install
@@ -131,9 +131,9 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ## Project Structure
 
 ```
-portal/
+orbital/
 ├── app/                    # Next.js App Router pages
-│   ├── portal/            # Main app (authenticated)
+│   ├── orbital/            # Main app (authenticated)
 │   │   ├── (main)/        # Dashboard, friends, rooms
 │   │   ├── profile/       # User profile settings
 │   │   └── room/[room_id]/ # Room chat view
@@ -169,7 +169,7 @@ portal/
 ### Frontend Flow
 
 ```
-User → Clerk Auth → Convex Auth → Portal Dashboard
+User → Clerk Auth → Convex Auth → Orbital Dashboard
                                       ↓
                             ┌─────────┼─────────┐
                             ↓         ↓         ↓

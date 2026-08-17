@@ -56,7 +56,7 @@ export function JoinRoomModal({ initialCode = "" }: JoinRoomModalProps) {
         return;
       }
       closeModal();
-      router.push(ROUTES.PORTAL_ROOM(result.room_id));
+      router.push(ROUTES.ORBITAL_ROOM(result.room_id));
     } catch {
       setError("Couldn't join the room");
     } finally {

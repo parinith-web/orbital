@@ -25,7 +25,7 @@ export function useNotificationHandlers() {
         console.error(error);
       }
 
-      router.push(`/portal/room/${notification.sourceId}`);
+      router.push(`/orbital/room/${notification.sourceId}`);
       if (notification.notificationType === "call") {
         setSidebarOpen(true);
         setSidebarTab("calls");

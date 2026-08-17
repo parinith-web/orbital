@@ -53,7 +53,7 @@ export const CallOverlay = () => {
   const isActive = status === "joined" || status === "joining";
 
   const isOnCorrectPage = actualRoomId
-    ? pathname.includes(`/portal/room/${actualRoomId}`)
+    ? pathname.includes(`/orbital/room/${actualRoomId}`)
     : false;
 
   if (!isActive || !isOnCorrectPage) {

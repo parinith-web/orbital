@@ -30,7 +30,7 @@ import { BubbleChatIcon } from "@hugeicons/core-free-icons";
  * comment for the full story): before this session, `min_players_to_start`/
  * `countdown_started_at` existed on the schema (A1) and D1 stamped the
  * former on every public session, but nothing ever actually started a
- * countdown or acted on one elapsing — portal_1.md's "4 players triggers a
+ * countdown or acted on one elapsing — orbital_1.md's "4 players triggers a
  * 15s countdown" default was entirely unimplemented server-side. This
  * component's countdown ring is only meaningful now that that backend piece
  * (`maybeStartAutostartCountdown` / `autoStartRound`) exists.
@@ -148,7 +148,7 @@ export const PublicLobbyScreen = ({
   const roundView = useQuery(api.gameRounds.getRoundView, { session_id: sessionId });
 
   // F1a: heartbeats for as long as this screen is mounted, i.e. as long as
-  // the player is on /portal/anomaly — see useGameSessionPresence.ts's own
+  // the player is on /orbital/anomaly — see useGameSessionPresence.ts's own
   // header for why this differs from SignalPanel's unconditional-on-panel-
   // close behavior. Called before the early return below (hooks can't
   // follow a conditional return).
@@ -186,7 +186,7 @@ export const PublicLobbyScreen = ({
   // as the "finding a game"/error states, but wrong once actually seated:
   // a private room gets a 3-column `CallPanel | GameStage | ChatPanel`
   // layout for free from `[room_id]/layout.tsx` (matching the Anomaly
-  // mockup), while `/portal/anomaly` sits under the plain `(main)` shell
+  // mockup), while `/orbital/anomaly` sits under the plain `(main)` shell
   // (`LeftSidebar` + bare content, see that layout's own comment) and had
   // no equivalent — no video panel, no chat, just this card's contents by
   // themselves. Now that there's a seated session (this component only

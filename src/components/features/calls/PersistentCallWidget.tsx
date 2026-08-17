@@ -55,23 +55,23 @@ const PersistentCallWidget = () => {
     // (`generateSessionId(PUBLIC_LOBBY_ROOM_ID_PREFIX)`, in
     // convex/publicMatchmaking.ts) that has no corresponding row in the
     // `rooms` table — routing there like a real room 404s/breaks. That
-    // call's own UI lives inline on /portal/anomaly (PublicLobbyVoice,
+    // call's own UI lives inline on /orbital/anomaly (PublicLobbyVoice,
     // mounted by PublicLobbyScreen), not behind CallOverlay the way a real
     // room's call is, so this also skips the room-call-specific sidebar/
     // overlay side effects below, which don't apply to it.
     if (actualRoomId.startsWith(`${PUBLIC_LOBBY_ROOM_ID_PREFIX}_`)) {
-      router.push(ROUTES.PORTAL_ANOMALY);
+      router.push(ROUTES.ORBITAL_ANOMALY);
       return;
     }
 
     if (actualRoomId.startsWith("direct_")) {
-      router.push("/portal");
+      router.push("/orbital");
     } else {
       // H7.2: no more setSidebarOpen/setSidebarTab("calls")/
       // setCallOverlayOpen(true) here — the room page's call section
       // (GameRoomSidePanel → CallOverlay) shows itself automatically once
       // joined, it's not a details-tab or full-screen state to flip on.
-      router.push(`/portal/room/${actualRoomId}`);
+      router.push(`/orbital/room/${actualRoomId}`);
     }
   };
 

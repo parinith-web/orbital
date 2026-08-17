@@ -22,7 +22,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Portal",
+  title: "Orbital",
   description: "Realtime chat application",
   icons: {
     icon: "/assets/favicon.ico",
@@ -72,13 +72,13 @@ export default function RootLayout({
           localization={{
             signIn: {
               start: {
-                title: "Portal",
+                title: "Orbital",
                 subtitle: "Log in to your account",
               },
             },
             signUp: {
               start: {
-                title: "Portal",
+                title: "Orbital",
                 subtitle: "Create an account",
               },
             },
@@ -98,12 +98,12 @@ export default function RootLayout({
         >
           <header className="fixed top-4 right-4 z-50 flex gap-2">
             <Show when="signed-out">
-              <SignInButton mode="modal" forceRedirectUrl="/portal">
+              <SignInButton mode="modal" forceRedirectUrl="/orbital">
                 <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
                   Sign In
                 </button>
               </SignInButton>
-              <SignUpButton mode="modal" forceRedirectUrl="/portal">
+              <SignUpButton mode="modal" forceRedirectUrl="/orbital">
                 <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
                   Sign Up
                 </button>

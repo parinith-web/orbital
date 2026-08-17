@@ -5,7 +5,7 @@ import LeftSidebar from "@/components/layout/LeftSidebar";
 // Session 1, and its component (NotificationTab.tsx) deleted outright in
 // Session 7 once nothing referenced it anymore. Everything now lives in
 // the left panel (see LeftSidebar.tsx). Background notification handling
-// (toasts, listeners) is unaffected — that lives in app/portal/layout.tsx
+// (toasts, listeners) is unaffected — that lives in app/orbital/layout.tsx
 // via NotificationListener and is untouched here.
 export default function MainLayout({
   children,

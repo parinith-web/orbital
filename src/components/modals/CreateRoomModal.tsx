@@ -80,7 +80,7 @@ export function CreateRoomModal() {
   const enterRoom = () => {
     if (!created) return;
     closeModal();
-    router.push(ROUTES.PORTAL_ROOM(created.room_id));
+    router.push(ROUTES.ORBITAL_ROOM(created.room_id));
   };
 
   const copyCode = async () => {
@@ -92,7 +92,7 @@ export function CreateRoomModal() {
 
   const copyLink = async () => {
     if (!created) return;
-    const link = `${window.location.origin}/portal?join=${created.join_code}`;
+    const link = `${window.location.origin}/orbital?join=${created.join_code}`;
     await navigator.clipboard.writeText(link);
     setCopied("link");
     toast.success("Invite link copied");

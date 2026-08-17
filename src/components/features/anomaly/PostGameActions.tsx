@@ -5,7 +5,7 @@ import { Button } from "@/components/ui";
 /**
  * E4 — post-game screen: "play again" vs "leave", per PRD §6 Flow B
  * ("post-game screen offers 'play again' (stays in same room, new round) or
- * 'leave' (returns to Portal home)").
+ * 'leave' (returns to Orbital home)").
  *
  * PUBLIC-LOBBY ONLY: passed into `RoundView` as its `postGameActions` render
  * prop (see that file's own E4 doc comment) only from `PublicLobbyScreen`.
@@ -21,7 +21,7 @@ import { Button } from "@/components/ui";
  *   - `onLeave`/`isLeaving` are the exact same props `PublicLobbyScreen`
  *     already threads down to its plain "Leave" button in the lobby-roster
  *     state (owned by `PublicLobbyEntry`'s `handleLeave`, which calls
- *     `leaveSession` then routes back to Portal home) — reused here rather
+ *     `leaveSession` then routes back to Orbital home) — reused here rather
  *     than a second leave path, so "leave" behaves identically whether it's
  *     clicked pre-round or post-round.
  * This mirrors this feature's existing convention (`PublicLobbyVoice`,

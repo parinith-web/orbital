@@ -12,7 +12,7 @@
 - [ ] H8 — Host controls & leaderboard broadcast
 - [ ] H9 — Tests + QA pass
 
-Package as of this point: `portal-main-h7-2-complete.zip`.
+Package as of this point: `orbital-main-h7-2-complete.zip`.
 
 ## Vision
 
@@ -23,7 +23,7 @@ There is no Friends tab, no DMs, and no generic standalone Rooms list. Every "ro
 ## Current State (audited from codebase)
 
 **Already built and reusable as-is:**
-- Clerk + Convex auth, `/portal` protected.
+- Clerk + Convex auth, `/orbital` protected.
 - **Signal** — a complete word-based imposter/social-deduction game: speaking order, server-authoritative turn timer, voting, reveal, scoring (+1 to voters who catch the imposter, +2 to imposter if they escape).
 - Public matchmaking lobby with 4-player/15s autostart (`publicMatchmaking.ts`, `PublicLobbyScreen.tsx`).
 - Reconnect/disconnect handling (`gamePresence.ts`).
@@ -68,7 +68,7 @@ Note: the `rooms` / `roomMembers` tables aren't deleted outright — they're rep
 ### H4 — Strip the social layer
 - Remove Friends/DMs/generic-Rooms code and nav.
 - Remove Convex functions/schema fields no longer used.
-- Clean up dangling imports/routes (e.g. `app/portal/(main)/friend`).
+- Clean up dangling imports/routes (e.g. `app/orbital/(main)/friend`).
 
 ### H4 — done
 
@@ -84,7 +84,7 @@ Note: the `rooms` / `roomMembers` tables aren't deleted outright — they're rep
 **Frontend — deleted:**
 - `src/components/features/friends/` (whole dir: `FriendsTab`, `FriendPage`, `FriendChatUI`, `FriendChatHeader`, `FriendsList`, `AddFriendDialog`, `PendingRequestMenu`)
 - `src/contexts/FriendsContext.tsx`, `src/hooks/useFriends.ts`, `src/lib/types/friend.ts`
-- `app/portal/(main)/friend/[friend_id]/page.tsx` (whole route)
+- `app/orbital/(main)/friend/[friend_id]/page.tsx` (whole route)
 - `src/components/modals/RemoveFriendModal.tsx`, `CreateRoomModal.tsx`, `JoinRoomModal.tsx`
 - `src/components/features/rooms/RoomsList.tsx`, `RoomItem.tsx`
 
@@ -92,25 +92,25 @@ Note: the `rooms` / `roomMembers` tables aren't deleted outright — they're rep
 - `src/lib/types/index.ts`, `src/hooks/index.ts`: dropped the now-deleted friend exports.
 - `src/components/layout/GlobalModals.tsx`: now only renders `LOGOUT` / `LEAVE_ROOM` / `SWITCH_CALL`.
 - `src/store/uiStore.tsx`: `ModalType` no longer has `CREATE_ROOM` / `JOIN_ROOM` / `ADD_FRIEND` / `REMOVE_FRIEND`.
-- `src/components/layout/LeftSidebar.tsx`: rewritten — no Friends nav, no Create/Join Room buttons, no `RoomsList`. What's left: "Game Hub" link (→ `/portal`), "Play Online" link (→ `/portal/signal`), the persistent call widget, and the profile button. **This is intentionally minimal, not the final H6 nav** — H6 is expected to replace this with the real hub-appropriate header/nav per the plan.
-- `app/portal/(main)/page.tsx`: `FriendsTab` replaced with a small placeholder card (title + one "Play Online" button routing to `/portal/signal`). **This is a stub, not H6's Game Hub** — it exists only so `/portal` isn't broken between H4 and H6. H6 should replace this file's contents wholesale with the real game-tile / Create-Room / Join-Room / Play-Online hub.
-- `app/portal/layout.tsx`: removed `FriendsProvider`.
+- `src/components/layout/LeftSidebar.tsx`: rewritten — no Friends nav, no Create/Join Room buttons, no `RoomsList`. What's left: "Game Hub" link (→ `/orbital`), "Play Online" link (→ `/orbital/signal`), the persistent call widget, and the profile button. **This is intentionally minimal, not the final H6 nav** — H6 is expected to replace this with the real hub-appropriate header/nav per the plan.
+- `app/orbital/(main)/page.tsx`: `FriendsTab` replaced with a small placeholder card (title + one "Play Online" button routing to `/orbital/signal`). **This is a stub, not H6's Game Hub** — it exists only so `/orbital` isn't broken between H4 and H6. H6 should replace this file's contents wholesale with the real game-tile / Create-Room / Join-Room / Play-Online hub.
+- `app/orbital/layout.tsx`: removed `FriendsProvider`.
 - `src/components/popups/UserProfilePopup.tsx`: rewritten as a read-only profile card (avatar, username, joined date) — no friend-request/DM/remove-friend actions or `isFriend` prop.
 - `src/components/features/notifications/NotificationTab.tsx`: dropped the now-unused `useFriends` call.
-- `src/components/features/notifications/useNotificationHandlers.ts`: `openNotification` always routes to `/portal/room/${sourceId}` now (no more `"direct"` → `/portal/friend/...` branch).
-- `src/components/features/calls/CallOverlay.tsx`: dropped the `direct_...` / `/portal/friend/...` pathname check — a call is "on the correct page" only when it matches `/portal/room/${actualRoomId}`.
-- `src/hooks/useActiveConversationId.ts`: dropped the `friendMatch` branch and `getDirectConversationId` import; it only ever resolves `/portal/room/[id]` now.
+- `src/components/features/notifications/useNotificationHandlers.ts`: `openNotification` always routes to `/orbital/room/${sourceId}` now (no more `"direct"` → `/orbital/friend/...` branch).
+- `src/components/features/calls/CallOverlay.tsx`: dropped the `direct_...` / `/orbital/friend/...` pathname check — a call is "on the correct page" only when it matches `/orbital/room/${actualRoomId}`.
+- `src/hooks/useActiveConversationId.ts`: dropped the `friendMatch` branch and `getDirectConversationId` import; it only ever resolves `/orbital/room/[id]` now.
 
 **Deliberately left alone (in scope for H4, judged low-risk/no-op rather than something to touch):**
 - The generic `"room" | "direct"` TypeScript unions still present in `ChatUI.tsx`, `MessageList/types.ts`, `ChatInputBar/types.ts`, `DetailsSidebar.tsx`, `useMessageActions.ts`, `lib/types/message.ts`, `lib/types/notification.ts`, `useNotifications.ts`, and the Convex schema's `messages.conversation_type` / `chatNotifications.source_type` / `unreadCounters.source_type` fields. None of these reference the deleted `friends` table, so leaving `"direct"` in the type surface is harmless — nothing constructs a `"direct"` conversation anymore now that the friends UI is gone, so that branch is simply dead code, not a dangling reference. Narrowing these to `"room"`-only was judged higher-risk-for-low-value busywork (touches ~8 files) and left for a future cleanup pass if desired.
 - `src/lib/utils/message.ts`'s `getDirectConversationId` helper — unused now, but not imported by anything broken, so left in place rather than deleted for cleanliness.
 - `rooms` / `roomMembers` Convex tables and `convex/rooms.ts` mutations (`joinRoom`, `createRoom`, `renameRoom`, `leaveRoom`, `deleteRoom`, `setNotificationPreference`) — per the plan's note, these aren't deleted; H5 will wrap them for game-room create/join.
 - `src/components/features/rooms/RoomChatUI.tsx`, `TopBar.tsx`, `RightSidebar.tsx`, `DetailsSidebar.tsx` and its `sidebar-info`/`sidebar-calls`/`sidebar-media` children — this is the room chrome, not the social layer; it's reused as-is by H7 for the game-room's chat/call panel.
-- `app/portal/room/[room_id]/` route and its `layout.tsx`/`page.tsx` — untouched; still the generic room page today, to be repurposed into the game-room page in H7.
+- `app/orbital/room/[room_id]/` route and its `layout.tsx`/`page.tsx` — untouched; still the generic room page today, to be repurposed into the game-room page in H7.
 
 **Known follow-ups for whoever picks up next:**
 1. Run `npx convex dev` (or equivalent codegen) once real `node_modules` are available, to properly regenerate `convex/_generated/api.d.ts`/`api.js` — this session hand-patched only the `friends` reference out of `api.d.ts`; it does not add the missing `gameEvents`/`games/*` module entries that were already stale before H4.
-2. `/portal` (`app/portal/(main)/page.tsx`) and `LeftSidebar.tsx` are stubs pending H6 — don't be surprised the nav looks bare; that's expected until H6 lands.
+2. `/orbital` (`app/orbital/(main)/page.tsx`) and `LeftSidebar.tsx` are stubs pending H6 — don't be surprised the nav looks bare; that's expected until H6 lands.
 3. No manual/automated verification was run in this session (no `node_modules`/build tooling available in the sandbox) — worth a `tsc --noEmit` and a skim of the vitest suite before treating H4 as fully verified.
 
 ### H5 — Room-code backend for game rooms
@@ -124,7 +124,7 @@ Note: the `rooms` / `roomMembers` tables aren't deleted outright — they're rep
 - `convex/schema.ts`: added `host_user_id`, `join_code`, `game_type` to `gameSessions` — all `v.optional`, since only room-code sessions set them (`createSession`'s in-room flow and `publicMatchmaking`'s "Play Online" flow both still leave them undefined). New `by_join_code` index for the lookup `joinGameRoomByCode` needs.
 - `convex/games/lobbyConfig.ts`: added `JOIN_CODE_LENGTH` (6) and `JOIN_CODE_ALPHABET` (uppercase letters + digits, minus visually-ambiguous `0/O/1/I/L`) as pure constants, same reasoning as the file's existing `AUTOSTART_COUNTDOWN_MS`/`WINNING_SCORE` — so a join-code input field can import the length without pulling in Convex server code.
 - New file `convex/gameRoomCode.ts`:
-  - `createGameRoom(game_type?, capacity?, room_name?)` — host-only entry point with no pre-existing Portal room needed. Inserts a fresh `rooms`/`roomMembers` row (host as `owner`, same shape `rooms.ts`'s old `createRoom` used), generates a unique join code (`generateUniqueJoinCode`, retried up to 10x against currently-live sessions — an `"ended"` session's code is free to reissue), inserts the `gameSessions` row (`mode: "private"`, `host_user_id`, `join_code`, `game_type` defaulting to `"signal"`), seats the host as the first `gamePlayers` row, and logs the existing `session_created` G1 event (same adoption metric `createSession` already feeds — a room-code room is still "a room trying Signal"). Returns `{ session_id, room_id, join_code }`.
+  - `createGameRoom(game_type?, capacity?, room_name?)` — host-only entry point with no pre-existing Orbital room needed. Inserts a fresh `rooms`/`roomMembers` row (host as `owner`, same shape `rooms.ts`'s old `createRoom` used), generates a unique join code (`generateUniqueJoinCode`, retried up to 10x against currently-live sessions — an `"ended"` session's code is free to reissue), inserts the `gameSessions` row (`mode: "private"`, `host_user_id`, `join_code`, `game_type` defaulting to `"signal"`), seats the host as the first `gamePlayers` row, and logs the existing `session_created` G1 event (same adoption metric `createSession` already feeds — a room-code room is still "a room trying Signal"). Returns `{ session_id, room_id, join_code }`.
   - `joinGameRoomByCode(join_code, connection_id?)` — the code is the only credential; unlike `joinSession`'s private-mode branch, this mutation itself grants `roomMembers` membership on first use rather than requiring it up front. Code matching is case-insensitive and whitespace-tolerant (normalized to uppercase, trimmed, both at write and read time). Seating goes through the existing `seatPlayerInSession` helper, so reconnect/lock-on-full/capacity behavior is identical to every other join path — a code-joined room that fills up correctly flips to `"locked"` and refuses further joiners with the same `"Session is no longer accepting new players"` error `joinSession`/`findOrCreatePublicSession` already return. Posts a system message on genuinely new arrivals only (gated on `!existingMembership`, not on `seatPlayerInSession`'s own separate reconnect flag) so a refresh/reconnect doesn't re-announce someone who's already a room member.
   - Both mutations bottom out in the same `seatPlayerInSession`/`generateSessionId` helpers `gameSessions.ts` already exports — no player-roster CRUD was reimplemented a third time.
 - `convex/_generated/api.d.ts`: hand-patched to add the `gameRoomCode` module reference (same stopgap H4 used for the `friends` removal — **`npx convex dev` still needs to be run for real codegen** before shipping; this patch doesn't address the other pre-existing-stale module entries H4's notes already flagged).
@@ -143,23 +143,23 @@ Note: the `rooms` / `roomMembers` tables aren't deleted outright — they're rep
 - No rate-limiting or attempt-cap on `joinGameRoomByCode` guesses (e.g. someone brute-forcing codes) — the PRD/plan didn't call for it and the existing codebase has no precedent for that kind of guard elsewhere; flagged here in case H9's QA pass wants to consider it.
 
 ### H6 — New app shell: Game Hub as the home page
-- `/portal` becomes the game hub: game tile(s) (just "Signal" for now, structured to add more later) → Create Room / Join Room / Play Online.
+- `/orbital` becomes the game hub: game tile(s) (just "Signal" for now, structured to add more later) → Create Room / Join Room / Play Online.
 - Replace `LeftSidebar`'s current chat-app form with a light nav appropriate for a game-first app (e.g. header with profile/logout only).
 
 **H6 is split into three sub-sessions**, sequenced so each one is independently testable against what H5 already shipped, rather than landing as one large UI change:
 
 - **H6.1 — Create Room / Join Room modals**, wired directly to H5's `createGameRoom` / `joinGameRoomByCode` mutations. Self-contained: doesn't depend on the hub page or sidebar existing in their final form, so it can be built and clicked through (via a temporary trigger) before H6.2 gives it a permanent home.
-- **H6.2 — Game Hub page** (`app/portal/(main)/page.tsx` rewrite): the actual game-tile layout (Signal tile for now) with Create Room / Join Room / Play Online as its three entry points, opening H6.1's modals and reusing the existing `/portal/signal` route for Play Online.
+- **H6.2 — Game Hub page** (`app/orbital/(main)/page.tsx` rewrite): the actual game-tile layout (Signal tile for now) with Create Room / Join Room / Play Online as its three entry points, opening H6.1's modals and reusing the existing `/orbital/signal` route for Play Online.
 - **H6.3 — LeftSidebar rewrite**: light nav (header w/ profile/logout only, per the plan), and wiring the `?join=` deep-link query param (currently stubbed to just redirect and drop the param — see H4/H5-era `LeftSidebar.tsx`) into H6.1's Join Room modal so a shared link pre-fills the code.
 
-Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere to point their "Create Room" / "Join Room" buttons — building the hub page or sidebar before the modals exist would mean wiring them twice. H6.2 before H6.3 because the hub page is the more load-bearing surface (it's `/portal` itself); the sidebar is comparatively cosmetic and safe to land last.
+Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere to point their "Create Room" / "Join Room" buttons — building the hub page or sidebar before the modals exist would mean wiring them twice. H6.2 before H6.3 because the hub page is the more load-bearing surface (it's `/orbital` itself); the sidebar is comparatively cosmetic and safe to land last.
 
 ### H6.1 — done
 
 **Frontend — added:**
 - `src/store/uiStore.tsx`: restored `"CREATE_ROOM" | "JOIN_ROOM"` to `ModalType` (removed in H4 along with the old `rooms.ts`-backed modals of the same name; re-added here now that H6.1 gives them a real backend to call).
-- New `src/components/modals/CreateRoomModal.tsx` — `FormDialog` wrapping a single optional "Room name" `Input`, calling `api.gameRoomCode.createGameRoom`. On success, closes the modal and routes straight to `ROUTES.PORTAL_ROOM(room_id)` (the existing, H4-untouched room page — still chat-only until H7 repurposes it into the game-room layout, but membership/routing already works today since `createGameRoom` seats the host into `roomMembers`). On error (e.g. network failure — the mutation itself only returns `{ error }` for the not-authenticated case, which shouldn't be reachable from behind the portal auth guard), surfaces a `sonner` toast rather than a dead-end dialog.
-- New `src/components/modals/JoinRoomModal.tsx` — `FormDialog` wrapping a single required "Room code" `Input`, `maxLength={JOIN_CODE_LENGTH}` and uppercased as-you-type (cosmetic only — `joinGameRoomByCode` itself already normalizes case/whitespace server-side, this just matches what the code will look like once shared). Calls `api.gameRoomCode.joinGameRoomByCode` with `getTabConnectionId()` (same tab-scoped connection id `PublicLobbyEntry.tsx` already uses for the reconnect-guard heartbeat path, for consistency across every join flow). Surfaces the mutation's own `{ error }` string inline under the input (e.g. "Invalid or expired room code") rather than a generic toast, since this one's errors are routine user-input mistakes, not exceptional failures. On success, closes and routes to `ROUTES.PORTAL_ROOM(room_id)`.
+- New `src/components/modals/CreateRoomModal.tsx` — `FormDialog` wrapping a single optional "Room name" `Input`, calling `api.gameRoomCode.createGameRoom`. On success, closes the modal and routes straight to `ROUTES.ORBITAL_ROOM(room_id)` (the existing, H4-untouched room page — still chat-only until H7 repurposes it into the game-room layout, but membership/routing already works today since `createGameRoom` seats the host into `roomMembers`). On error (e.g. network failure — the mutation itself only returns `{ error }` for the not-authenticated case, which shouldn't be reachable from behind the orbital auth guard), surfaces a `sonner` toast rather than a dead-end dialog.
+- New `src/components/modals/JoinRoomModal.tsx` — `FormDialog` wrapping a single required "Room code" `Input`, `maxLength={JOIN_CODE_LENGTH}` and uppercased as-you-type (cosmetic only — `joinGameRoomByCode` itself already normalizes case/whitespace server-side, this just matches what the code will look like once shared). Calls `api.gameRoomCode.joinGameRoomByCode` with `getTabConnectionId()` (same tab-scoped connection id `PublicLobbyEntry.tsx` already uses for the reconnect-guard heartbeat path, for consistency across every join flow). Surfaces the mutation's own `{ error }` string inline under the input (e.g. "Invalid or expired room code") rather than a generic toast, since this one's errors are routine user-input mistakes, not exceptional failures. On success, closes and routes to `ROUTES.ORBITAL_ROOM(room_id)`.
   - Accepts an optional `initialCode` prop (pre-fills the input, not yet passed by anything) — added now, ahead of H6.3's actual `?join=` deep-link wiring, so H6.3 doesn't need to touch this file at all, only the call site.
 - `src/components/layout/GlobalModals.tsx`: renders `CreateRoomModal` / `JoinRoomModal` for the `"CREATE_ROOM"` / `"JOIN_ROOM"` cases, matching the existing `LOGOUT`/`LEAVE_ROOM`/`SWITCH_CALL` pattern.
 
@@ -172,11 +172,11 @@ Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere t
 ### H6.2 — done
 
 **Frontend — edited:**
-- `app/portal/(main)/page.tsx`: rewritten wholesale, replacing H4's placeholder card. Now a single game tile ("Signal" — icon, name, one-line description) with three entry points stacked below it:
+- `app/orbital/(main)/page.tsx`: rewritten wholesale, replacing H4's placeholder card. Now a single game tile ("Signal" — icon, name, one-line description) with three entry points stacked below it:
   - **Create Room** — `Button` calling `setModal("CREATE_ROOM")`. Opens H6.1's `CreateRoomModal` exactly as that session already built it; this page adds no room-creation logic of its own.
   - **Join Room** — `Button` calling `setModal("JOIN_ROOM")`, no `data` argument (so `JoinRoomModal`'s `initialCode` stays unset here) — that's H6.3's job once the sidebar's `?join=` param is wired to `setModal("JOIN_ROOM", { join_code })`, which `GlobalModals.tsx` already reads from `modalData?.join_code` today.
-  - **Play Online** — unchanged behavior from the H4 stub: routes to `ROUTES.PORTAL_SIGNAL` (`/portal/signal`), which still mounts the pre-existing `PublicLobbyEntry` untouched.
-  - Kept the same `useCurrentUser`/`setUser` sync `useEffect` the H4 stub had — no reason to drop it, `/portal` still needs to hydrate `useUserStore` on load.
+  - **Play Online** — unchanged behavior from the H4 stub: routes to `ROUTES.ORBITAL_SIGNAL` (`/orbital/signal`), which still mounts the pre-existing `PublicLobbyEntry` untouched.
+  - Kept the same `useCurrentUser`/`setUser` sync `useEffect` the H4 stub had — no reason to drop it, `/orbital` still needs to hydrate `useUserStore` on load.
 - No changes to `LeftSidebar.tsx` — the "Game Hub" / "Play Online" nav links it already has continue to work as-is; H6.3 is where its `?join=` stub and general chrome get revisited.
 
 **Deliberately left alone / left for later sessions:**
@@ -192,13 +192,13 @@ Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere t
 ### H6.3 — done
 
 **Frontend — edited:**
-- `src/components/layout/LeftSidebar.tsx`: the `?join=` query param is now wired to H6.1's `JoinRoomModal` instead of being dropped. On a route like `/portal?join=7K4RXP`, once `useUserStore`'s `user.user_id` has resolved, the sidebar calls `setModal("JOIN_ROOM", { join_code: joinParam.toUpperCase() })` — the exact `modalData?.join_code` shape `GlobalModals.tsx` already read (unused until now) — then `router.replace(pathname)` to strip the param from the URL so a refresh or back-navigation doesn't reopen the modal. The `.toUpperCase()` is defensive: `joinGameRoomByCode` normalizes case server-side regardless, but since codes are stored/displayed uppercase (per H5's `JOIN_CODE_ALPHABET`) and `JoinRoomModal`'s own input uppercases as-you-type, a manually-typed or copy-pasted link should land pre-filled looking the same way.
-- Gated on `user?.user_id` specifically so an unauthenticated visitor following a shared link isn't shown a join-code modal underneath/behind Clerk's auth redirect — they hit the normal auth flow first, and the param is still present in the URL (untouched by the effect until a user exists) so the modal opens correctly once they land back on `/portal` post-auth.
+- `src/components/layout/LeftSidebar.tsx`: the `?join=` query param is now wired to H6.1's `JoinRoomModal` instead of being dropped. On a route like `/orbital?join=7K4RXP`, once `useUserStore`'s `user.user_id` has resolved, the sidebar calls `setModal("JOIN_ROOM", { join_code: joinParam.toUpperCase() })` — the exact `modalData?.join_code` shape `GlobalModals.tsx` already read (unused until now) — then `router.replace(pathname)` to strip the param from the URL so a refresh or back-navigation doesn't reopen the modal. The `.toUpperCase()` is defensive: `joinGameRoomByCode` normalizes case server-side regardless, but since codes are stored/displayed uppercase (per H5's `JOIN_CODE_ALPHABET`) and `JoinRoomModal`'s own input uppercases as-you-type, a manually-typed or copy-pasted link should land pre-filled looking the same way.
+- Gated on `user?.user_id` specifically so an unauthenticated visitor following a shared link isn't shown a join-code modal underneath/behind Clerk's auth redirect — they hit the normal auth flow first, and the param is still present in the URL (untouched by the effect until a user exists) so the modal opens correctly once they land back on `/orbital` post-auth.
 - Consolidated the file's two separate `useUIStore()` calls (`leftMobileMenu`/`setLeftMobileMenu` and the new `setModal`) into one destructure — no behavior change, just avoids two subscriptions to the same store.
 - Updated the file's header comment: it previously said the Game Hub UI was "H6's job" and described the `?join=` handling as a stub; both are now done, so the comment describes what H6.2 actually shipped and what this session wired up.
 
 **Deliberately left alone / left for later sessions:**
-- The rest of the sidebar's nav (Game Hub / Play Online links, `PersistentCallWidget`, `ProfileButton`) is unchanged. The plan's "light nav (header w/ profile/logout only, per the plan)" phrasing was an "e.g." illustration, not a mandate to strip the Game Hub / Play Online links — those are still useful (they're the only way back to the hub or into public matchmaking from inside a game room today, since H7 hasn't repurposed the room page yet) and removing them wasn't called for by anything else in the plan. Profile/logout is already covered by the existing `ProfileButton` (avatar → `/portal/profile`, inline logout icon → `setModal("LOGOUT")`), which this session left untouched.
+- The rest of the sidebar's nav (Game Hub / Play Online links, `PersistentCallWidget`, `ProfileButton`) is unchanged. The plan's "light nav (header w/ profile/logout only, per the plan)" phrasing was an "e.g." illustration, not a mandate to strip the Game Hub / Play Online links — those are still useful (they're the only way back to the hub or into public matchmaking from inside a game room today, since H7 hasn't repurposed the room page yet) and removing them wasn't called for by anything else in the plan. Profile/logout is already covered by the existing `ProfileButton` (avatar → `/orbital/profile`, inline logout icon → `setModal("LOGOUT")`), which this session left untouched.
 - No share-link *generation* was added anywhere (e.g. a "copy invite link" button in the game room or `CreateRoomModal`) — nothing in the codebase currently builds a `?join=` URL to send anyone; this session only makes an incoming one work. Wiring up a copy-link affordance wasn't in H6's scope and fits more naturally in H7 once there's an actual game-room page to put the button on.
 - No automated test coverage added — same gap H6.1/H6.2 already flagged (no frontend component test harness in this repo, only `convex-test` for backend functions).
 
@@ -209,7 +209,7 @@ Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere t
 - Unlike H6.1/H6.2's sandbox, `npm install` succeeded in this session's environment (`registry.npmjs.org` reachable), so `tsc`/`eslint`/`vitest` above are real runs, not the "no tooling available" caveat those sessions had to flag. `npx next build` wasn't attempted here since H6.2 already established it fails in-sandbox purely on the `next/font` Google Fonts egress restriction, unrelated to app code.
 
 ### H7 — Game-room page: game main + chat/call/screen-share panel
-- `/portal/room/[room_id]` (repurposed) renders the game (`RoundView`/lobby state) center-stage, with a right-side panel stacking chat (`ChatUI`, scoped to the room's `conversation_id`) and call controls/participant grid (reusing `CallOverlay`/`CallControls`/screen share as-is).
+- `/orbital/room/[room_id]` (repurposed) renders the game (`RoundView`/lobby state) center-stage, with a right-side panel stacking chat (`ChatUI`, scoped to the room's `conversation_id`) and call controls/participant grid (reusing `CallOverlay`/`CallControls`/screen share as-is).
 - Permanently docked (not a modal), collapsible to a drawer on mobile.
 
 ### H7.1 — done
@@ -230,8 +230,8 @@ Rationale for this order: H6.1 first because H6.2 and H6.3 both need somewhere t
   - Mobile: a slide-in drawer via `translate-x`, gated on `uiStore`'s `rightMobileMenu` — the same flag the old `RightSidebar`'s own mobile drawer used, reused here rather than inventing a second flag for the same visual slot.
 
 **Frontend — edited:**
-- `app/portal/room/[room_id]/page.tsx`: center-stage content is now `<GameStage room_id={room_id} />` (H7.1's component) instead of the old chat-only `Room`/`RoomChatUI`. The membership-check/redirect logic above it is untouched.
-- `app/portal/room/[room_id]/layout.tsx`: rewritten. Drops `TopBar` (search + info/media/calls tab-toggle header), `RightSidebar` (member list), `DetailsSidebar` + its tab children, and the old full-screen `CallOverlay` usage. Adds `GameRoomSidePanel` alongside the (unchanged) `LeftSidebar`, plus one small new bit of chrome: a mobile-only toggle button (`lg:hidden`, flips `rightMobileMenu`) taking over the job `TopBar`'s "Room Members" button used to do for opening the right-side panel on small screens.
+- `app/orbital/room/[room_id]/page.tsx`: center-stage content is now `<GameStage room_id={room_id} />` (H7.1's component) instead of the old chat-only `Room`/`RoomChatUI`. The membership-check/redirect logic above it is untouched.
+- `app/orbital/room/[room_id]/layout.tsx`: rewritten. Drops `TopBar` (search + info/media/calls tab-toggle header), `RightSidebar` (member list), `DetailsSidebar` + its tab children, and the old full-screen `CallOverlay` usage. Adds `GameRoomSidePanel` alongside the (unchanged) `LeftSidebar`, plus one small new bit of chrome: a mobile-only toggle button (`lg:hidden`, flips `rightMobileMenu`) taking over the job `TopBar`'s "Room Members" button used to do for opening the right-side panel on small screens.
 - `src/components/features/calls/CallOverlay.tsx`: repurposed from a `fixed inset-0 z-[9999]` full-screen modal takeover into a docked, fixed-height (`h-72`) block that fits inside `GameRoomSidePanel`'s call slot. Drops the `<SignalPanel />` it used to nest — now redundant since `GameStage` is the room's permanent, call-independent game view, and mounting both would mean two independently-mutating clients of the same live session. Drops the `isCallOverlayOpen` gate — that flag meant "is the full-screen takeover open", which doesn't apply to a permanently-docked panel; other code (`useCallSessionActions`, `ActiveCallPanel`, `CallControls`'s leave handler) still harmlessly writes to it, this component just no longer reads it. `isActive && isOnCorrectPage` alone now decides whether the docked call section shows.
 - `src/components/features/calls/CallOverlayHeader.tsx`: dropped the "Back to Chat" arrow (`setCallOverlayOpen(false)`) — there's nothing to "go back" to anymore since chat is always visible below the call section, not hidden behind a full-screen takeover. Kept the elapsed-call-duration readout.
 - `src/components/features/calls/CallControls.tsx`: removed the "Play Signal" button and its `signalSessionId`/`isStartingSignal`/`createSignalSession` plumbing. It used to be the only way to surface Signal (opening `SignalPanel` as a modal over the call) — now that `GameStage` always shows the room's live session, a second trigger reopening a duplicate view of the same `session_id` would be confusing and race-prone (two panels independently calling `createSession`/`endSession`). Every other control (mute/video/screen-share/settings/leave) is untouched.

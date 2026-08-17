@@ -26,7 +26,7 @@
  * refreshes, not new connections, and lose no ground.
  *
  * `crypto.randomUUID()` needs a secure context (https, or localhost) —
- * true for every deployed/dev Portal target. No fallback is provided; if
+ * true for every deployed/dev Orbital target. No fallback is provided; if
  * this throws, F1b's guard simply doesn't engage for that tab, which is a
  * strict improvement over not existing (falls back to F1a's pre-existing
  * unconditional-disconnect behavior — see the optional-arg handling in

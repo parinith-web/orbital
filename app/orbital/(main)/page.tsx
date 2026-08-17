@@ -15,7 +15,7 @@ import { Button } from "@/components/ui";
 import { ROUTES } from "@/lib/constants/routes";
 
 /**
- * H6.2 — Game Hub, the real `/portal` home (replacing H4's placeholder
+ * H6.2 — Game Hub, the real `/orbital` home (replacing H4's placeholder
  * card). Structured as one game tile ("Anomaly") with three entry points —
  * Create Room / Join Room / Play Online — rather than a page-level layout
  * that only happens to fit one game, since the plan calls for more tiles
@@ -24,7 +24,7 @@ import { ROUTES } from "@/lib/constants/routes";
  * Create Room / Join Room just open H6.1's modals (`setModal("CREATE_ROOM"
  * | "JOIN_ROOM")`) — this page owns no room-code/session logic itself, that
  * all already lives in `CreateRoomModal`/`JoinRoomModal` and the mutations
- * they call. Play Online reuses the existing `/portal/anomaly` route
+ * they call. Play Online reuses the existing `/orbital/anomaly` route
  * (`PublicLobbyEntry`) untouched, exactly as H5's "no changes needed" note
  * said.
  */
@@ -76,7 +76,7 @@ export default function Page() {
           <Button
             variant="ghost"
             className="w-full justify-center gap-2"
-            onClick={() => router.push(ROUTES.PORTAL_ANOMALY)}
+            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
           >
             <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
             Play Online

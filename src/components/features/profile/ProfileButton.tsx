@@ -24,10 +24,10 @@ export const ProfileButton = ({
   return (
     <div
       onClick={() => {
-        router.push("/portal/settings");
+        router.push("/orbital/settings");
         setLeftMobileMenu?.(false);
       }}
-      className={`${/^\/portal\/(settings|profile)/.test(pathname) ? "bg-theme-hover" : ""} flex justify-between items-center cursor-pointer hover:bg-theme-hover ease-in-out rounded-xl w-60 px-2 py-2`}
+      className={`${/^\/orbital\/(settings|profile)/.test(pathname) ? "bg-theme-hover" : ""} flex justify-between items-center cursor-pointer hover:bg-theme-hover ease-in-out rounded-xl w-60 px-2 py-2`}
     >
       <div className="flex gap-4 items-center">
         <div className="relative">

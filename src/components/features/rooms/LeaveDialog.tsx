@@ -33,7 +33,7 @@ export const LeaveDialog = () => {
       toast.success("Left room");
     }
     closeModal();
-    router.replace("/portal");
+    router.replace("/orbital");
   };
 
   return (

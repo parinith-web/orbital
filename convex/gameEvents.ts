@@ -17,10 +17,10 @@ import type { Doc } from "./_generated/dataModel";
  * FOUR EVENT TYPES, MAPPED TO THE PRD'S FOUR METRICS (re-read §8 fresh
  * before writing this, per SIGNAL_PROGRESS.md's own standing convention):
  *
- * 1. "% of active Portal rooms that try Anomaly at least once" (Feature 1
+ * 1. "% of active Orbital rooms that try Anomaly at least once" (Feature 1
  *    adoption) <- `session_created` events where `mode === "private"`.
  *    Group by `room_id`, count distinct rooms with >=1 such event, divide
- *    by however "active Portal rooms" ends up being defined against the
+ *    by however "active Orbital rooms" ends up being defined against the
  *    existing `rooms` table (that denominator is a product decision this
  *    file doesn't make). NOTE: this is *also* reconstructable from the
  *    `gameSessions` table itself today (one private row per room, and
@@ -65,7 +65,7 @@ import type { Doc } from "./_generated/dataModel";
  *    for a distinction this metric doesn't actually need (it wants
  *    "did rounds keep happening," not "who clicked which button").
  *
- * 4. "Whether Anomaly usage correlates with longer overall Portal session
+ * 4. "Whether Anomaly usage correlates with longer overall Orbital session
  *    time" <- join any of the above three event types (by `user_id` and
  *    `created_at`) against the existing `presence` table's own
  *    `updated_at` activity trail. No new event type needed here — this

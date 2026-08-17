@@ -7,7 +7,7 @@ import schema from "./schema";
 /**
  * F2a — cross-session dedup guard for public matchmaking.
  *
- * Covers the two concrete scenarios `portal_1.md`'s F2 line names
+ * Covers the two concrete scenarios `orbital_1.md`'s F2 line names
  * ("double-click join, refresh mid-match"), both of which trace back to
  * the same root gap `publicMatchmaking.ts`'s own header flagged since D1:
  * nothing stopped a caller who already had a live `gamePlayers` row in one

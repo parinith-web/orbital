@@ -11,7 +11,7 @@ import schema from "./schema";
  * scratch": `publicMatchmaking.ts`'s own header already argues that Convex's
  * mutations are isolated, serializable transactions, so two concurrent
  * `findOrCreatePublicSession` calls touching the same nearly-full room can't
- * both land and overshoot `capacity`. D2c's job (per portal_1.md's own done
+ * both land and overshoot `capacity`. D2c's job (per orbital_1.md's own done
  * condition) is to *demonstrate* that property against real execution, not
  * just assert it in a comment — and to confirm it still holds now that D2a
  * (lock-on-full) and D2b (lock-on-start) both added a second/third write

@@ -24,7 +24,7 @@ import { PublicLobbyScreen } from "./PublicLobbyScreen";
  * auto-triggered call, E4's post-game screen — see `PublicLobbyScreen`'s
  * own doc comment for what's still deliberately out of scope.
  *
- * SINGLE-CLICK FLOW: the PRD's Flow B is "Portal home -> 'Join a Game' ->
+ * SINGLE-CLICK FLOW: the PRD's Flow B is "Orbital home -> 'Join a Game' ->
  * matchmaking places user" — one click, not click-then-click-again. The
  * click already happened in the sidebar (navigating here); this component
  * fires the matchmaking mutation itself on mount rather than waiting for a
@@ -111,7 +111,7 @@ export const PublicLobbyEntry = () => {
       // Leaving is best-effort here — either way, send the player back.
     } finally {
       setIsLeaving(false);
-      router.push(ROUTES.PORTAL);
+      router.push(ROUTES.ORBITAL);
     }
   };
 
@@ -153,8 +153,8 @@ export const PublicLobbyEntry = () => {
             <h1 className="text-lg font-medium text-white">Couldn&apos;t find a game</h1>
             <p className="text-sm text-gray-400">{state.message}</p>
             <div className="flex gap-2 mt-2">
-              <Button variant="secondary" onClick={() => router.push(ROUTES.PORTAL)}>
-                Back to Portal
+              <Button variant="secondary" onClick={() => router.push(ROUTES.ORBITAL)}>
+                Back to Orbital
               </Button>
               <Button variant="primary" onClick={handleRetry}>
                 Try Again

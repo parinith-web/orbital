@@ -5,7 +5,7 @@ export function useActiveConversationId(): string | null {
   const pathname = usePathname();
 
   return useMemo(() => {
-    const roomMatch = pathname.match(/^\/portal\/room\/([^\/]+)(\/.*)?$/);
+    const roomMatch = pathname.match(/^\/orbital\/room\/([^\/]+)(\/.*)?$/);
     if (roomMatch) {
       return roomMatch[1];
     }

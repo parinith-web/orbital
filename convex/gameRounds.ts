@@ -201,7 +201,7 @@ export const ANOMALY_SYSTEM_SENDER = { sender_id: "anomaly_system", sender_usern
  * reusing the exact `messages` shape `rooms.ts` already uses for its own
  * join/leave system messages. `session.room_id` is used as-is regardless
  * of session mode (see file header's mode-agnostic SCOPE note) — private
- * sessions point at a real Portal room, and Phase E's public-lobby rooms
+ * sessions point at a real Orbital room, and Phase E's public-lobby rooms
  * are expected to reuse the same room/chat surface once built.
  */
 export async function postSystemMessage(ctx: MutationCtx, session: Doc<"gameSessions">, content: string) {
@@ -458,7 +458,7 @@ export const startRound = mutation({
 
 /**
  * AUTOSTART COUNTDOWN (E2) — the public lobby's "4 players triggers a 15s
- * countdown" default from portal_1.md, which nothing before this session
+ * countdown" default from orbital_1.md, which nothing before this session
  * actually implemented: A1 added the `min_players_to_start` /
  * `countdown_started_at` fields to `gameSessions`, D1 stamps the former on
  * every public session it creates, and D3's recycle path resets the latter

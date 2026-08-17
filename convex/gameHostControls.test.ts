@@ -105,7 +105,7 @@ describe("H8 — endSession keeps the pre-H8 'any current player' rule for hostl
       "room_nohost_1",
     );
 
-    // member_a is not the Portal room's owner and never ran createSession
+    // member_a is not the Orbital room's owner and never ran createSession
     // themself — exactly the case the pre-H8 "no host concept" rule
     // exists for.
     const result = await t

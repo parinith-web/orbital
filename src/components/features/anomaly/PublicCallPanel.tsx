@@ -15,7 +15,7 @@ import { CallOverlayHeader } from "@/components/features/calls/CallOverlayHeader
  * Fixes the gap the Anomaly mockup calls for but "Play Online" never got:
  * a left-hand participant video panel. A private room already gets this
  * for free from `CallPanel.tsx` (mounted by `[room_id]/layout.tsx`), but
- * `/portal/anomaly` sits under the plain `(main)` shell (just
+ * `/orbital/anomaly` sits under the plain `(main)` shell (just
  * `LeftSidebar` + content — see that layout's own comment) and, before
  * this, only rendered `PublicLobbyVoice`'s compact mute-only status strip
  * in place of it — no video tiles, no camera/screen-share controls.
@@ -26,8 +26,8 @@ import { CallOverlayHeader } from "@/components/features/calls/CallOverlayHeader
  * H7.2 (`CallControls.tsx`'s own header confirms this) — `CallOverlay` is
  * just `CallOverlayHeader + ParticipantGrid + CallControls` today, none of
  * which are round-UI or session-control components. It's still not reused
- * directly here only because it gates on `pathname.includes("/portal/room/…")`
- * (see `CallOverlay.tsx`), which is never true on `/portal/anomaly` — so
+ * directly here only because it gates on `pathname.includes("/orbital/room/…")`
+ * (see `CallOverlay.tsx`), which is never true on `/orbital/anomaly` — so
  * this composes the same three primitives directly instead, sidestepping
  * that route check rather than fighting it.
  *

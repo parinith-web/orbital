@@ -30,7 +30,7 @@ export default function LoginPage() {
           routing="path"
           path="/login"
           signUpUrl="/signup"
-          forceRedirectUrl="/portal"
+          forceRedirectUrl="/orbital"
           appearance={{
             elements: {
               rootBox: "bg-[#101010] rounded-xl",

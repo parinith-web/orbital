@@ -65,7 +65,7 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
     setIsFinishing(true);
     try {
       await createUser({ username, avatar });
-      toast.success("Welcome to Portal!");
+      toast.success("Welcome to Orbital!");
       onComplete();
     } catch (e) {
       toast.error("Failed to create profile");
@@ -117,7 +117,7 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
                     <h1
                       className={`${galindo.className} text-3xl font-bold text-white mb-2`}
                     >
-                      Portal
+                      Orbital
                     </h1>
                     <p className="text-gray-300">Let's get your profile set up.</p>
                   </div>

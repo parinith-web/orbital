@@ -6,8 +6,8 @@ import { useUIStore } from "@/store/uiStore";
 import { UserInfoTab } from "@/components/features/profile/ProfilePage/UserInfoTab";
 import { PreferencesTab } from "@/components/features/profile/ProfilePage/PreferencesTab";
 
-// Settings route — merges the former standalone Profile (`/portal/profile`)
-// and Preferences (`/portal/preferences`) destinations into a single tab.
+// Settings route — merges the former standalone Profile (`/orbital/profile`)
+// and Preferences (`/orbital/preferences`) destinations into a single tab.
 // UserInfoTab and PreferencesTab are both fully self-contained (they read/
 // write the user store and colorContext/PreferencesContext respectively),
 // so this page just supplies the shared header chrome plus a small

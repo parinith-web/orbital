@@ -1,6 +1,6 @@
 import { Skeleton } from "./Skeleton";
 
-export default function PortalShellSkeleton({
+export default function OrbitalShellSkeleton({
   showNotifications = true,
 }: {
   showNotifications?: boolean;

@@ -7,7 +7,7 @@
  * one constant. This file has none of that, so `RoundView`-style client
  * countdown UI can import straight from here.
  *
- * portal_1.md's locked-in default: "4 players triggers a 15s countdown."
+ * orbital_1.md's locked-in default: "4 players triggers a 15s countdown."
  */
 export const AUTOSTART_COUNTDOWN_MS = 15 * 1000;
 
@@ -15,7 +15,7 @@ export const AUTOSTART_COUNTDOWN_MS = 15 * 1000;
  * G2 — the prefix `generateSessionId("public_room")` (gameSessions.ts) uses
  * for a public session's synthetic `room_id`. Split out here, same pure-
  * module reasoning as `AUTOSTART_COUNTDOWN_MS` above, so client code that
- * needs to tell "this is a real Portal room" from "this is a public Anomaly
+ * needs to tell "this is a real Orbital room" from "this is a public Anomaly
  * lobby's synthetic room" apart (see PersistentCallWidget.tsx) has one
  * canonical string to check against instead of a second hardcoded copy of
  * `publicMatchmaking.ts`'s own literal. This is the `prefix` argument

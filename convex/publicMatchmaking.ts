@@ -222,7 +222,7 @@ export const findOrCreatePublicSession = mutation({
     }
 
     // No open room found — spin up a new one and seat the caller as its
-    // first member. `room_id` is synthetic (no real Portal `rooms` row
+    // first member. `room_id` is synthetic (no real Orbital `rooms` row
     // behind it, unlike private sessions) — it exists purely so this
     // session's system messages (gameRounds.ts's postSystemMessage) have
     // somewhere to post into, via the same `messages` conversation_id

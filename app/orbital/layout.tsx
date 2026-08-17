@@ -8,17 +8,17 @@ import { usePathname } from "next/navigation";
 import { ColorProvider, useColor } from "@/contexts/colorContext";
 import NotificationListener from "@/components/features/notifications/NotificationListener";
 import CallCleanupListener from "@/components/features/calls/CallCleanupListener";
-import PortalShellSkeleton from "@/components/skeletons/PortalShellSkeleton";
+import OrbitalShellSkeleton from "@/components/skeletons/OrbitalShellSkeleton";
 import { useCurrentUser } from "@/hooks";
 import { OnboardingDialog } from "@/components/features/auth/OnboardingDialog";
 
-function PortalLayoutContent({ children }: { children: React.ReactNode }) {
+function OrbitalLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
   const pathname = usePathname();
   const { isThemeReady } = useColor();
-  const isRoomPage = pathname.startsWith("/portal/room");
+  const isRoomPage = pathname.startsWith("/orbital/room");
   const [hasOnboarded, setHasOnboarded] = useState(false);
 
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -48,11 +48,11 @@ function PortalLayoutContent({ children }: { children: React.ReactNode }) {
 
   const handleOnboardingComplete = () => {
     setHasOnboarded(true);
-    router.replace("/portal");
+    router.replace("/orbital");
   };
 
   if ((isLoading || !isThemeReady || isProfileLoading) && !isRoomPage) {
-    return <PortalShellSkeleton />;
+    return <OrbitalShellSkeleton />;
   }
 
   const wasDeleted =
@@ -97,5 +97,5 @@ function PortalLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <PortalLayoutContent>{children}</PortalLayoutContent>;
+  return <OrbitalLayoutContent>{children}</OrbitalLayoutContent>;
 }

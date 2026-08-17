@@ -206,7 +206,7 @@ describe("H2/H9 — score-threshold end condition", () => {
     // Seed every voter at exactly WINNING_SCORE - 1 so a clean +1 for a
     // correct accusation pushes ALL of them past the line in the same
     // reveal — the "several players each score +1 in the same round" case
-    // portal_1.md's own H2 line calls out.
+    // orbital_1.md's own H2 line calls out.
     for (const voter of voters) await setScore(t, sessionId, voter, WINNING_SCORE - 1);
     await setScore(t, sessionId, trueOffSignal, 0);
 

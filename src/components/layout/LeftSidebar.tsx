@@ -25,25 +25,25 @@ import { api } from "@/convex/_generated/api";
  * Settings. This replaced the old game-first nav (Game Hub / Play Online
  * only, with no Friends/DMs or standalone Rooms destination). Play Online
  * isn't dropped from the app — it still lives as a tile inside the Game Hub
- * page itself (app/portal/(main)/page.tsx), it's just no longer a top-level
+ * page itself (app/orbital/(main)/page.tsx), it's just no longer a top-level
  * nav item now that Friends/Rooms/Settings have taken those slots.
  *
- * Settings (`/portal/settings`) merges what used to be two separate
+ * Settings (`/orbital/settings`) merges what used to be two separate
  * destinations — Profile and Preferences — into one tab with an internal
- * sub-tab switcher. The old `/portal/profile` and `/portal/preferences`
- * routes still exist as redirects to `/portal/settings` so old links/
+ * sub-tab switcher. The old `/orbital/profile` and `/orbital/preferences`
+ * routes still exist as redirects to `/orbital/settings` so old links/
  * bookmarks don't 404.
  *
- * All destinations are fully built: Friends (`/portal/friends` — Chats,
- * Requests, Find people), Rooms (`/portal/rooms`), and Settings
- * (`/portal/settings` — Profile + Preferences).
+ * All destinations are fully built: Friends (`/orbital/friends` — Chats,
+ * Requests, Find people), Rooms (`/orbital/rooms`), and Settings
+ * (`/orbital/settings` — Profile + Preferences).
  *
  * The Friends nav item also carries a small badge showing the incoming
  * pending-friend-request count (see `incomingRequestCount` below) — same
  * `listPendingRequests` query the Friends page's Requests tab uses.
  *
  * H6.3 — the `?join=` deep-link is still wired to the Join Room modal:
- * a shared link like `/portal?join=7K4RXP` opens `JoinRoomModal` with the
+ * a shared link like `/orbital?join=7K4RXP` opens `JoinRoomModal` with the
  * code pre-filled via `setModal("JOIN_ROOM", { join_code })`, which
  * `GlobalModals.tsx` already reads from `modalData?.join_code`. The param
  * is then stripped from the URL so a refresh/back-nav doesn't reopen it.
@@ -51,7 +51,7 @@ import { api } from "@/convex/_generated/api";
 
 type LeftSidebarProps = {
   className?: string;
-  showPortalSkeletons?: boolean;
+  showOrbitalSkeletons?: boolean;
 };
 
 type NavItem = {
@@ -66,38 +66,38 @@ const NAV_ITEMS: NavItem[] = [
   {
     key: "game-hub",
     label: "Game Hub",
-    route: ROUTES.PORTAL,
+    route: ROUTES.ORBITAL,
     icon: Home01Icon,
-    isActive: (pathname) => /^\/portal$/.test(pathname),
+    isActive: (pathname) => /^\/orbital$/.test(pathname),
   },
   {
     key: "friends",
     label: "Friends",
-    route: ROUTES.PORTAL_FRIENDS,
+    route: ROUTES.ORBITAL_FRIENDS,
     icon: UserGroupIcon,
-    isActive: (pathname) => /^\/portal\/friends/.test(pathname),
+    isActive: (pathname) => /^\/orbital\/friends/.test(pathname),
   },
   {
     key: "rooms",
     label: "Rooms",
-    route: ROUTES.PORTAL_ROOMS,
+    route: ROUTES.ORBITAL_ROOMS,
     icon: HashtagIcon,
-    isActive: (pathname) => /^\/portal\/rooms/.test(pathname),
+    isActive: (pathname) => /^\/orbital\/rooms/.test(pathname),
   },
   {
     key: "settings",
     label: "Settings",
-    route: ROUTES.PORTAL_SETTINGS,
+    route: ROUTES.ORBITAL_SETTINGS,
     icon: Settings01Icon,
-    // Matches the old /portal/profile and /portal/preferences paths too,
+    // Matches the old /orbital/profile and /orbital/preferences paths too,
     // so this item still highlights while those routes redirect in.
-    isActive: (pathname) => /^\/portal\/(settings|profile|preferences)/.test(pathname),
+    isActive: (pathname) => /^\/orbital\/(settings|profile|preferences)/.test(pathname),
   },
 ];
 
 export default function LeftSidebar({
   className = "",
-  showPortalSkeletons = true,
+  showOrbitalSkeletons = true,
 }: LeftSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -112,7 +112,7 @@ export default function LeftSidebar({
   );
   const incomingRequestCount = pendingRequests?.incoming.length ?? 0;
 
-  // H6.3 — a shared `/portal?join=CODE` link opens Join Room with the code
+  // H6.3 — a shared `/orbital?join=CODE` link opens Join Room with the code
   // pre-filled, then drops the param from the URL so the modal doesn't
   // reopen on refresh/back-nav. Only fires once user auth has resolved
   // (mirrors the rest of this component gating on `user?.user_id`) so an
@@ -173,7 +173,7 @@ export default function LeftSidebar({
             </div>
           )}
 
-          {!user?.user_id && showPortalSkeletons ? (
+          {!user?.user_id && showOrbitalSkeletons ? (
             <div className="flex mt-2 flex-col gap-2 items-center">
               <Skeleton className="h-[24px] mt-2 w-[240px] rounded-[4px]" />
             </div>
