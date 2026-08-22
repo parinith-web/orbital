@@ -78,10 +78,12 @@ export function PlainRoomLayout({ room_id }: { room_id: string }) {
         <div className="flex-1 flex flex-col min-w-0 bg-theme-surface">
           <TopBar room_id={room_id} />
           <div className="flex-1 flex overflow-hidden">
+            {isSidebarOpen && (
+              <DetailsSidebar id={room_id} type="room" side="left" />
+            )}
             <div className="flex-1 overflow-hidden relative">
               <Room room_id={room_id} />
             </div>
-            {isSidebarOpen && <DetailsSidebar id={room_id} type="room" />}
           </div>
           <RoomCallOverlay />
         </div>

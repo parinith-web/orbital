@@ -22,12 +22,14 @@ interface SidebarCallsProps {
   roomId: string;
   conversationName?: string;
   onClose: () => void;
+  side?: "left" | "right";
 }
 
 export function SidebarCalls({
   roomId,
   conversationName,
   onClose,
+  side,
 }: SidebarCallsProps) {
   const { activeCalls, recentCalls, isLoading } = useCalls(roomId);
   const setActiveCall = useUIStore((s) => s.setActiveCall);
@@ -38,7 +40,7 @@ export function SidebarCalls({
 
   if (isLoading) {
     return (
-      <SidebarLayout>
+      <SidebarLayout side={side}>
         <SidebarHeader title="Calls" onClose={onClose} />
         <div className="p-4 text-gray-400 flex flex-col gap-2">
           <Skeleton className="w-full h-20 rounded-xl" />
@@ -72,7 +74,7 @@ export function SidebarCalls({
   const hasNoCalls = activeCalls.length === 0 && endedCalls.length === 0;
 
   return (
-    <SidebarLayout>
+    <SidebarLayout side={side}>
       <SidebarHeader title="Calls" onClose={onClose} />
       <div className="flex-1 min-h-0 overflow-y-auto">
         {callError && (

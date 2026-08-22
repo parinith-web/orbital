@@ -34,6 +34,7 @@ interface SidebarInfoProps {
   currentUser: any;
   isLoading: boolean;
   onClose: () => void;
+  side?: "left" | "right";
 }
 
 export function SidebarInfo({
@@ -44,6 +45,7 @@ export function SidebarInfo({
   currentUser,
   isLoading,
   onClose,
+  side,
 }: SidebarInfoProps) {
   const { renameRoom, setNotificationPreference } = useRoomActions();
   const roomMembers = useRoomMembers(id);
@@ -118,7 +120,7 @@ export function SidebarInfo({
   };
 
   return (
-    <SidebarLayout>
+    <SidebarLayout side={side}>
       <SidebarHeader title="Room Info" onClose={onClose} />
       <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col gap-8">
         <div className="flex flex-col items-center gap-4 text-center">

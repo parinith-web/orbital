@@ -11,9 +11,11 @@ interface DetailsSidebarProps {
   id: string;
   type: "room" | "direct";
   title?: string;
+  /** Which edge of the screen the sidebar is docked to. Defaults to "right". */
+  side?: "left" | "right";
 }
 
-export function DetailsSidebar({ id, type, title }: DetailsSidebarProps) {
+export function DetailsSidebar({ id, type, title, side }: DetailsSidebarProps) {
   const { sidebarTab, setSidebarOpen } = useUIStore();
   const handleClose = () => setSidebarOpen(false);
   const { room, isLoading: isRoomLoading } = useRoom(id);
@@ -35,6 +37,7 @@ export function DetailsSidebar({ id, type, title }: DetailsSidebarProps) {
             currentUser={user}
             isLoading={isRoomLoading}
             onClose={handleClose}
+            side={side}
           />
         </div>
       )}
@@ -43,6 +46,7 @@ export function DetailsSidebar({ id, type, title }: DetailsSidebarProps) {
           mediaFiles={mediaFiles || []}
           isLoading={isMediaLoading}
           onClose={handleClose}
+          side={side}
         />
       </div>
       <div className={sidebarTab === "calls" ? "contents" : "hidden"}>
@@ -50,6 +54,7 @@ export function DetailsSidebar({ id, type, title }: DetailsSidebarProps) {
           roomId={id}
           conversationName={title}
           onClose={handleClose}
+          side={side}
         />
       </div>
     </div>

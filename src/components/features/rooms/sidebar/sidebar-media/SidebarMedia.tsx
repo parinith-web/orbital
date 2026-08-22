@@ -10,12 +10,14 @@ interface SidebarMediaProps {
   mediaFiles: any[];
   isLoading: boolean;
   onClose: () => void;
+  side?: "left" | "right";
 }
 
 export function SidebarMedia({
   mediaFiles,
   isLoading,
   onClose,
+  side,
 }: SidebarMediaProps) {
   const { openLightbox } = useUIStore();
 
@@ -47,7 +49,7 @@ export function SidebarMedia({
   };
 
   return (
-    <SidebarLayout>
+    <SidebarLayout side={side}>
       <SidebarHeader title="Media Gallery" onClose={onClose} />
       <MediaLightbox />
 
