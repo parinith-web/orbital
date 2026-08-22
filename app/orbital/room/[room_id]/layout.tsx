@@ -1,12 +1,16 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { useUIStore } from "@/store/uiStore";
 import { CallPanel } from "@/components/features/rooms/CallPanel";
 import { ChatPanel } from "@/components/features/rooms/ChatPanel";
+import { PlainRoomLayout } from "@/components/features/rooms/PlainRoomLayout";
 import { RoomCallProvider } from "@/contexts/CallContext";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
+import { ChatSkeleton } from "@/components/skeletons/ChatSkeleton";
 
 /**
  * Session 3 (layout restructure scaffold) — replaces the single docked
@@ -41,34 +45,61 @@ import { UserGroupIcon } from "@hugeicons/core-free-icons";
  * `CallOverlay.tsx`), the panel itself needs a bounded height so that
  * dock can pin in place while `ParticipantGrid` scrolls internally
  * instead of the whole column scrolling underneath it.
+ *
+ * Session 5 — this game-room branch (below) is completely unchanged from
+ * Session 4. What's new is the fork at the top of `LayoutContent`: rooms
+ * created via the Rooms tab (`rooms.createRoom`, no `gameSessions` row)
+ * never reach this JSX at all anymore. They render `PlainRoomLayout`
+ * instead — Portal's chat/call room experience, with no `GameStage`,
+ * `CallPanel`, or `ChatPanel` anywhere in the tree. See `PlainRoomLayout`
+ * and `RoomCallOverlay`'s header comments for why those are separate,
+ * forked components rather than edits to the files below.
+ *
+ * The fork reads `gameSessions.getSessionByRoomId(room_id)` — the exact
+ * same query `GameStage` already uses to find its session — so a room is
+ * classified as "game room" using the same source of truth `GameStage`
+ * itself relies on, not a second guess at it. `page.tsx` (which always
+ * renders `<GameStage room_id={room_id} />`) is untouched: for the
+ * plain-room branch, `PlainRoomLayout` renders its own content instead of
+ * `{children}`, so `GameStage` — and its "Start Anomaly" fallback button
+ * — never mounts for a plain room.
  */
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const room_id = params.room_id as string;
   const { setRightMobileMenu } = useUIStore();
 
+  // undefined = still loading, null = no live session, object = game room.
+  const session = useQuery(api.gameSessions.getSessionByRoomId, { room_id });
+
   return (
     <RoomCallProvider roomId={room_id}>
-      <section className="flex h-[100dvh] overflow-hidden">
-        <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
-          <CallPanel
-            room_id={room_id}
-            className="w-full shrink-0 border-b lg:border-b-0 lg:border-r lg:w-80 lg:h-full lg:overflow-hidden"
-          />
-          <div className="flex-1 flex flex-col min-w-0 bg-theme-surface">
-            <div className="flex-1 overflow-hidden relative">
-              {children}
-              <button
-                onClick={() => setRightMobileMenu(true)}
-                className="lg:hidden absolute top-3 right-3 z-40 w-9 h-9 flex items-center justify-center rounded-full bg-theme-surface border border-theme-border text-gray-300"
-              >
-                <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
-              </button>
+      {session === undefined ? (
+        <ChatSkeleton />
+      ) : session === null ? (
+        <PlainRoomLayout room_id={room_id} />
+      ) : (
+        <section className="flex h-[100dvh] overflow-hidden">
+          <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden min-w-0">
+            <CallPanel
+              room_id={room_id}
+              className="w-full shrink-0 border-b lg:border-b-0 lg:border-r lg:w-80 lg:h-full lg:overflow-hidden"
+            />
+            <div className="flex-1 flex flex-col min-w-0 bg-theme-surface">
+              <div className="flex-1 overflow-hidden relative">
+                {children}
+                <button
+                  onClick={() => setRightMobileMenu(true)}
+                  className="lg:hidden absolute top-3 right-3 z-40 w-9 h-9 flex items-center justify-center rounded-full bg-theme-surface border border-theme-border text-gray-300"
+                >
+                  <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
+                </button>
+              </div>
             </div>
+            <ChatPanel room_id={room_id} className="lg:w-80 lg:flex-shrink-0 lg:border-l" />
           </div>
-          <ChatPanel room_id={room_id} className="lg:w-80 lg:flex-shrink-0 lg:border-l" />
-        </div>
-      </section>
+        </section>
+      )}
     </RoomCallProvider>
   );
 }

@@ -1,11 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { useUIStore } from "@/store/uiStore";
+import { useRoomMembers } from "@/hooks";
 import TopBar from "@/components/layout/TopBar";
 import RightSidebar from "@/components/layout/RightSidebar";
 import { DetailsSidebar } from "@/components/features/rooms/sidebar/DetailsSidebar";
 import Room from "@/components/features/rooms/RoomChatUI";
 import { RoomCallOverlay } from "@/components/features/rooms/call/RoomCallOverlay";
+import { ChatSkeleton } from "@/components/skeletons/ChatSkeleton";
 
 /**
  * Session 4 — the plain chat/call room shell, ported from Portal's
@@ -31,9 +36,41 @@ import { RoomCallOverlay } from "@/components/features/rooms/call/RoomCallOverla
  * `RoomCallProvider` is intentionally NOT wrapped here — it's provided by
  * the parent `layout.tsx` for both the game-room and plain-room branches,
  * same as today.
+ *
+ * Session 5 — because `page.tsx` never mounts for a plain room (see
+ * above), it also never runs its membership guard (redirects a non-member
+ * back out of the room). This component carries that exact same guard
+ * itself so a plain room is protected identically to how Portal protects
+ * every room and to how a game room is still protected by `page.tsx`.
  */
 export function PlainRoomLayout({ room_id }: { room_id: string }) {
   const { isSidebarOpen } = useUIStore();
+  const router = useRouter();
+  const members = useRoomMembers(room_id);
+  const { userId, isLoaded: isAuthLoaded } = useAuth();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!isAuthLoaded) return;
+
+    if (!userId) {
+      router.replace(`/`);
+      return;
+    }
+
+    if (members !== undefined) {
+      const isMember = members.some(
+        (m: { user_id: string }) => m.user_id === userId,
+      );
+      if (!isMember) {
+        router.replace("/orbital");
+      } else {
+        setChecking(false);
+      }
+    }
+  }, [room_id, router, members, userId, isAuthLoaded]);
+
+  if (checking) return <ChatSkeleton />;
 
   return (
     <section className="flex h-[100dvh] overflow-hidden">
