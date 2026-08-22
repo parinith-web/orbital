@@ -4,7 +4,6 @@ import { Logout01Icon } from "@hugeicons/core-free-icons";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import type { User } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
 import { useUIStore } from "@/store/uiStore";
 import { TooltipWrapper } from "@/components/ui/tooltip";
 
@@ -17,7 +16,6 @@ export const ProfileButton = ({
   awayUsers: Set<string>;
 }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const isAway = user?.user_id ? awayUsers.has(user.user_id.toString()) : false;
   const { setLeftMobileMenu } = useUIStore();
 
@@ -27,7 +25,7 @@ export const ProfileButton = ({
         router.push("/orbital/settings");
         setLeftMobileMenu?.(false);
       }}
-      className={`${/^\/orbital\/(settings|profile)/.test(pathname) ? "bg-theme-hover" : ""} flex justify-between items-center cursor-pointer hover:bg-theme-hover ease-in-out rounded-xl w-60 px-2 py-2`}
+      className="bg-theme-hover flex justify-between items-center cursor-pointer ease-in-out rounded-xl w-60 px-2 py-2"
     >
       <div className="flex gap-4 items-center">
         <div className="relative">
