@@ -58,7 +58,7 @@ export default function TopBar({ room_id }: { room_id: string }) {
 
   return (
     <div className="h-12">
-      <div className="z-[60] relative text-white/60 text-sm px-3 md:px-2 w-full justify-between flex items-center gap-2 bg-theme-surface h-12 border-theme-border border-b">
+      <div className="z-[60] relative text-white/60 text-sm px-3 md:px-2 w-full justify-start flex items-center gap-2 bg-theme-surface h-12 border-theme-border border-b">
         <TooltipWrapper content="Main menu" side="right">
           <button
             onClick={(e) => {
@@ -143,7 +143,7 @@ export default function TopBar({ room_id }: { room_id: string }) {
 
         <Popover.Root open={isSearchOpen} onOpenChange={setIsSearchOpen}>
           <Popover.Trigger asChild>
-            <div className="relative flex-none w-72 md:w-96 outline-none">
+            <div className="relative flex-none w-72 md:w-96 outline-none ml-auto">
               <div className="flex px-3 py-1 items-center text-gray-400 rounded-[6px] bg-theme-base overflow-hidden outline-none">
                 <HugeiconsIcon
                   icon={Search01Icon}
