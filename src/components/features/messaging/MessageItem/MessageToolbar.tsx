@@ -50,7 +50,7 @@ export const MessageToolbar = ({
 
   return (
     <div
-      className={`absolute top-1/2 -translate-y-1/2 left-full ml-2 z-[70] transition-opacity flex items-center gap-0.5 bg-theme-base border border-theme-border rounded-[8px] p-0.5 shadow-lg group-hover/row:opacity-100 ${menuOpen || hoverCardOpen ? "opacity-100" : "opacity-0"}`}
+      className={`absolute top-1/2 -translate-y-1/2 left-full ml-4 z-[70] transition-opacity flex items-center gap-0.5 bg-theme-base border border-theme-border rounded-[7px] p-0.5 shadow-lg group-hover/row:opacity-100 ${menuOpen || hoverCardOpen ? "opacity-100" : "opacity-0"}`}
     >
       <HoverCard.Root
         openDelay={100}
@@ -61,9 +61,9 @@ export const MessageToolbar = ({
 
         <HoverCard.Trigger asChild>
           <button
-            className={`p-1.5 rounded-[6px] transition-colors ${hoverCardOpen ? "bg-theme-hover text-white" : "text-gray-400 hover:text-white hover:bg-theme-hover"}`}
+            className={`p-1 rounded-[5px] transition-colors ${hoverCardOpen ? "bg-theme-hover text-white" : "text-gray-400 hover:text-white hover:bg-theme-hover"}`}
           >
-            <HugeiconsIcon icon={Happy01Icon} className="w-4 h-4" />
+            <HugeiconsIcon icon={Happy01Icon} className="w-3.5 h-3.5" />
           </button>
         </HoverCard.Trigger>
 
@@ -88,9 +88,9 @@ export const MessageToolbar = ({
               e.stopPropagation();
               onEditRequest();
             }}
-            className="p-1.5 hover:bg-theme-hover rounded-[6px] transition-colors text-gray-400 hover:text-white"
+            className="p-1 hover:bg-theme-hover rounded-[5px] transition-colors text-gray-400 hover:text-white"
           >
-            <HugeiconsIcon icon={PencilEdit01Icon} className="w-4 h-4" />
+            <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
           </button>
         </TooltipWrapper>
 
@@ -104,8 +104,8 @@ export const MessageToolbar = ({
         >
 
           <DropdownMenu.Trigger asChild>
-            <button className="p-1.5 rounded-[6px] transition-colors hover:bg-theme-hover text-gray-400 hover:text-white">
-              <HugeiconsIcon icon={MoreHorizontalIcon} className="w-4 h-4" />
+            <button className="p-1 rounded-[5px] transition-colors hover:bg-theme-hover text-gray-400 hover:text-white">
+              <HugeiconsIcon icon={MoreHorizontalIcon} className="w-3.5 h-3.5" />
             </button>
           </DropdownMenu.Trigger>
 
