@@ -143,7 +143,7 @@ export default function TopBar({ room_id }: { room_id: string }) {
 
         <Popover.Root open={isSearchOpen} onOpenChange={setIsSearchOpen}>
           <Popover.Trigger asChild>
-            <div className="relative flex-1 outline-none">
+            <div className="relative flex-none w-72 md:w-96 outline-none">
               <div className="flex px-3 py-1 items-center text-gray-400 rounded-[6px] bg-theme-base overflow-hidden outline-none">
                 <HugeiconsIcon
                   icon={Search01Icon}
@@ -181,7 +181,7 @@ export default function TopBar({ room_id }: { room_id: string }) {
                       setIsSearchOpen(false);
                     }
                   }}
-                  className="md:px-2 px-1 py-1 min-w-0 w-full bg-transparent outline-none placeholder-gray-400"
+                  className="md:px-2 px-1 py-1 min-w-0 w-full bg-transparent outline-none placeholder-gray-400 text-right"
                 />
               </div>
             </div>
