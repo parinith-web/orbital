@@ -79,7 +79,7 @@ export function ChatInputBar(props: ChatInputBarProps) {
   return (
     <div
       {...getRootProps()}
-      className="flex flex-col z-[99] w-full max-w-[520px] relative md:px-3 px-2 py-1 md:py-3 rounded-xl bg-theme-surface border border-theme-border"
+      className="flex flex-col z-[99] w-full max-w-[620px] relative md:px-3 px-2 py-1 md:py-3 rounded-xl bg-theme-surface border border-theme-border"
     >
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
