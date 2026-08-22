@@ -279,6 +279,19 @@ export const MessageItem = React.memo(
                     style={{ color: isImage || isVideo ? undefined : "" }}
                   />
                 )}
+
+                <MessageToolbar
+                  content={message.content}
+                  messageId={message._id as string}
+                  onDeleteRequest={onDeleteRequest}
+                  onEditRequest={() =>
+                    setEditingMessage({
+                      id: message._id,
+                      content: message.content || "",
+                    })
+                  }
+                  isCurrentUser={isCurrentUser}
+                />
               </div>
 
               <MessageReactions
@@ -288,18 +301,6 @@ export const MessageItem = React.memo(
               />
             </div>
           </div>
-          <MessageToolbar
-            content={message.content}
-            messageId={message._id as string}
-            onDeleteRequest={onDeleteRequest}
-            onEditRequest={() =>
-              setEditingMessage({
-                id: message._id,
-                content: message.content || "",
-              })
-            }
-            isCurrentUser={isCurrentUser}
-          />
         </div>
       </div>
     );
