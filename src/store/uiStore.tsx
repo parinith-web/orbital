@@ -11,6 +11,8 @@ export type ModalType =
   | "SWITCH_CALL"
   | "CREATE_ROOM"
   | "JOIN_ROOM"
+  | "CREATE_GAME_ROOM"
+  | "JOIN_GAME_ROOM"
   | null;
 
 type UIState = {

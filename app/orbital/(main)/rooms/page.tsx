@@ -18,10 +18,13 @@ import { ROUTES } from "@/lib/constants/routes";
  * Session 3 — Rooms tab. Reuses roomContext's `useRooms()` (already
  * populated by RoomsProvider in app/orbital/layout.tsx, same data
  * RightSidebar reads for the in-room member list) so there's no new
- * data-fetching here. Create Room / Join Room reuse the exact same global
- * modals the Game Hub tile opens (`setModal("CREATE_ROOM" | "JOIN_ROOM")`)
- * so that entry point isn't lost now that it's no longer only reachable
- * from Game Hub.
+ * data-fetching here. Create Room / Join Room open the global
+ * `CREATE_ROOM` / `JOIN_ROOM` modals.
+ *
+ * Session 2 — these now open the plain chat/call room modals
+ * (`rooms.createRoom` / `rooms.joinRoom`), decoupled from Anomaly game
+ * rooms. The Game Hub tile's Create/Join Room start a game room instead,
+ * via the separate `CREATE_GAME_ROOM` / `JOIN_GAME_ROOM` modals.
  */
 export default function RoomsPage() {
   const router = useRouter();

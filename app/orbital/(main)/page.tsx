@@ -21,12 +21,18 @@ import { ROUTES } from "@/lib/constants/routes";
  * that only happens to fit one game, since the plan calls for more tiles
  * later.
  *
- * Create Room / Join Room just open H6.1's modals (`setModal("CREATE_ROOM"
- * | "JOIN_ROOM")`) — this page owns no room-code/session logic itself, that
- * all already lives in `CreateRoomModal`/`JoinRoomModal` and the mutations
- * they call. Play Online reuses the existing `/orbital/anomaly` route
+ * Create Room / Join Room open the game-room modals
+ * (`setModal("CREATE_GAME_ROOM" | "JOIN_GAME_ROOM")`) — this page owns no
+ * room-code/session logic itself, that all already lives in
+ * `CreateGameRoomModal`/`JoinGameRoomModal` and the mutations they call.
+ * Play Online reuses the existing `/orbital/anomaly` route
  * (`PublicLobbyEntry`) untouched, exactly as H5's "no changes needed" note
  * said.
+ *
+ * Session 2 — these two buttons used to open `CREATE_ROOM`/`JOIN_ROOM`,
+ * which now open the plain chat/call room modals instead (see the Rooms
+ * tab). This page keeps starting Anomaly game rooms exactly as before, just
+ * via the renamed `CREATE_GAME_ROOM`/`JOIN_GAME_ROOM` keys.
  */
 export default function Page() {
   const router = useRouter();
@@ -60,7 +66,7 @@ export default function Page() {
           <Button
             variant="primary"
             className="w-full justify-center gap-2"
-            onClick={() => setModal("CREATE_ROOM")}
+            onClick={() => setModal("CREATE_GAME_ROOM")}
           >
             <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
             Create Room
@@ -68,7 +74,7 @@ export default function Page() {
           <Button
             variant="secondary"
             className="w-full justify-center gap-2"
-            onClick={() => setModal("JOIN_ROOM")}
+            onClick={() => setModal("JOIN_GAME_ROOM")}
           >
             <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
             Join Room

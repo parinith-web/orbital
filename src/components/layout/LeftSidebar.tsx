@@ -43,10 +43,16 @@ import { api } from "@/convex/_generated/api";
  * `listPendingRequests` query the Friends page's Requests tab uses.
  *
  * H6.3 — the `?join=` deep-link is still wired to the Join Room modal:
- * a shared link like `/orbital?join=7K4RXP` opens `JoinRoomModal` with the
- * code pre-filled via `setModal("JOIN_ROOM", { join_code })`, which
- * `GlobalModals.tsx` already reads from `modalData?.join_code`. The param
- * is then stripped from the URL so a refresh/back-nav doesn't reopen it.
+ * a shared link like `/orbital?join=7K4RXP` opens `JoinGameRoomModal` with
+ * the code pre-filled via `setModal("JOIN_GAME_ROOM", { join_code })`,
+ * which `GlobalModals.tsx` already reads from `modalData?.join_code`. The
+ * param is then stripped from the URL so a refresh/back-nav doesn't reopen
+ * it.
+ *
+ * Session 2 — join codes are an Anomaly game-room concept
+ * (`gameRoomCode.joinGameRoomByCode`), so this deep link now opens
+ * `JOIN_GAME_ROOM` instead of the plain-room `JOIN_ROOM` modal, which no
+ * longer accepts a join code (it joins by `room_id` instead).
  */
 
 type LeftSidebarProps = {
@@ -120,7 +126,7 @@ export default function LeftSidebar({
   // popping a modal behind Clerk's redirect.
   useEffect(() => {
     if (joinParam && user?.user_id) {
-      setModal("JOIN_ROOM", { join_code: joinParam.toUpperCase() });
+      setModal("JOIN_GAME_ROOM", { join_code: joinParam.toUpperCase() });
       router.replace(pathname);
     }
   }, [joinParam, pathname, router, setModal, user?.user_id]);

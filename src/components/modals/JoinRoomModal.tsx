@@ -1,67 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import { useRoomActions } from "@/hooks";
 import { useUIStore } from "@/store/uiStore";
 import { FormDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui";
 import { ROUTES } from "@/lib/constants/routes";
-import { JOIN_CODE_LENGTH } from "@/convex/games/lobbyConfig";
-import { getTabConnectionId } from "@/lib/games/connectionId";
-
-type JoinRoomModalProps = {
-  /**
-   * Pre-fills the code input. Not passed by anything yet — H6.3 wires this
-   * up to the sidebar's `?join=` query param so a shared link lands here
-   * with the code already typed in, without this file needing to change.
-   */
-  initialCode?: string;
-};
 
 /**
- * H6.1 — "Join Room" entry point, calling H5's `joinGameRoomByCode`
- * mutation. Unlike `CreateRoomModal`, failures here (bad/expired code) are
- * routine user-input mistakes rather than exceptional errors, so they're
- * shown inline under the field instead of as a toast.
+ * Session 2 — "Join Room" entry point for the Rooms tab, ported from
+ * Portal. This is a plain chat/call room: joins by the room's own
+ * `room_id` via `rooms.joinRoom` (through `useRoomActions`) — no join
+ * code, no game session involved.
+ *
+ * This is deliberately the `JOIN_ROOM` modal now — the previous
+ * join-by-code game-room behavior that used to live here moved to
+ * `JoinGameRoomModal` under `JOIN_GAME_ROOM`, reachable only from the
+ * Game Hub tile / `?join=` invite links.
  */
-export function JoinRoomModal({ initialCode = "" }: JoinRoomModalProps) {
-  const router = useRouter();
+export function JoinRoomModal() {
   const { closeModal } = useUIStore();
-  const joinGameRoomByCode = useMutation(api.gameRoomCode.joinGameRoomByCode);
-  const [code, setCode] = useState(initialCode);
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { joinRoom } = useRoomActions();
+  const router = useRouter();
 
-  const handleSubmit = async () => {
-    if (isSubmitting) return;
-    const trimmed = code.trim();
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: { roomId: "" },
+  });
+
+  const onSubmit = async (data: { roomId: string }) => {
+    const trimmed = data.roomId.trim();
     if (!trimmed) {
-      setError("Enter a room code");
+      toast.error("Enter a Room ID!");
       return;
     }
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      const result = await joinGameRoomByCode({
-        join_code: trimmed,
-        connection_id: getTabConnectionId(),
-      });
-      if (!result || "error" in result) {
-        setError(
-          (result && "error" in result && result.error) ||
-            "Couldn't join the room",
-        );
-        return;
+    const result = await joinRoom({ room_id: trimmed });
+
+    if (result?.error) {
+      if (result.error.includes("already in this room")) {
+        toast.info("You are already in this room");
+        closeModal();
+        router.replace(ROUTES.ORBITAL_ROOM(trimmed));
+      } else {
+        toast.error(result.error);
       }
-      closeModal();
-      router.push(ROUTES.ORBITAL_ROOM(result.room_id));
-    } catch {
-      setError("Couldn't join the room");
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
+
+    closeModal();
+    toast.success("Room joined successfully");
+    router.replace(ROUTES.ORBITAL_ROOM(trimmed));
   };
 
   return (
@@ -69,22 +62,17 @@ export function JoinRoomModal({ initialCode = "" }: JoinRoomModalProps) {
       open
       onOpenChange={(open) => !open && closeModal()}
       title="Join Room"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       submitText="Join"
       loading={isSubmitting}
-      disabled={code.trim().length === 0}
     >
       <Input
-        label="Room code"
-        placeholder="e.g. 7K4RXP"
-        value={code}
-        onChange={(e) => {
-          setError(null);
-          setCode(e.target.value.toUpperCase());
-        }}
-        maxLength={JOIN_CODE_LENGTH}
-        error={error ?? undefined}
+        {...register("roomId", { required: true, minLength: 4 })}
+        label="Room ID"
+        placeholder="Room ID"
         autoFocus
+        autoCorrect="off"
+        autoCapitalize="none"
       />
     </FormDialog>
   );
