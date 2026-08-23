@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -13,6 +13,10 @@ import { DirectChatThread } from "./DirectChatThread";
 
 interface ChatsViewProps {
   onFindPeople: () => void;
+  /** Set by the Friends tab's "Message" button — auto-opens that user's
+   * thread once their conversation shows up in `listMyConversations`. */
+  initialOpenUserId?: string | null;
+  onConsumeInitialOpen?: () => void;
 }
 
 /**
@@ -26,9 +30,20 @@ interface ChatsViewProps {
  * replaces the list with the thread (DirectChatThread's back button
  * returns to the list) rather than trying to show both at once.
  */
-export function ChatsView({ onFindPeople }: ChatsViewProps) {
+export function ChatsView({ onFindPeople, initialOpenUserId, onConsumeInitialOpen }: ChatsViewProps) {
   const conversations = useQuery(api.friends.listMyConversations);
   const [openConversationId, setOpenConversationId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!initialOpenUserId || !conversations) return;
+    const match = conversations.find(
+      (c) => c.other_user.user_id === initialOpenUserId,
+    );
+    if (match) {
+      setOpenConversationId(match.conversation_id);
+      onConsumeInitialOpen?.();
+    }
+  }, [initialOpenUserId, conversations, onConsumeInitialOpen]);
 
   const openConversation = conversations?.find(
     (c) => c.conversation_id === openConversationId,

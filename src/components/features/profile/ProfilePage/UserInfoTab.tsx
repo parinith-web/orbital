@@ -1,5 +1,5 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Upload01Icon, Moon02Icon, CopyIcon } from "@hugeicons/core-free-icons";
+import { Upload01Icon, Moon02Icon, CopyIcon, UserGroupIcon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,8 @@ import { formatToIST } from "@/lib/utils/date";
 import { useState, useEffect, useRef } from "react";
 import { useUserProfileActions } from "@/hooks";
 import { usePresence } from "@/contexts/presenceContext";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { TooltipWrapper } from "@/components/ui/tooltip";
 import {
   ConfirmDialog,
@@ -64,6 +66,8 @@ export const UserInfoTab = () => {
   } = useUserProfileActions();
   const { awayUsers, setStatus } = usePresence();
   const isAway = user?.user_id ? awayUsers.has(user.user_id.toString()) : false;
+  const friends = useQuery(api.friends.listFriends);
+  const friendsCount = friends?.length ?? 0;
 
   useEffect(() => {
     setNewUsername(user?.username || "");
@@ -291,6 +295,26 @@ export const UserInfoTab = () => {
       <div className="w-full flex flex-col gap-1 mt-5">
         <span className="text-xs text-gray-300">Joined On</span>
         <Input value={formatToIST(user?._creationTime)} disabled />
+      </div>
+
+      <div className="w-full flex flex-col gap-1 mt-5">
+        <span className="text-xs text-gray-300">Friends</span>
+        <button
+          onClick={() => router.push("/orbital/friends")}
+          className="flex items-center justify-between w-full px-3 py-2 rounded-[8px] bg-theme-surface border border-theme-border hover:bg-theme-hover transition-colors text-left"
+        >
+          <span className="flex items-center gap-2 text-white/90">
+            <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-gray-400" />
+            {friends === undefined ? (
+              <span className="text-gray-400">Loading...</span>
+            ) : (
+              <span>
+                {friendsCount} {friendsCount === 1 ? "Friend" : "Friends"}
+              </span>
+            )}
+          </span>
+          <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-gray-500" />
+        </button>
       </div>
 
       <div className="flex md:flex-row flex-col gap-2 md:gap-3 items-center w-full mt-5">

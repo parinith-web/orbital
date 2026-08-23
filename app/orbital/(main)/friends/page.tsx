@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ChatsView } from "@/components/features/friends/ChatsView";
 import { RequestsView } from "@/components/features/friends/RequestsView";
 import { FindPeopleView } from "@/components/features/friends/FindPeopleView";
+import { FriendsListView } from "@/components/features/friends/FriendsListView";
 
 /**
  * Session 6a built Requests + Find people. Session 6b adds the last
@@ -19,18 +20,42 @@ import { FindPeopleView } from "@/components/features/friends/FindPeopleView";
  *
  * Tabs are now controlled (`activeTab` state) instead of relying on
  * `Tabs`' own uncontrolled default, so ChatsView's empty-state "Find
- * people" button can switch tabs programmatically.
+ * people" button can switch tabs programmatically. The default tab also
+ * flips to "requests" (once, on first load) when there's an incoming
+ * request waiting — otherwise it's easy to land on an empty Chats view
+ * and never notice the badge means something needs a response.
  *
  * The pending-request count badge (on both the "Requests" tab and the
  * "Friends" nav item in LeftSidebar) is sourced from the same
  * `listPendingRequests` query RequestsView already needs, so it's one
- * extra `useQuery` call here rather than new backend surface.
+ * extra `useQuery` call here rather than new backend surface. The
+ * "Friends" tab's count follows the same pattern via `listFriends`.
  */
 export default function FriendsPage() {
   const { setLeftMobileMenu, leftMobileMenu } = useUIStore();
   const pending = useQuery(api.friends.listPendingRequests);
+  const friends = useQuery(api.friends.listFriends);
   const incomingCount = pending?.incoming.length ?? 0;
-  const [activeTab, setActiveTab] = useState("chats");
+  const friendsCount = friends?.length ?? 0;
+
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [hasAutoSelected, setHasAutoSelected] = useState(false);
+  const [pendingOpenUserId, setPendingOpenUserId] = useState<string | null>(null);
+
+  // Resolve the effective tab: explicit selection wins, otherwise default
+  // to "requests" when something's waiting, else "chats". Runs once the
+  // pending query resolves so we don't flash "chats" then jump to
+  // "requests" a moment later.
+  if (activeTab === null && !hasAutoSelected && pending !== undefined) {
+    setHasAutoSelected(true);
+    setActiveTab(incomingCount > 0 ? "requests" : "chats");
+  }
+  const effectiveTab = activeTab ?? "chats";
+
+  const openChatWith = (userId: string) => {
+    setPendingOpenUserId(userId);
+    setActiveTab("chats");
+  };
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
@@ -53,10 +78,18 @@ export default function FriendsPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 min-h-0">
+      <Tabs value={effectiveTab} onValueChange={setActiveTab} className="flex-1 min-h-0">
         <div className="p-3 pb-0">
           <TabsList>
             <TabsTrigger value="chats" />
+            <TabsTrigger value="friends">
+              Friends
+              {friendsCount > 0 && (
+                <span className="flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-theme-border text-white/70 text-[10px] leading-[18px] text-center">
+                  {friendsCount}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="requests">
               Requests
               {incomingCount > 0 && (
@@ -70,7 +103,18 @@ export default function FriendsPage() {
         </div>
 
         <TabsContent value="chats" className="flex flex-col">
-          <ChatsView onFindPeople={() => setActiveTab("find-people")} />
+          <ChatsView
+            onFindPeople={() => setActiveTab("find-people")}
+            initialOpenUserId={pendingOpenUserId}
+            onConsumeInitialOpen={() => setPendingOpenUserId(null)}
+          />
+        </TabsContent>
+
+        <TabsContent value="friends" className="flex flex-col">
+          <FriendsListView
+            onFindPeople={() => setActiveTab("find-people")}
+            onMessage={openChatWith}
+          />
         </TabsContent>
 
         <TabsContent value="requests" className="flex flex-col">
