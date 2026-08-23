@@ -6,7 +6,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { useRoomActions, useRoomMembers } from "@/hooks";
+import { useRoomActions } from "@/hooks";
 import { formatDateFull } from "@/lib/utils/date";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,6 @@ export function SidebarInfo({
   side,
 }: SidebarInfoProps) {
   const { renameRoom, setNotificationPreference } = useRoomActions();
-  const roomMembers = useRoomMembers(id);
   const [editedName, setEditedName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notificationPref, setNotificationPref] = useState<string>("all");
@@ -60,13 +59,13 @@ export function SidebarInfo({
   }, [room?.room_name]);
 
   useEffect(() => {
-    if (roomMembers && currentUser?.user_id) {
-      const myMember = roomMembers.find(
+    if (members && currentUser?.user_id) {
+      const myMember = members.find(
         (m) => m.Users?.user_id === currentUser?.user_id,
       );
       setNotificationPref(myMember?.notificationPreference || "all");
     }
-  }, [roomMembers, currentUser?.user_id]);
+  }, [members, currentUser?.user_id]);
 
   const isOwner = room?.owner_id === currentUser?.user_id;
   const owner = members?.find((m) => m.role === "owner");

@@ -27,36 +27,34 @@ export function DetailsSidebar({ id, type, title, side }: DetailsSidebarProps) {
 
   return (
     <div className="h-full flex flex-col">
-      {type === "room" && (
-        <div className={sidebarTab === "info" ? "contents" : "hidden"}>
-          <SidebarInfo
-            id={id}
-            type={type}
-            room={room}
-            members={members || []}
-            currentUser={user}
-            isLoading={isRoomLoading}
-            onClose={handleClose}
-            side={side}
-          />
-        </div>
+      {type === "room" && sidebarTab === "info" && (
+        <SidebarInfo
+          id={id}
+          type={type}
+          room={room}
+          members={members || []}
+          currentUser={user}
+          isLoading={isRoomLoading}
+          onClose={handleClose}
+          side={side}
+        />
       )}
-      <div className={sidebarTab === "media" ? "contents" : "hidden"}>
+      {sidebarTab === "media" && (
         <SidebarMedia
           mediaFiles={mediaFiles || []}
           isLoading={isMediaLoading}
           onClose={handleClose}
           side={side}
         />
-      </div>
-      <div className={sidebarTab === "calls" ? "contents" : "hidden"}>
+      )}
+      {sidebarTab === "calls" && (
         <SidebarCalls
           roomId={id}
           conversationName={title}
           onClose={handleClose}
           side={side}
         />
-      </div>
+      )}
     </div>
   );
 }
