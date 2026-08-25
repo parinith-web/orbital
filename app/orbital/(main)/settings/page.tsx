@@ -25,26 +25,19 @@ export default function SettingsPage() {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="flex justify-between w-full md:px-2 px-3 items-center bg-theme-surface border-b border-theme-border py-1 h-12">
-        <div className="md:ml-3 flex items-center w-full gap-2 text-white/90">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setLeftMobileMenu(!leftMobileMenu);
-            }}
-            className="flex-none p-1 md:hidden rounded-[8px] transition-colors"
-          >
-            <HugeiconsIcon
-              icon={Menu01Icon}
-              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${leftMobileMenu ? "rotate-180" : ""}`}
-            />
-          </button>
-          <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
-          <h1 className="text-md">Settings</h1>
-        </div>
-      </div>
-
       <div className="flex items-center gap-1 w-full md:px-2 px-3 pt-3 border-b border-theme-border bg-theme-surface">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setLeftMobileMenu(!leftMobileMenu);
+          }}
+          className="flex-none p-1 mb-2 md:hidden rounded-[8px] transition-colors"
+        >
+          <HugeiconsIcon
+            icon={Menu01Icon}
+            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${leftMobileMenu ? "rotate-180" : ""}`}
+          />
+        </button>
         {SUB_TABS.map((tab) => (
           <button
             key={tab.key}

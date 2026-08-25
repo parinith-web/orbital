@@ -38,25 +38,21 @@ export default function RoomsPage() {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="flex justify-between w-full md:px-2 px-3 items-center bg-theme-surface border-b border-theme-border py-1 h-12">
-        <div className="md:ml-3 flex items-center w-full gap-2 text-white/90">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setLeftMobileMenu(!leftMobileMenu);
-            }}
-            className="flex-none p-1 md:hidden rounded-[8px] transition-colors"
-          >
-            <HugeiconsIcon
-              icon={Menu01Icon}
-              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${leftMobileMenu ? "rotate-180" : ""}`}
-            />
-          </button>
-          <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
-          <h1 className="text-md">Rooms</h1>
-        </div>
+      <div className="flex justify-between w-full md:px-2 px-3 items-center py-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setLeftMobileMenu(!leftMobileMenu);
+          }}
+          className="flex-none p-1 md:hidden rounded-[8px] transition-colors"
+        >
+          <HugeiconsIcon
+            icon={Menu01Icon}
+            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${leftMobileMenu ? "rotate-180" : ""}`}
+          />
+        </button>
 
-        <div className="flex-none flex items-center gap-2">
+        <div className="flex-none flex items-center gap-2 ml-auto">
           <Button
             variant="ghost"
             size="sm"
@@ -78,7 +74,7 @@ export default function RoomsPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="flex-1 overflow-y-auto p-3 pt-0">
         {isLoading ? (
           <ListSkeleton />
         ) : rooms.length === 0 ? (
