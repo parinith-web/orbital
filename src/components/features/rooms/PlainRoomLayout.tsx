@@ -75,6 +75,7 @@ export function PlainRoomLayout({ room_id }: { room_id: string }) {
   return (
     <section className="flex h-[100dvh] overflow-hidden">
       <div className="flex-1 flex">
+        <RightSidebar room_id={room_id} />
         <div className="flex-1 flex flex-col min-w-0 bg-theme-surface">
           <TopBar room_id={room_id} />
           <div className="flex-1 flex overflow-hidden">
@@ -87,7 +88,6 @@ export function PlainRoomLayout({ room_id }: { room_id: string }) {
           </div>
           <RoomCallOverlay />
         </div>
-        <RightSidebar room_id={room_id} />
       </div>
     </section>
   );

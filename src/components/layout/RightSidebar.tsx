@@ -49,13 +49,13 @@ export default function RightSidebar({ room_id }: { room_id: string }) {
   return (
     <>
       <div
-        className={`bg-theme-surface px-2 h-screen flex flex-col overflow-hidden border-theme-border border-l
+        className={`bg-theme-surface px-2 h-screen flex flex-col overflow-hidden border-theme-border border-r
     text-white
     select-none
     transition-transform duration-300 ease-in-out
-    fixed top-0 right-0 z-[99] w-70
+    fixed top-0 left-0 z-[99] w-70
     lg:translate-y-0 translate-y-12
-    ${rightMobileMenu ? "translate-x-0" : "translate-x-full"}
+    ${rightMobileMenu ? "translate-x-0" : "-translate-x-full"}
 
     lg:static lg:translate-x-0`}
       >
