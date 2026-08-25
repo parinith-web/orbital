@@ -50,7 +50,7 @@ export const MessageToolbar = ({
 
   return (
     <div
-      className={`absolute top-1/2 -translate-y-1/2 left-full ml-4 z-[70] transition-opacity flex items-center gap-0.5 bg-theme-base border border-theme-border rounded-[7px] p-0.5 shadow-lg group-hover/row:opacity-100 ${menuOpen || hoverCardOpen ? "opacity-100" : "opacity-0"}`}
+      className={`absolute top-1/2 -translate-y-1/2 z-[70] transition-opacity flex items-center gap-0.5 bg-theme-base border border-theme-border rounded-[7px] p-0.5 shadow-lg group-hover/row:opacity-100 ${isCurrentUser ? "right-full mr-4" : "left-full ml-4"} ${menuOpen || hoverCardOpen ? "opacity-100" : "opacity-0"}`}
     >
       <HoverCard.Root
         openDelay={100}

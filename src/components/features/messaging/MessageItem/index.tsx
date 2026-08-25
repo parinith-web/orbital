@@ -132,7 +132,7 @@ export const MessageItem = React.memo(
         >
           <div
             data-msg-id={message._id}
-            className={`flex gap-2 ${showMeta ? "mt-3" : "pt-[0]"} flex-row`}
+            className={`flex gap-2 ${showMeta ? "mt-3" : "pt-[0]"} ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}
           >
             {showMeta ? (
               <UserProfilePopup
@@ -165,9 +165,13 @@ export const MessageItem = React.memo(
               <div className="w-10" />
             )}
 
-            <div className="flex flex-col max-w-[60%] items-start">
+            <div
+              className={`flex flex-col max-w-[60%] ${isCurrentUser ? "items-end" : "items-start"}`}
+            >
               {showMeta && (
-                <div className="flex items-center gap-1 px-1 flex-row">
+                <div
+                  className={`flex items-center gap-1 px-1 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}
+                >
                   <UserProfilePopup
                     user={{
                       id: message.sender_id,
@@ -212,7 +216,7 @@ export const MessageItem = React.memo(
                     : isFile
                       ? "text-white"
                       : isCurrentUser
-                        ? "text-white rounded-xl rounded-tl-none border border-theme-accent/30 bg-theme-accent/10"
+                        ? "text-white rounded-xl rounded-tr-none border border-theme-accent/30 bg-theme-accent/10"
                         : "text-white rounded-xl rounded-tl-none bg-theme-hover"
                 }`}
               >
