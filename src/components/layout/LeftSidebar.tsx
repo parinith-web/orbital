@@ -78,7 +78,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     key: "friends",
-    label: "Friends",
+    label: "Social",
     route: ROUTES.ORBITAL_FRIENDS,
     icon: UserGroupIcon,
     isActive: (pathname) => /^\/orbital\/friends/.test(pathname),

@@ -11,7 +11,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useUIStore } from "@/store/uiStore";
 import { api } from "@/convex/_generated/api";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ChatsView } from "@/components/features/friends/ChatsView";
 import { RequestsView } from "@/components/features/friends/RequestsView";
 import { FindPeopleView } from "@/components/features/friends/FindPeopleView";
@@ -63,6 +62,13 @@ export default function FriendsPage() {
     setActiveTab("chats");
   };
 
+  const SUB_TABS = [
+    { key: "chats", label: "Chats", icon: BubbleChatIcon, count: 0 },
+    { key: "friends", label: "Friends", icon: UserGroupIcon, count: friendsCount },
+    { key: "requests", label: "Requests", icon: UserAdd01Icon, count: incomingCount },
+    { key: "find-people", label: "Find people", icon: Search01Icon, count: 0 },
+  ] as const;
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="flex justify-between w-full md:px-2 px-3 items-center bg-theme-surface border-b border-theme-border py-1 h-12">
@@ -80,68 +86,58 @@ export default function FriendsPage() {
             />
           </button>
           <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
-          <h1 className="text-md">Friends</h1>
+          <h1 className="text-md">Social</h1>
         </div>
       </div>
 
-      <Tabs
-        value={effectiveTab}
-        onValueChange={setActiveTab}
-        orientation="vertical"
-        className="flex-1 min-h-0"
-      >
-        <TabsList className="p-2 border-r border-theme-border">
-          <TabsTrigger value="chats">
-            <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4 flex-none" />
-            <span>Chats</span>
-          </TabsTrigger>
-          <TabsTrigger value="friends">
-            <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 flex-none" />
-            <span>Friends</span>
-            {friendsCount > 0 && (
-              <span className="ml-auto flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-theme-border text-white/70 text-[10px] leading-[18px] text-center">
-                {friendsCount}
+      <div className="flex items-center gap-1 w-full md:px-2 px-3 pt-3 border-b border-theme-border bg-theme-surface">
+        {SUB_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-t-xl transition-colors border-b-2 ${
+              effectiveTab === tab.key
+                ? "border-theme-accent text-white"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <HugeiconsIcon icon={tab.icon} className="w-4 h-4" />
+            {tab.label}
+            {tab.count > 0 && (
+              <span
+                className={`flex-none min-w-[18px] h-[18px] px-1 rounded-full text-[10px] leading-[18px] text-center ${
+                  tab.key === "requests"
+                    ? "bg-red-500 text-white"
+                    : "bg-theme-border text-white/70"
+                }`}
+              >
+                {tab.count}
               </span>
             )}
-          </TabsTrigger>
-          <TabsTrigger value="requests">
-            <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4 flex-none" />
-            <span>Requests</span>
-            {incomingCount > 0 && (
-              <span className="ml-auto flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] leading-[18px] text-center">
-                {incomingCount}
-              </span>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="find-people">
-            <HugeiconsIcon icon={Search01Icon} className="w-4 h-4 flex-none" />
-            <span>Find people</span>
-          </TabsTrigger>
-        </TabsList>
+          </button>
+        ))}
+      </div>
 
-        <TabsContent value="chats" className="flex flex-col">
+      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+        {effectiveTab === "chats" && (
           <ChatsView
             onFindPeople={() => setActiveTab("find-people")}
             initialOpenUserId={pendingOpenUserId}
             onConsumeInitialOpen={() => setPendingOpenUserId(null)}
           />
-        </TabsContent>
+        )}
 
-        <TabsContent value="friends" className="flex flex-col">
+        {effectiveTab === "friends" && (
           <FriendsListView
             onFindPeople={() => setActiveTab("find-people")}
             onMessage={openChatWith}
           />
-        </TabsContent>
+        )}
 
-        <TabsContent value="requests" className="flex flex-col">
-          <RequestsView />
-        </TabsContent>
+        {effectiveTab === "requests" && <RequestsView />}
 
-        <TabsContent value="find-people" className="flex flex-col">
-          <FindPeopleView />
-        </TabsContent>
-      </Tabs>
+        {effectiveTab === "find-people" && <FindPeopleView />}
+      </div>
     </div>
   );
 }
