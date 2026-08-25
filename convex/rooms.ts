@@ -1,5 +1,49 @@
-import { mutation } from "./_generated/server";
+import { mutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
+
+/**
+ * Deletes a room and everything tied to its `room_id`: the `rooms` row
+ * itself, all `roomMembers` rows, and (best-effort) marks any still-active
+ * `calls` for the room as ended so participants still in a live meet get
+ * cleaned up rather than left talking to a call the room no longer owns.
+ *
+ * Shared by `deleteRoom` (explicit host action) and `leaveRoom` (implicit
+ * auto-delete once the last member leaves) so both paths stay in sync.
+ */
+async function cascadeDeleteRoom(ctx: MutationCtx, room_id: string) {
+  const room = await ctx.db
+    .query("rooms")
+    .withIndex("by_room_id", (q) => q.eq("room_id", room_id))
+    .first();
+
+  if (room) {
+    await ctx.db.delete(room._id);
+  }
+
+  const allMembers = await ctx.db
+    .query("roomMembers")
+    .withIndex("by_room_id", (q) => q.eq("room_id", room_id))
+    .collect();
+
+  for (const m of allMembers) {
+    await ctx.db.delete(m._id);
+  }
+
+  const activeCalls = await ctx.db
+    .query("calls")
+    .withIndex("by_active", (q) => q.eq("roomId", room_id).eq("isActive", true))
+    .collect();
+
+  for (const call of activeCalls) {
+    await ctx.db.patch(call._id, {
+      isActive: false,
+      endedAt: Date.now(),
+      participants: [],
+      activePeerIds: [],
+      mediaStates: [],
+    });
+  }
+}
 
 export const joinRoom = mutation({
   args: { room_id: v.string() },
@@ -129,8 +173,24 @@ export const leaveRoom = mutation({
 
     if (!membership) return { error: "Not a member" };
 
-    if (membership.role === "owner") {
+    const otherMembers = await ctx.db
+      .query("roomMembers")
+      .withIndex("by_room_id", (q) => q.eq("room_id", args.room_id))
+      .filter((q) => q.neq(q.field("_id"), membership._id))
+      .collect();
+
+    const isLastMember = otherMembers.length === 0;
+
+    if (membership.role === "owner" && !isLastMember) {
       return { error: "Owner cannot leave room, must delete or transfer ownership" };
+    }
+
+    if (isLastMember) {
+      // Last person in the room (owner or not) — nobody is left to keep
+      // the room around, so tear it down instead of leaving an empty
+      // room behind in everyone's sidebar forever.
+      await cascadeDeleteRoom(ctx, args.room_id);
+      return { success: true, roomDeleted: true };
     }
 
     await ctx.db.delete(membership._id);
@@ -167,23 +227,7 @@ export const deleteRoom = mutation({
       return { error: "Unauthorized" };
     }
 
-    const room = await ctx.db
-      .query("rooms")
-      .withIndex("by_room_id", (q) => q.eq("room_id", args.room_id))
-      .first();
-
-    if (room) {
-      await ctx.db.delete(room._id);
-    }
-
-    const allMembers = await ctx.db
-      .query("roomMembers")
-      .withIndex("by_room_id", (q) => q.eq("room_id", args.room_id))
-      .collect();
-
-    for (const m of allMembers) {
-      await ctx.db.delete(m._id);
-    }
+    await cascadeDeleteRoom(ctx, args.room_id);
 
     return { success: true };
   },
