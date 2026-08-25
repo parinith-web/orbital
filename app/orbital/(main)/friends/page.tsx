@@ -2,7 +2,13 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { UserGroupIcon, Menu01Icon } from "@hugeicons/core-free-icons";
+import {
+  UserGroupIcon,
+  Menu01Icon,
+  BubbleChatIcon,
+  UserAdd01Icon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";
 import { useUIStore } from "@/store/uiStore";
 import { api } from "@/convex/_generated/api";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -78,29 +84,40 @@ export default function FriendsPage() {
         </div>
       </div>
 
-      <Tabs value={effectiveTab} onValueChange={setActiveTab} className="flex-1 min-h-0">
-        <div className="p-3 pb-0">
-          <TabsList>
-            <TabsTrigger value="chats" />
-            <TabsTrigger value="friends">
-              Friends
-              {friendsCount > 0 && (
-                <span className="flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-theme-border text-white/70 text-[10px] leading-[18px] text-center">
-                  {friendsCount}
-                </span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="requests">
-              Requests
-              {incomingCount > 0 && (
-                <span className="flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] leading-[18px] text-center">
-                  {incomingCount}
-                </span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="find-people">Find people</TabsTrigger>
-          </TabsList>
-        </div>
+      <Tabs
+        value={effectiveTab}
+        onValueChange={setActiveTab}
+        orientation="vertical"
+        className="flex-1 min-h-0"
+      >
+        <TabsList className="p-2 border-r border-theme-border">
+          <TabsTrigger value="chats">
+            <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4 flex-none" />
+            <span>Chats</span>
+          </TabsTrigger>
+          <TabsTrigger value="friends">
+            <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 flex-none" />
+            <span>Friends</span>
+            {friendsCount > 0 && (
+              <span className="ml-auto flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-theme-border text-white/70 text-[10px] leading-[18px] text-center">
+                {friendsCount}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="requests">
+            <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4 flex-none" />
+            <span>Requests</span>
+            {incomingCount > 0 && (
+              <span className="ml-auto flex-none min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] leading-[18px] text-center">
+                {incomingCount}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="find-people">
+            <HugeiconsIcon icon={Search01Icon} className="w-4 h-4 flex-none" />
+            <span>Find people</span>
+          </TabsTrigger>
+        </TabsList>
 
         <TabsContent value="chats" className="flex flex-col">
           <ChatsView
