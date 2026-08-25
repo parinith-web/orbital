@@ -156,7 +156,7 @@ export default function TopBar({ room_id }: { room_id: string }) {
           )}
         </Popover.Root>
 
-        <div className="flex items-center flex-none md:gap-1 gap-0 ml-2">
+        <div className="flex items-center flex-none md:gap-1 gap-0 ml-auto">
           <TooltipWrapper content="Media Gallery">
             <div
               onClick={(e) => {
