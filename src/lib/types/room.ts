@@ -9,6 +9,7 @@ export interface UserRoom {
   } | null;
   owner_id?: string | null;
   joined_at?: number;
+  is_game_room?: boolean;
 }
 
 export interface RoomMemberWithUser {

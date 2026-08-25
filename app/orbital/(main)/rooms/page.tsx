@@ -29,7 +29,12 @@ import { ROUTES } from "@/lib/constants/routes";
 export default function RoomsPage() {
   const router = useRouter();
   const { setLeftMobileMenu, leftMobileMenu, setModal } = useUIStore();
-  const { rooms, membersCount, activeCallRoomIds, isLoading } = useRooms();
+  const { rooms: allRooms, membersCount, activeCallRoomIds, isLoading } = useRooms();
+  // Anomaly game rooms live in the same `rooms` table (so in-room
+  // chat/call panels can resolve them by room_id), but this tab is for
+  // plain chat/call rooms only — game rooms are surfaced from the Game
+  // Hub instead. See roomQueries.ts's `getUserRooms` for `is_game_room`.
+  const rooms = allRooms.filter((room) => !room.is_game_room);
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">

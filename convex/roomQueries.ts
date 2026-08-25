@@ -48,6 +48,17 @@ export const getUserRooms = query({
 
         const owner = allRoomMembers.find((m) => m.role === "owner");
 
+        // A room backing an Anomaly game session (created via
+        // gameRoomCode.ts's createGameRoom, or an existing room that
+        // started a session) is a "game room" — it still needs to be in
+        // this list for in-room features (chat/call panel, sidebar call
+        // lookups) that resolve room data by room_id, but the plain
+        // Rooms tab (app/orbital/(main)/rooms/page.tsx) filters these
+        // out so game rooms don't clutter the regular room list.
+        const gameSession = await ctx.db
+          .query("gameSessions")
+          .withIndex("by_room_id", (q) => q.eq("room_id", membership.room_id))
+          .first();
 
         return {
           room_id: membership.room_id,
@@ -55,6 +66,7 @@ export const getUserRooms = query({
           memberCount: allRoomMembers.length,
           owner_id: owner?.user_id || null,
           joined_at: membership._creationTime,
+          is_game_room: gameSession !== null,
         };
       }),
     );
