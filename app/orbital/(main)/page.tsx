@@ -1,46 +1,33 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, HashtagIcon, PlayCircleIcon } from "@hugeicons/core-free-icons";
 import { useUserStore } from "@/store/useUserStore";
 import { useCurrentUser } from "@/hooks";
-import { useUIStore } from "@/store/uiStore";
-import { Button } from "@/components/ui";
 import { ROUTES } from "@/lib/constants/routes";
-import { AnomalyLogo } from "@/components/features/anomaly/AnomalyLogo";
+import { AnomalyArtwork } from "@/components/features/anomaly/AnomalyArtwork";
 
 /**
- * H6.2 — Game Hub, the real `/orbital` home (replacing H4's placeholder
- * card). Structured as one game tile ("Anomaly") with three entry points —
- * Create Room / Join Room / Play Online — rather than a page-level layout
- * that only happens to fit one game, since the plan calls for more tiles
- * later.
+ * H6.2 — Game Hub, the real `/orbital` home.
  *
- * Create Room / Join Room open the game-room modals
- * (`setModal("CREATE_GAME_ROOM" | "JOIN_GAME_ROOM")`) — this page owns no
- * room-code/session logic itself, that all already lives in
- * `CreateGameRoomModal`/`JoinGameRoomModal` and the mutations they call.
- * Play Online reuses the existing `/orbital/anomaly` route
- * (`PublicLobbyEntry`) untouched, exactly as H5's "no changes needed" note
- * said.
+ * H7 UPDATE: this used to be one game tile with its icon, description, and
+ * Create Room / Join Room / Play Online stacked as buttons right here (see
+ * git history for that version). That put the full pitch-and-action card
+ * on the hub itself, which fought with the sidebar chrome for space and
+ * didn't leave room for more tiles later the way H6.2's own plan intended.
  *
- * The tile's icon is now the real `AnomalyLogo` mark (not a generic
- * controller glyph) and doubles as a nav target: clicking it routes to
- * `/orbital/anomaly/about`, a fuller "what is this game" landing page
- * (`AnomalyLandingPage`) for anyone who wants the pitch before picking one
- * of the three actions below.
- *
- * Session 2 — these two buttons used to open `CREATE_ROOM`/`JOIN_ROOM`,
- * which now open the plain chat/call room modals instead (see the Rooms
- * tab). This page keeps starting Anomaly game rooms exactly as before, just
- * via the renamed `CREATE_GAME_ROOM`/`JOIN_GAME_ROOM` keys.
+ * Now the hub just shows the game's box art (`AnomalyArtwork`) — a single
+ * clickable piece representing Anomaly, not a form. Clicking it is the
+ * only interaction: it routes to `/orbital/anomaly/about`, which is now a
+ * genuine full-screen landing page (outside the `(main)` sidebar group,
+ * same as the `/orbital/anomaly` matchmaking route) modeled on skribbl.io
+ * — hero art, then Play Online / Join Room / Create Room, then how to
+ * play. That page owns all three entry points and the rules explainer;
+ * this one no longer needs to duplicate any of it.
  */
 export default function Page() {
   const router = useRouter();
   const setUser = useUserStore((s) => s.setUser);
   const { user: profile } = useCurrentUser();
-  const setModal = useUIStore((s) => s.setModal);
 
   useEffect(() => {
     if (profile) {
@@ -50,53 +37,10 @@ export default function Page() {
 
   return (
     <div className="flex-1 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-theme-surface border border-theme-border rounded-2xl p-8 flex flex-col items-center text-center gap-6">
-        <div className="flex flex-col items-center gap-4">
-          <button
-            type="button"
-            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY_ABOUT)}
-            className="w-12 h-12 rounded-2xl overflow-hidden hover:scale-105 hover:brightness-110 transition-transform duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-            aria-label="View Anomaly game details"
-            title="View Anomaly game details"
-          >
-            <AnomalyLogo className="w-12 h-12" />
-          </button>
-          <div>
-            <h1 className="text-lg font-medium text-white">Anomaly</h1>
-            <p className="text-sm text-gray-400 mt-1">
-              A word-based imposter game. Create a room for your friends, join
-              one with a code, or jump into a public match.
-            </p>
-          </div>
-        </div>
-
-        <div className="w-full flex flex-col gap-2">
-          <Button
-            variant="primary"
-            className="w-full justify-center gap-2"
-            onClick={() => setModal("CREATE_GAME_ROOM")}
-          >
-            <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-            Create Room
-          </Button>
-          <Button
-            variant="secondary"
-            className="w-full justify-center gap-2"
-            onClick={() => setModal("JOIN_GAME_ROOM")}
-          >
-            <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
-            Join Room
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-center gap-2"
-            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
-          >
-            <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
-            Play Online
-          </Button>
-        </div>
-      </div>
+      <AnomalyArtwork
+        className="max-w-md"
+        onClick={() => router.push(ROUTES.ORBITAL_ANOMALY_ABOUT)}
+      />
     </div>
   );
 }

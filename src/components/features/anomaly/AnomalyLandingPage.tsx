@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
+  ArrowLeft01Icon,
   HashtagIcon,
   PlayCircleIcon,
   BubbleChatIcon,
@@ -20,19 +21,24 @@ import { ROUTES } from "@/lib/constants/routes";
 import { AnomalyLogo } from "./AnomalyLogo";
 
 /**
- * The Anomaly "about" / landing page — reached by clicking the Anomaly
- * logo on the Game Hub tile (`app/orbital/(main)/page.tsx`). Distinct from
- * that tile on purpose: the tile is the fast path for someone who already
- * knows the game and just wants a button, this page is the pitch for
- * everyone else — what it is, how a round actually plays out, and then
- * the same three entry points once they're sold.
+ * Anomaly's full-screen landing page — reached by clicking the game's
+ * artwork on the Game Hub tile (`app/orbital/(main)/page.tsx`). Rendered
+ * from `app/orbital/anomaly/about/page.tsx`, which sits outside the
+ * `(main)` route group specifically so this page gets the whole viewport
+ * instead of the `LeftSidebar`-chromed content pane every other page in
+ * the app uses. Distinct from the hub tile on purpose: the tile is the
+ * fast path for someone who already knows the game, this page is the
+ * pitch for everyone else — what it is, how a round actually plays out,
+ * and then the same three entry points once they're sold.
  *
- * Modeled loosely on skribbl.io's landing page (hero -> big primary
- * action -> About / How to play), reskinned into this app's dark
+ * Modeled directly on skribbl.io's landing page (full-bleed hero -> big
+ * primary actions -> About / How to play), reskinned into this app's dark
  * purple/theme-accent surface language instead of skribbl's flat
  * primary-color blocks, and swapping skribbl's static "News" column for
  * an "Inside a round" walkthrough + feature grid, since Anomaly doesn't
  * have a devlog to show off but does have mechanics worth explaining.
+ * Since there's no sidebar here to navigate away with, the top-left back
+ * link is this page's only way back to the Game Hub.
  */
 const HOW_TO_PLAY = [
   {
@@ -85,14 +91,38 @@ export function AnomalyLandingPage() {
   const setModal = useUIStore((s) => s.setModal);
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="mx-auto w-full max-w-4xl px-6 py-14 flex flex-col gap-20">
+    <div className="relative flex-1 h-full overflow-y-auto bg-theme-surface">
+      {/* Ambient background — this page owns the whole viewport now, so it
+          gets to feel like a destination rather than another chat pane. */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div
+          className="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full blur-3xl opacity-20"
+          style={{ backgroundColor: "var(--theme-accent-color)" }}
+        />
+        <svg className="absolute inset-0 h-full w-full opacity-[0.04]" aria-hidden>
+          <pattern id="anomaly-landing-grid" width="26" height="26" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.4" fill="white" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#anomaly-landing-grid)" />
+        </svg>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => router.push(ROUTES.ORBITAL)}
+        className="fixed top-5 left-5 z-10 flex items-center gap-2 rounded-xl border border-theme-border bg-theme-surface/80 backdrop-blur px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-theme-hover transition-colors"
+      >
+        <HugeiconsIcon icon={ArrowLeft01Icon} className="w-4 h-4" />
+        Orbital
+      </button>
+
+      <div className="relative mx-auto w-full max-w-4xl px-6 py-14 flex flex-col gap-20">
         {/* Hero */}
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center text-center gap-6"
+          className="flex flex-col items-center text-center gap-6 pt-10"
         >
           <AnomalyLogo className="w-20 h-20" glow />
 
