@@ -50,7 +50,7 @@ const WORDS: ScatterWord[] = [
 
 /** A loose, slightly imperfect hand-drawn loop — never a clean ellipse,
  * so it reads as marker-drawn rather than a UI badge. */
-function HandCircle({ rotate }: { rotate: number }) {
+export function HandCircle({ rotate }: { rotate: number }) {
   return (
     <svg
       viewBox="0 0 140 70"
