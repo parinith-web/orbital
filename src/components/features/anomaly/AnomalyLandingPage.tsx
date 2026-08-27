@@ -10,9 +10,7 @@ import {
   PlayCircleIcon,
   BubbleChatIcon,
   ViewOffSlashIcon,
-  Tick01Icon,
   Mic01Icon,
-  CrownIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui";
@@ -35,11 +33,9 @@ import { AnomalyWordScatter } from "./AnomalyWordScatter";
  * Modeled directly on skribbl.io's landing page (full-bleed hero -> big
  * primary actions -> About / How to play), reskinned into this app's dark
  * purple/theme-accent surface language instead of skribbl's flat
- * primary-color blocks, and swapping skribbl's static "News" column for
- * an "Inside a round" walkthrough + feature grid, since Anomaly doesn't
- * have a devlog to show off but does have mechanics worth explaining.
- * Since there's no sidebar here to navigate away with, the top-left back
- * link is this page's only way back to the Game Hub.
+ * primary-color blocks. Since there's no sidebar here to navigate away
+ * with, the top-left back link is this page's only way back to the Game
+ * Hub.
  */
 const HOW_TO_PLAY = [
   {
@@ -61,29 +57,6 @@ const HOW_TO_PLAY = [
     icon: ViewOffSlashIcon,
     title: "Vote out the anomaly",
     body: "Discuss who sounded off, then vote. Guess wrong and the imposter blends in for another round.",
-  },
-];
-
-const FEATURES = [
-  {
-    icon: Mic01Icon,
-    title: "Built-in voice & video",
-    body: "No third-party call link — everyone talks in the same room they're playing in.",
-  },
-  {
-    icon: HashtagIcon,
-    title: "Private rooms",
-    body: "Spin up a room, share a 6-character code, and only the people you invite can get in.",
-  },
-  {
-    icon: PlayCircleIcon,
-    title: "Public matchmaking",
-    body: "Don't feel like waiting on friends? Play Online drops you straight into an open lobby.",
-  },
-  {
-    icon: CrownIcon,
-    title: "Live leaderboard",
-    body: "Points carry across rounds so the group always knows who's actually good at this.",
   },
 ];
 
@@ -200,61 +173,6 @@ export function AnomalyLandingPage() {
               </div>
             ))}
           </div>
-        </motion.section>
-
-        {/* Feature grid */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col gap-6"
-        >
-          <div className="flex flex-col gap-1 text-center">
-            <h2 className="text-xl font-medium text-white">Why Anomaly</h2>
-            <p className="text-sm text-gray-400">Everything you need is already in the room.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-theme-surface border border-theme-border rounded-2xl p-5 flex flex-col gap-3"
-              >
-                <div className="w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center">
-                  <HugeiconsIcon icon={feature.icon} className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-white">{feature.title}</h3>
-                  <p className="text-sm text-gray-400 mt-1 leading-relaxed">{feature.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Closing CTA */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center text-center gap-4 bg-theme-surface border border-theme-border rounded-2xl px-8 py-10"
-        >
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Tick01Icon} className="w-4 h-4" style={{ color: "var(--theme-accent-color)" }} />
-            <span className="text-sm text-gray-400">No download, no setup — just a room code.</span>
-          </div>
-          <h2 className="text-xl font-medium text-white">Think you can spot the anomaly?</h2>
-          <Button
-            variant="primary"
-            size="lg"
-            className="gap-2 px-8"
-            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
-          >
-            <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
-            Play Online
-          </Button>
         </motion.section>
       </div>
     </div>
