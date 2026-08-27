@@ -1,18 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { AnomalyWordScatter } from "./AnomalyWordScatter";
 
 /**
  * The Game Hub's entry point into Anomaly — replaces what used to be a
  * plain icon+title+description card with one clickable piece of art.
  *
- * H8 UPDATE: the coded crowd-of-dots SVG + per-letter wordmark (see git
- * history) has been swapped for a hand-drawn cover image — a hand
- * circling the word "ANOMALY" in red marker — supplied as the game's
- * actual box art. Keeps the same clickable-tile contract (button wrapper,
- * ambient glow, hover affordance, description) so nothing else about the
- * hub had to change.
+ * H9 UPDATE: the hand-drawn "ANOMALY" marker photo cover has been
+ * replaced with the same scattered-word background used on the landing
+ * page, with the game title set centered on top of it — keeps the cover
+ * and the full landing page visually consistent instead of introducing a
+ * second, unrelated cover treatment.
  *
  * Purely presentational: takes an onClick and gets out of the way. The
  * page wiring it up decides where that click goes (the full-screen
@@ -36,27 +35,16 @@ export function AnomalyArtwork({ onClick, className = "" }: AnomalyArtworkProps)
       aria-label="Open Anomaly — a word-based imposter game"
       className={`group relative w-full overflow-hidden rounded-3xl border border-theme-border bg-theme-surface text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${className}`}
     >
-      {/* Ambient glow field */}
-      <div
-        className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full blur-3xl opacity-30 transition-opacity duration-500 group-hover:opacity-50"
-        style={{ backgroundColor: "var(--theme-accent-color)" }}
-      />
-      <div
-        className="pointer-events-none absolute -bottom-20 -left-10 h-52 w-52 rounded-full blur-3xl opacity-20 transition-opacity duration-500 group-hover:opacity-35"
-        style={{ backgroundColor: "var(--theme-accent-color)" }}
-      />
-
       <div className="relative flex flex-col items-center gap-7 px-8 py-10">
-        {/* Cover art — hand circling "ANOMALY" in red marker */}
-        <div className="relative w-full overflow-hidden rounded-2xl">
-          <Image
-            src="/assets/anomaly-cover.png"
-            alt="A hand circling the word ANOMALY in red marker"
-            width={961}
-            height={580}
-            className="w-full h-auto object-cover"
-            priority
-          />
+        {/* Cover — scattered word background, matching the landing page,
+            with the title centered on top */}
+        <div className="relative w-full h-48 overflow-hidden rounded-2xl bg-black">
+          <AnomalyWordScatter />
+          <div className="relative flex h-full items-center justify-center">
+            <span className="text-4xl font-semibold text-white tracking-tight">
+              Anomaly
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-1 text-center">
