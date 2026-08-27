@@ -28,7 +28,7 @@ type ScatterWord = {
 };
 
 const WORDS: ScatterWord[] = [
-  { word: "IMPOSTER", top: "6%", left: "8%", rotate: -8, size: "text-3xl", font: "font-pop", opacity: 0.1 },
+  { word: "IMPOSTER", top: "6%", left: "20%", rotate: -8, size: "text-3xl", font: "font-pop", opacity: 0.1 },
   { word: "blend in", top: "14%", left: "78%", rotate: 6, size: "text-xl", font: "font-serif", opacity: 0.12 },
   { word: "SUSPECT", top: "22%", left: "4%", rotate: 4, size: "text-2xl", font: "font-mono", opacity: 0.09 },
   { word: "DECEIVE", top: "30%", left: "86%", rotate: -10, size: "text-2xl", font: "font-pop", opacity: 0.1, circled: true },

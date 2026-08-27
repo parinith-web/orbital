@@ -93,7 +93,9 @@ export function AnomalyLandingPage() {
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-semibold text-white tracking-tight">Anomaly</h1>
             <p className="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
-              One imposter. One word off. Talk, then vote them out.
+              One imposter. One word off.
+              <br />
+              Talk, then vote them out.
             </p>
           </div>
 
@@ -142,19 +144,13 @@ export function AnomalyLandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {HOW_TO_PLAY.map((step, i) => (
+            {HOW_TO_PLAY.map((step) => (
               <div
                 key={step.title}
                 className="bg-theme-surface border border-theme-border rounded-2xl p-5 flex gap-4"
               >
-                <div className="shrink-0 w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center relative">
+                <div className="shrink-0 w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center">
                   <HugeiconsIcon icon={step.icon} className="w-4 h-4 text-white" />
-                  <span
-                    className="absolute -top-2 -left-2 w-5 h-5 rounded-full text-[10px] font-medium flex items-center justify-center text-white"
-                    style={{ backgroundColor: "var(--theme-accent-color)" }}
-                  >
-                    {i + 1}
-                  </span>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-white">{step.title}</h3>
