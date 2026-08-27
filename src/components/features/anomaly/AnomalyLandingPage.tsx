@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui";
 import { useUIStore } from "@/store/uiStore";
 import { ROUTES } from "@/lib/constants/routes";
-import { AnomalyLogo } from "./AnomalyLogo";
 import { AnomalyWordScatter } from "./AnomalyWordScatter";
 
 /**
@@ -72,10 +71,6 @@ export function AnomalyLandingPage() {
           game-themed words in mixed fonts, a few hand-circled in the
           accent color (see `AnomalyWordScatter`). */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full blur-3xl opacity-20"
-          style={{ backgroundColor: "var(--theme-accent-color)" }}
-        />
         <AnomalyWordScatter />
       </div>
 
@@ -94,20 +89,16 @@ export function AnomalyLandingPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center text-center gap-6 pt-10"
+          className="flex flex-col items-center text-center gap-5 pt-16"
         >
-          <AnomalyLogo className="w-20 h-20" glow />
-
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-semibold text-white tracking-tight">Anomaly</h1>
-            <p className="text-base text-gray-400 max-w-lg mx-auto leading-relaxed">
-              A word-based imposter game. Everyone gets a word, one of you
-              doesn&apos;t — talk it out over voice, then vote before the
-              anomaly gets away with it.
+            <p className="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
+              One imposter. One word off. Talk, then vote them out.
             </p>
           </div>
 
-          <div className="w-full max-w-xs flex flex-col gap-2 mt-2">
+          <div className="w-full max-w-xs flex flex-col gap-2 mt-3">
             <Button
               variant="primary"
               size="lg"
