@@ -29,17 +29,21 @@ type ScatterWord = {
 
 const WORDS: ScatterWord[] = [
   { word: "IMPOSTER", top: "6%", left: "20%", rotate: -8, size: "text-xl", font: "font-pop", opacity: 0.1 },
+  { word: "reveal", top: "8%", left: "58%", rotate: -4, size: "text-sm", font: "font-serif", opacity: 0.09 },
   { word: "blend in", top: "14%", left: "78%", rotate: 6, size: "text-base", font: "font-serif", opacity: 0.12 },
   { word: "SUSPECT", top: "22%", left: "4%", rotate: 4, size: "text-lg", font: "font-mono", opacity: 0.09 },
   { word: "DECEIVE", top: "30%", left: "86%", rotate: -10, size: "text-lg", font: "font-pop", opacity: 0.1, circled: true },
+  { word: "decoy", top: "34%", left: "10%", rotate: 5, size: "text-sm", font: "font-mono", opacity: 0.08 },
   { word: "TRUST", top: "44%", left: "60%", rotate: -5, size: "text-base", font: "font-pop", opacity: 0.08 },
   { word: "GLITCH", top: "48%", left: "94%", rotate: -9, size: "text-sm", font: "font-pop", opacity: 0.08 },
   { word: "whisper", top: "52%", left: "82%", rotate: 8, size: "text-sm", font: "font-serif", opacity: 0.11 },
   { word: "MIMIC", top: "58%", left: "6%", rotate: -6, size: "text-lg", font: "font-mono", opacity: 0.1, circled: true },
+  { word: "LIAR", top: "64%", left: "88%", rotate: -6, size: "text-sm", font: "font-mono", opacity: 0.07 },
   { word: "VOTE", top: "70%", left: "72%", rotate: -4, size: "text-xl", font: "font-pop", opacity: 0.1 },
   { word: "GIVEAWAY", top: "76%", left: "16%", rotate: 7, size: "text-base", font: "font-mono", opacity: 0.09 },
   { word: "guess wrong", top: "84%", left: "56%", rotate: -7, size: "text-sm", font: "font-serif", opacity: 0.1 },
   { word: "outlier", top: "90%", left: "8%", rotate: 5, size: "text-base", font: "font-serif", opacity: 0.09 },
+  { word: "expose", top: "92%", left: "80%", rotate: 4, size: "text-sm", font: "font-serif", opacity: 0.08 },
 ];
 
 /** A loose, slightly imperfect hand-drawn loop — never a clean ellipse,
