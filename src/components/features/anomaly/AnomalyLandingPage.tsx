@@ -19,6 +19,7 @@ import { Button } from "@/components/ui";
 import { useUIStore } from "@/store/uiStore";
 import { ROUTES } from "@/lib/constants/routes";
 import { AnomalyLogo } from "./AnomalyLogo";
+import { AnomalyWordScatter } from "./AnomalyWordScatter";
 
 /**
  * Anomaly's full-screen landing page — reached by clicking the game's
@@ -93,18 +94,16 @@ export function AnomalyLandingPage() {
   return (
     <div className="relative flex-1 h-full overflow-y-auto bg-theme-surface">
       {/* Ambient background — this page owns the whole viewport now, so it
-          gets to feel like a destination rather than another chat pane. */}
+          gets to feel like a destination rather than another chat pane.
+          H9 UPDATE: the plain dot-grid texture is now a scatter of
+          game-themed words in mixed fonts, a few hand-circled in the
+          accent color (see `AnomalyWordScatter`). */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
           className="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full blur-3xl opacity-20"
           style={{ backgroundColor: "var(--theme-accent-color)" }}
         />
-        <svg className="absolute inset-0 h-full w-full opacity-[0.04]" aria-hidden>
-          <pattern id="anomaly-landing-grid" width="26" height="26" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1.4" fill="white" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#anomaly-landing-grid)" />
-        </svg>
+        <AnomalyWordScatter />
       </div>
 
       <button
