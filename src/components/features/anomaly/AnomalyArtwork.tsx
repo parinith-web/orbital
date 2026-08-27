@@ -1,21 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 /**
  * The Game Hub's entry point into Anomaly — replaces what used to be a
  * plain icon+title+description card with one clickable piece of art.
  *
- * The idea: a crowd of identical little "player" dots, one of them subtly
- * off — wrong shape, wrong glow, standing slightly apart — same "spot the
- * imposter" pun as `AnomalyLogo`, just given room to breathe at hero size,
- * plus a colorful per-letter wordmark (a nod to skribbl.io's title art,
- * the reference this whole flow is modeled on) so the tile reads as a
- * game's box art rather than a settings icon.
- *
- * Entirely `currentColor`/`--theme-accent-color` driven — no hardcoded
- * hues besides white — so it stays coherent with whatever accent color
- * the user has picked, the same contract `AnomalyLogo` already keeps.
+ * H8 UPDATE: the coded crowd-of-dots SVG + per-letter wordmark (see git
+ * history) has been swapped for a hand-drawn cover image — a hand
+ * circling the word "ANOMALY" in red marker — supplied as the game's
+ * actual box art. Keeps the same clickable-tile contract (button wrapper,
+ * ambient glow, hover affordance, description) so nothing else about the
+ * hub had to change.
  *
  * Purely presentational: takes an onClick and gets out of the way. The
  * page wiring it up decides where that click goes (the full-screen
@@ -25,28 +22,6 @@ type AnomalyArtworkProps = {
   onClick?: () => void;
   className?: string;
 };
-
-const CROWD = [
-  { x: 42, y: 46 },
-  { x: 92, y: 40 },
-  { x: 148, y: 52 },
-  { x: 206, y: 38 },
-  { x: 264, y: 48 },
-  { x: 66, y: 100 },
-  { x: 124, y: 92 },
-  { x: 236, y: 96 },
-  { x: 292, y: 88 },
-  { x: 48, y: 152 },
-  { x: 168, y: 146 },
-  { x: 226, y: 156 },
-  { x: 284, y: 150 },
-  { x: 100, y: 168 },
-];
-
-// The anomaly sits deliberately off-grid — a touch lower and further out
-// than any neighbor — instead of dead center, so it reads as "apart from
-// the crowd" rather than "the logo's focal point".
-const ANOMALY = { x: 196, y: 118 };
 
 export function AnomalyArtwork({ onClick, className = "" }: AnomalyArtworkProps) {
   return (
@@ -71,87 +46,18 @@ export function AnomalyArtwork({ onClick, className = "" }: AnomalyArtworkProps)
         style={{ backgroundColor: "var(--theme-accent-color)" }}
       />
 
-      {/* Faint dot-grid texture, matching the crowd motif underneath */}
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.06]"
-        aria-hidden
-      >
-        <pattern id="anomaly-artwork-grid" width="22" height="22" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="1.4" fill="white" />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#anomaly-artwork-grid)" />
-      </svg>
-
-      <div className="relative flex flex-col items-center gap-7 px-8 py-12">
-        {/* Wordmark */}
-        <div className="flex items-center" aria-hidden>
-          {"ANOMALY".split("").map((letter, i) => (
-            <span
-              key={i}
-              className="text-4xl sm:text-5xl font-bold tracking-tight transition-transform duration-300"
-              style={{
-                color: i === 4 ? "var(--theme-accent-color)" : "white",
-                opacity: i === 4 ? 1 : 0.92 - i * 0.02,
-                transform: i === 4 ? "translateY(-2px)" : undefined,
-              }}
-            >
-              {letter}
-            </span>
-          ))}
+      <div className="relative flex flex-col items-center gap-7 px-8 py-10">
+        {/* Cover art — hand circling "ANOMALY" in red marker */}
+        <div className="relative w-full overflow-hidden rounded-2xl">
+          <Image
+            src="/assets/anomaly-cover.png"
+            alt="A hand circling the word ANOMALY in red marker"
+            width={961}
+            height={580}
+            className="w-full h-auto object-cover"
+            priority
+          />
         </div>
-
-        {/* The crowd — one glowing diamond hiding among circles */}
-        <svg viewBox="0 0 330 210" className="h-32 w-auto sm:h-36" role="img" aria-labelledby="anomaly-art-title">
-          <title id="anomaly-art-title">A crowd of identical players with one anomaly hidden among them</title>
-
-          {CROWD.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r="10"
-              fill="white"
-              fillOpacity="0.16"
-              stroke="white"
-              strokeOpacity="0.3"
-            />
-          ))}
-
-          {/* Soft pulse behind the anomaly */}
-          <circle
-            cx={ANOMALY.x}
-            cy={ANOMALY.y}
-            r="22"
-            fill="var(--theme-accent-color)"
-            opacity="0.5"
-            className="animate-fade-slow"
-          />
-
-          {/* Connecting "who's off?" lines from a couple of nearby players */}
-          <line x1={168} y1={146} x2={ANOMALY.x} y2={ANOMALY.y} stroke="white" strokeOpacity="0.12" strokeDasharray="3 4" />
-          <line x1={236} y1={96} x2={ANOMALY.x} y2={ANOMALY.y} stroke="white" strokeOpacity="0.12" strokeDasharray="3 4" />
-
-          <rect
-            x={ANOMALY.x - 11}
-            y={ANOMALY.y - 11}
-            width="22"
-            height="22"
-            rx="4"
-            transform={`rotate(45 ${ANOMALY.x} ${ANOMALY.y})`}
-            fill="var(--theme-accent-color)"
-          />
-          <rect
-            x={ANOMALY.x - 11}
-            y={ANOMALY.y - 11}
-            width="22"
-            height="22"
-            rx="4"
-            transform={`rotate(45 ${ANOMALY.x} ${ANOMALY.y})`}
-            fill="none"
-            stroke="white"
-            strokeOpacity="0.4"
-          />
-        </svg>
 
         <div className="flex flex-col items-center gap-1 text-center">
           <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
