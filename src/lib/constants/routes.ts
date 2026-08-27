@@ -10,6 +10,7 @@ export const ROUTES = {
   ORBITAL_PREFERENCES: "/orbital/preferences",
   ORBITAL_ROOM: (roomId: string) => `/orbital/room/${roomId}`,
   ORBITAL_ANOMALY: "/orbital/anomaly",
+  ORBITAL_ANOMALY_ABOUT: "/orbital/anomaly/about",
 } as const;
 
 export const ROUTE_KEYS = {
@@ -22,6 +23,7 @@ export const ROUTE_KEYS = {
   ORBITAL_PREFERENCES: "ORBITAL_PREFERENCES",
   ORBITAL_ROOM: "ORBITAL_ROOM",
   ORBITAL_ANOMALY: "ORBITAL_ANOMALY",
+  ORBITAL_ANOMALY_ABOUT: "ORBITAL_ANOMALY_ABOUT",
 } as const;
 
 export type RouteKey = (typeof ROUTE_KEYS)[keyof typeof ROUTE_KEYS];

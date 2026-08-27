@@ -2,17 +2,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  GameController01Icon,
-  Add01Icon,
-  HashtagIcon,
-  PlayCircleIcon,
-} from "@hugeicons/core-free-icons";
+import { Add01Icon, HashtagIcon, PlayCircleIcon } from "@hugeicons/core-free-icons";
 import { useUserStore } from "@/store/useUserStore";
 import { useCurrentUser } from "@/hooks";
 import { useUIStore } from "@/store/uiStore";
 import { Button } from "@/components/ui";
 import { ROUTES } from "@/lib/constants/routes";
+import { AnomalyLogo } from "@/components/features/anomaly/AnomalyLogo";
 
 /**
  * H6.2 — Game Hub, the real `/orbital` home (replacing H4's placeholder
@@ -28,6 +24,12 @@ import { ROUTES } from "@/lib/constants/routes";
  * Play Online reuses the existing `/orbital/anomaly` route
  * (`PublicLobbyEntry`) untouched, exactly as H5's "no changes needed" note
  * said.
+ *
+ * The tile's icon is now the real `AnomalyLogo` mark (not a generic
+ * controller glyph) and doubles as a nav target: clicking it routes to
+ * `/orbital/anomaly/about`, a fuller "what is this game" landing page
+ * (`AnomalyLandingPage`) for anyone who wants the pitch before picking one
+ * of the three actions below.
  *
  * Session 2 — these two buttons used to open `CREATE_ROOM`/`JOIN_ROOM`,
  * which now open the plain chat/call room modals instead (see the Rooms
@@ -50,9 +52,15 @@ export default function Page() {
     <div className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-theme-surface border border-theme-border rounded-2xl p-8 flex flex-col items-center text-center gap-6">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-theme-hover flex items-center justify-center">
-            <HugeiconsIcon icon={GameController01Icon} className="w-6 h-6 text-white" />
-          </div>
+          <button
+            type="button"
+            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY_ABOUT)}
+            className="w-12 h-12 rounded-2xl overflow-hidden hover:scale-105 hover:brightness-110 transition-transform duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            aria-label="View Anomaly game details"
+            title="View Anomaly game details"
+          >
+            <AnomalyLogo className="w-12 h-12" />
+          </button>
           <div>
             <h1 className="text-lg font-medium text-white">Anomaly</h1>
             <p className="text-sm text-gray-400 mt-1">
