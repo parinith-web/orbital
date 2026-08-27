@@ -13,7 +13,6 @@ import {
   Mic01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
-import { Button } from "@/components/ui";
 import { useUIStore } from "@/store/uiStore";
 import { ROUTES } from "@/lib/constants/routes";
 import { AnomalyWordScatter } from "./AnomalyWordScatter";
@@ -98,34 +97,34 @@ export function AnomalyLandingPage() {
             </p>
           </div>
 
-          <div className="w-full max-w-xs flex flex-col gap-2 mt-3">
-            <Button
-              variant="primary"
-              size="lg"
-              className="w-full justify-center gap-2"
+          <div className="w-full max-w-xs grid grid-cols-3 gap-2.5 mt-3">
+            <button
+              type="button"
               onClick={() => setModal("CREATE_GAME_ROOM")}
+              className="group aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-colors"
+              style={{ backgroundColor: "var(--theme-accent-color)" }}
             >
-              <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-              Create Room
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full justify-center gap-2"
+              <HugeiconsIcon icon={Add01Icon} className="w-5 h-5 text-black/80" />
+              <span className="text-xs font-medium text-black/80 text-center leading-tight px-1">
+                Create
+              </span>
+            </button>
+            <button
+              type="button"
               onClick={() => setModal("JOIN_GAME_ROOM")}
+              className="aspect-square rounded-2xl border border-theme-border flex flex-col items-center justify-center gap-2 text-gray-300 hover:text-white hover:bg-theme-hover transition-colors"
             >
-              <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
-              Join Room
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              className="w-full justify-center gap-2"
+              <HugeiconsIcon icon={HashtagIcon} className="w-5 h-5" />
+              <span className="text-xs font-medium text-center leading-tight px-1">Join</span>
+            </button>
+            <button
+              type="button"
               onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
+              className="aspect-square rounded-2xl border border-theme-border flex flex-col items-center justify-center gap-2 text-gray-300 hover:text-white hover:bg-theme-hover transition-colors"
             >
-              <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
-              Play Online
-            </Button>
+              <HugeiconsIcon icon={PlayCircleIcon} className="w-5 h-5" />
+              <span className="text-xs font-medium text-center leading-tight px-1">Online</span>
+            </button>
           </div>
         </motion.section>
 
