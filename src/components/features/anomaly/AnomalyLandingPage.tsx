@@ -91,7 +91,7 @@ export function AnomalyLandingPage() {
           className="flex flex-col items-center text-center gap-5 pt-16"
         >
           <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-semibold text-white tracking-tight">Anomaly</h1>
+            <h1 className="text-4xl font-semibold text-white tracking-tight -translate-y-2">Anomaly</h1>
             <p className="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
               One imposter. One word off.
               <br />
