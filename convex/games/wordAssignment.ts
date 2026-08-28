@@ -17,6 +17,18 @@ export interface WordPair {
  * listening can reveal the mismatch. This is a starter bank — expand freely,
  * it's just data.
  */
+/**
+ * F1h — grown from the original 15-pair starter bank. Repeats were showing
+ * up fast in longer/regular-group sessions, and a repeat pair quietly kills
+ * the game's core info-asymmetry the moment a group has seen it before
+ * (everyone already knows how "Coffee vs Tea" plays out). No mechanism
+ * change here, just more raw pairs — same "close enough to plausibly
+ * overlap, distinct enough to be catchable on close listening" bar the
+ * original bank's own doc comment sets, spread across more categories
+ * (food, animals, places, professions, sports, music, transport, weather,
+ * everyday objects, media) so a single session doesn't lean on any one
+ * category repeating either.
+ */
 export const WORD_BANK: WordPair[] = [
   { main: "Coffee", offSignal: "Tea" },
   { main: "Beach", offSignal: "Lake" },
@@ -33,6 +45,93 @@ export const WORD_BANK: WordPair[] = [
   { main: "Desert", offSignal: "Savanna" },
   { main: "Painter", offSignal: "Sculptor" },
   { main: "Subway", offSignal: "Bus" },
+
+  // Food & drink
+  { main: "Burger", offSignal: "Sandwich" },
+  { main: "Pancake", offSignal: "Waffle" },
+  { main: "Lemon", offSignal: "Lime" },
+  { main: "Apple", offSignal: "Pear" },
+  { main: "Bakery", offSignal: "Patisserie" },
+  { main: "Cupcake", offSignal: "Muffin" },
+  { main: "Noodles", offSignal: "Spaghetti" },
+  { main: "Taco", offSignal: "Burrito" },
+  { main: "Cheese", offSignal: "Butter" },
+  { main: "Wine", offSignal: "Champagne" },
+
+  // Animals
+  { main: "Wolf", offSignal: "Fox" },
+  { main: "Lion", offSignal: "Tiger" },
+  { main: "Owl", offSignal: "Hawk" },
+  { main: "Dolphin", offSignal: "Shark" },
+  { main: "Butterfly", offSignal: "Moth" },
+  { main: "Spider", offSignal: "Scorpion" },
+  { main: "Frog", offSignal: "Toad" },
+  { main: "Rabbit", offSignal: "Hare" },
+  { main: "Crocodile", offSignal: "Alligator" },
+  { main: "Penguin", offSignal: "Seal" },
+
+  // Places & nature
+  { main: "Mountain", offSignal: "Hill" },
+  { main: "River", offSignal: "Stream" },
+  { main: "Forest", offSignal: "Jungle" },
+  { main: "Island", offSignal: "Peninsula" },
+  { main: "Castle", offSignal: "Palace" },
+  { main: "Museum", offSignal: "Gallery" },
+  { main: "Library", offSignal: "Bookstore" },
+  { main: "Farm", offSignal: "Ranch" },
+  { main: "Zoo", offSignal: "Aquarium" },
+  { main: "Waterfall", offSignal: "Rapids" },
+
+  // Professions
+  { main: "Teacher", offSignal: "Professor" },
+  { main: "Lawyer", offSignal: "Judge" },
+  { main: "Chef", offSignal: "Baker" },
+  { main: "Pilot", offSignal: "Astronaut" },
+  { main: "Firefighter", offSignal: "Paramedic" },
+
+  // Sports & games
+  { main: "Basketball", offSignal: "Volleyball" },
+  { main: "Baseball", offSignal: "Cricket" },
+  { main: "Tennis", offSignal: "Badminton" },
+  { main: "Skiing", offSignal: "Snowboarding" },
+  { main: "Marathon", offSignal: "Sprint" },
+
+  // Music & instruments
+  { main: "Piano", offSignal: "Organ" },
+  { main: "Drum", offSignal: "Tambourine" },
+  { main: "Trumpet", offSignal: "Saxophone" },
+  { main: "Orchestra", offSignal: "Band" },
+
+  // Transport
+  { main: "Bicycle", offSignal: "Scooter" },
+  { main: "Train", offSignal: "Tram" },
+  { main: "Ship", offSignal: "Yacht" },
+  { main: "Car", offSignal: "Truck" },
+  { main: "Rocket", offSignal: "Satellite" },
+
+  // Weather & sky
+  { main: "Thunderstorm", offSignal: "Hurricane" },
+  { main: "Snow", offSignal: "Hail" },
+  { main: "Rainbow", offSignal: "Aurora" },
+  { main: "Fog", offSignal: "Mist" },
+
+  // Everyday objects
+  { main: "Robot", offSignal: "Android" },
+  { main: "Smartphone", offSignal: "Tablet" },
+  { main: "Camera", offSignal: "Camcorder" },
+  { main: "Umbrella", offSignal: "Raincoat" },
+  { main: "Backpack", offSignal: "Suitcase" },
+  { main: "Candle", offSignal: "Lantern" },
+  { main: "Blanket", offSignal: "Quilt" },
+  { main: "Sofa", offSignal: "Armchair" },
+  { main: "Mirror", offSignal: "Window" },
+  { main: "Diamond", offSignal: "Pearl" },
+
+  // Media & entertainment
+  { main: "Comedy", offSignal: "Satire" },
+  { main: "Documentary", offSignal: "Biography" },
+  { main: "Podcast", offSignal: "Radio" },
+  { main: "Carnival", offSignal: "Festival" },
 ];
 
 export interface RandomSource {

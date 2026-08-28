@@ -303,6 +303,7 @@ export default defineSchema({
     speaking_order: v.array(v.string()),
     current_speaker_index: v.optional(v.number()),
     turn_expires_at: v.optional(v.number()), // server-authoritative timer deadline
+    voting_expires_at: v.optional(v.number()), // server-authoritative voting-phase deadline (set on entering "voting")
     votes: v.array(v.object({ voter_id: v.string(), voted_for_id: v.string() })),
     status: v.union(
       v.literal("speaking"),

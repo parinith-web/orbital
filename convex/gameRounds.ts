@@ -6,6 +6,7 @@ import { assignRound } from "./games/wordAssignment";
 import {
   advanceSpeaker as advanceSpeakerPure,
   computeTurnExpiry,
+  DEFAULT_VOTING_DURATION_MS,
   generateSpeakingOrder,
   hasTurnExpired,
 } from "./games/turnOrder";
@@ -57,12 +58,24 @@ import { logGameEvent } from "./gameEvents";
  * not touching the A1 schema. Worth revisiting if that scheduler-queue
  * churn ever actually matters at scale.
  *
- * NOT covered by B4: an analogous timer for the `"voting"` phase. Nothing
- * currently unsticks a round where speaking finished but not everyone
- * votes and no one manually calls `revealRound`. Flagged as an open
- * question again here since it was raised (and deferred) at the end of B3
- * too — needs an explicit decision, not another deferral, before Phase C
- * ships a UI that can get stuck waiting on it.
+ * VOTING-PHASE TIMER (F1g): closes the gap this section used to flag —
+ * previously nothing unstuck a round where speaking finished but a
+ * connected player just never voted (the F1d auto-reveal only fires once
+ * every *connected required* voter has cast a vote; a connected player who
+ * simply sits on it forever isn't caught by that). `applyAdvance` now
+ * stamps `voting_expires_at` (`DEFAULT_VOTING_DURATION_MS` — 60s — out from
+ * the moment speaking ends) the same way it already stamps
+ * `turn_expires_at` for a speaking turn, and schedules a self-validating
+ * `autoRevealOnVotingExpiry` job via `scheduleAutoReveal`, mirroring B4's
+ * `autoAdvanceOnExpiry`/`scheduleAutoAdvance` pair exactly: the job carries
+ * the deadline it was scheduled for, and on firing it re-reads the round
+ * and only acts if it's still `"voting"` with a matching
+ * `voting_expires_at` — a manual `revealRound` call, or `castVote`'s own
+ * auto-reveal, already moving the round to `"revealed"` makes it a no-op.
+ * When it does fire, it calls `performReveal` with whatever votes exist at
+ * that moment — `computeRoundResult` (A4) already handles a partial or
+ * even empty vote list cleanly (no majority winner defaults to "off-signal
+ * evaded"), so no new scoring case was needed, only the trigger.
  *
  * SECURITY NOTE — REDACTION (B5): `gameRounds` rows store `word_offsignal`
  * and `offsignal_user_id` directly on the row, per the A1 schema. A raw
@@ -273,6 +286,21 @@ async function scheduleAutoAdvance(ctx: MutationCtx, round_id: Id<"gameRounds">,
   await ctx.scheduler.runAt(turnExpiresAt, internal.gameRounds.autoAdvanceOnExpiry, {
     round_id,
     expected_turn_expires_at: turnExpiresAt,
+  });
+}
+
+/**
+ * F1g — voting-phase counterpart to `scheduleAutoAdvance` above. Same
+ * self-validating-token pattern: `votingExpiresAt` is both the deadline and
+ * the staleness check `autoRevealOnVotingExpiry` compares against when it
+ * fires, so a reveal that already happened by other means (last required
+ * vote landing, a manual `revealRound`) just makes this a harmless no-op
+ * rather than needing an explicit cancel.
+ */
+async function scheduleAutoReveal(ctx: MutationCtx, round_id: Id<"gameRounds">, votingExpiresAt: number) {
+  await ctx.scheduler.runAt(votingExpiresAt, internal.gameRounds.autoRevealOnVotingExpiry, {
+    round_id,
+    expected_voting_expires_at: votingExpiresAt,
   });
 }
 
@@ -632,11 +660,14 @@ async function applyAdvance(ctx: MutationCtx, session: Doc<"gameSessions">, roun
   });
 
   if (nextTurn.isSpeakingComplete) {
+    const votingExpiresAt = computeTurnExpiry(Date.now(), DEFAULT_VOTING_DURATION_MS);
     await ctx.db.patch(round._id, {
       status: "voting",
       current_speaker_index: nextTurn.nextSpeakerIndex,
       turn_expires_at: undefined,
+      voting_expires_at: votingExpiresAt,
     });
+    await scheduleAutoReveal(ctx, round._id, votingExpiresAt);
     await postSystemMessage(ctx, session, `Voting is open for round ${round.round_number}.`);
     return { phase: "voting" as const };
   }
@@ -686,6 +717,40 @@ export const autoAdvanceOnExpiry = internalMutation({
 });
 
 /**
+ * F1g — fires at a voting phase's deadline. Self-validating (see
+ * `scheduleAutoReveal`'s doc comment above) exactly like
+ * `autoAdvanceOnExpiry`: if the round has since left `"voting"`, or its
+ * `voting_expires_at` no longer matches what this job was scheduled for
+ * (the round was already revealed by the last required vote landing, or by
+ * a manual `revealRound` call), it's a stale invocation and no-ops. When it
+ * does apply, it force-reveals with whatever votes exist at that moment —
+ * `performReveal`/`computeRoundResult` need no special-casing for a partial
+ * vote list, so this is purely "call the same reveal path everything else
+ * already uses, just from a third trigger."
+ */
+export const autoRevealOnVotingExpiry = internalMutation({
+  args: {
+    round_id: v.id("gameRounds"),
+    expected_voting_expires_at: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const round = await ctx.db.get(args.round_id);
+    if (!round) return;
+    if (round.status !== "voting") return;
+    if (round.voting_expires_at !== args.expected_voting_expires_at) return;
+
+    const session = await ctx.db
+      .query("gameSessions")
+      .withIndex("by_session_id", (q) => q.eq("session_id", round.session_id))
+      .first();
+    if (!session) return;
+    if (session.status === "ended") return;
+
+    await performReveal(ctx, session, round);
+  },
+});
+
+/**
  * Shared by the explicit `revealRound` mutation and castVote's auto-trigger
  * once every eligible voter has voted. Idempotent — safe to call on an
  * already-`"revealed"` round (returns `alreadyRevealed: true` and touches
@@ -724,7 +789,12 @@ async function performReveal(
     }),
   );
 
-  await ctx.db.patch(round._id, { status: "revealed" });
+  // Clearing voting_expires_at isn't required for correctness — the status
+  // guard alone already makes any pending autoRevealOnVotingExpiry job a
+  // no-op — but keeps a revealed round's row tidy rather than leaving a
+  // now-meaningless timestamp sitting on it, same hygiene turn_expires_at
+  // already gets on the speaking->voting transition.
+  await ctx.db.patch(round._id, { status: "revealed", voting_expires_at: undefined });
 
   const offSignalPlayer = await getGamePlayer(ctx, session.session_id, round.offsignal_user_id);
   const offSignalName = offSignalPlayer?.username || "Someone";
@@ -1008,6 +1078,7 @@ export const getRoundView = query({
       speaking_order: round.speaking_order,
       current_speaker_user_id: currentSpeakerUserId,
       turn_expires_at: round.turn_expires_at ?? null,
+      voting_expires_at: round.voting_expires_at ?? null,
       my_word: myWord,
       vote_tally: voteTally,
       voted_user_ids: votedUserIds,
