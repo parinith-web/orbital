@@ -2,98 +2,27 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ShieldKeyIcon,
-  FingerAccessIcon,
-  Settings02Icon,
-  Notification03Icon,
-  UserGroupIcon,
-} from "@hugeicons/core-free-icons";
-import { ParticipantCardMock } from "./ParticipantCardMock";
-import { CallControlsMock } from "./CallControlsMock";
-import { ProfileButtonMock } from "./ProfileButtonMock";
-import { AvatarStatusMock } from "./AvatarStatusMock";
-import { AnomalyGameMock } from "./AnomalyGameMock";
+import { UserGroupIcon } from "@hugeicons/core-free-icons";
+import { AppUICalls } from "@/components/landing/AppUICalls";
+import { AppUISignIn } from "@/components/landing/AppUISignIn";
+import { AppUIAccount } from "@/components/landing/AppUIAccount";
+import { AppUIGameNight } from "@/components/landing/AppUIGameNight";
 import { AppUIFriendsRooms } from "@/components/landing/AppUIFriendsRooms";
 
-/** A little "everything is fine here" badge reused across a couple of the
- * feature panels below. */
-function StatusBadge({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-1.5 rounded-full border border-[#242424] bg-[#101010] px-3 py-1 text-[11px] font-medium text-emerald-400">
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-      {label}
-    </div>
-  );
-}
-
 function CallsPanel() {
-  return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <div className="flex items-center gap-1.5 rounded-full border border-[#242424] bg-[#101010] px-3 py-1 text-[11px] font-medium text-arcade-yellow">
-        <HugeiconsIcon icon={ShieldKeyIcon} className="h-3.5 w-3.5" />
-        End-to-end encrypted
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <ParticipantCardMock className="h-28 w-36 sm:h-36 sm:w-44" />
-        <ParticipantCardMock className="h-28 w-36 sm:h-36 sm:w-44" />
-      </div>
-      <CallControlsMock />
-    </div>
-  );
+  return <AppUICalls />;
 }
 
 function SignInPanel() {
-  return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <AvatarStatusMock className="w-fit" />
-      <StatusBadge label="Verified device" />
-      <div className="flex items-center gap-2 rounded-xl border border-[#242424] bg-[#101010] px-4 py-2.5 text-xs text-white/70">
-        <HugeiconsIcon icon={FingerAccessIcon} className="h-4 w-4 text-white/70" />
-        Passkey sign-in enabled — no password stored, anywhere.
-      </div>
-      <ProfileButtonMock name="Wave" avatar="/assets/sq.png" />
-    </div>
-  );
+  return <AppUISignIn />;
 }
 
 function AccountPanel() {
-  const rows = [
-    { label: "Two-factor authentication", value: "On" },
-    { label: "Active sessions", value: "1 device" },
-    { label: "Data export", value: "Available anytime" },
-  ];
-  return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <ProfileButtonMock name="Ember" avatar="/assets/ch.png" />
-      <div className="w-full max-w-[280px] rounded-xl border border-[#242424] bg-[#101010] p-1">
-        {rows.map((r) => (
-          <div
-            key={r.label}
-            className="flex items-center justify-between gap-3 px-3 py-2.5 text-xs text-white/70"
-          >
-            <span className="flex items-center gap-2">
-              <HugeiconsIcon icon={Settings02Icon} className="h-3.5 w-3.5 text-white/40" />
-              {r.label}
-            </span>
-            <span className="font-medium text-white">{r.value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <AppUIAccount />;
 }
 
 function GamePanel() {
-  return (
-    <div className="flex w-full flex-col items-center gap-3">
-      <div className="flex items-center gap-1.5 rounded-full border border-[#242424] bg-[#101010] px-3 py-1 text-[11px] font-medium text-arcade-pink">
-        <HugeiconsIcon icon={Notification03Icon} className="h-3.5 w-3.5" />
-        Live game night
-      </div>
-      <AnomalyGameMock className="max-w-[360px]" />
-    </div>
-  );
+  return <AppUIGameNight />;
 }
 
 function SocialPanel() {
