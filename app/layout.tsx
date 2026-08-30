@@ -1,6 +1,6 @@
 import "@/app/globals.css";
 
-import { Bungee, DM_Sans, Galindo, Inter, Lexend } from "next/font/google";
+import { DM_Sans, Galindo, Inter, Lexend } from "next/font/google";
 import { Suspense } from "react";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
@@ -11,21 +11,15 @@ import { getThemeBootstrapScript } from "@/lib/theme";
 import { ColorProvider } from "@/contexts/colorContext";
 import { PreferencesProvider } from "@/contexts/PreferencesContext";
 import { GlobalModals } from "@/components/layout/GlobalModals";
-import { ClerkProvider } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  Show,
+} from "@clerk/nextjs";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthHeader } from "@/components/layout/AuthHeader";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-// Bungee — a chunky, road-sign-bold display face — powers the arcade
-// marquee moments on the marketing landing page only (wordmark, big
-// headlines, buttons): `font-display` in tailwind.config.ts. It never
-// touches the app's own `font-sans`.
-const bungee = Bungee({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
-});
 
 export const metadata: Metadata = {
   title: "Orbital",
@@ -66,7 +60,6 @@ export default function RootLayout({
         dmSans.variable,
         lexend.variable,
         galindo.variable,
-        bungee.variable,
       )}
     >
       <head>
@@ -103,7 +96,20 @@ export default function RootLayout({
             },
           }}
         >
-          <AuthHeader />
+          <header className="fixed top-4 right-4 z-50 flex gap-2">
+            <Show when="signed-out">
+              <SignInButton mode="modal" forceRedirectUrl="/orbital">
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal" forceRedirectUrl="/orbital">
+                <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </Show>
+          </header>
           <div className="flex min-h-screen">
             <ConvexClientProvider>
               <Suspense>

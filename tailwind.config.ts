@@ -15,24 +15,11 @@ export default {
         sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
         pop: ["var(--font-poppins)", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"], // optional
-        // Landing-page-only display face — Bungee, a chunky road-sign
-        // face — reserved for arcade-marquee moments: the wordmark, big
-        // headlines, and buttons. Doesn't touch the app's own `font-sans`.
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
 
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        // Arcade-cabinet accent palette (landing page only) — vivid,
-        // comic-book color pops against the near-black cabinet housing.
-        arcade: {
-          ink: "#0B0B10",
-          blue: "#2E6FF2",
-          pink: "#FF3D8A",
-          yellow: "#FFD23F",
-          green: "#38D66B",
-        },
         theme: {
           DEFAULT: "var(--theme-accent-color)",
           primary: "var(--theme-accent-color)",

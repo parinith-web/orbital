@@ -10,15 +10,11 @@ import {
   PlayCircleIcon,
   BubbleChatIcon,
   ViewOffSlashIcon,
-  Tick01Icon,
   Mic01Icon,
-  CrownIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
-import { Button } from "@/components/ui";
 import { useUIStore } from "@/store/uiStore";
 import { ROUTES } from "@/lib/constants/routes";
-import { AnomalyLogo } from "./AnomalyLogo";
 import { AnomalyWordScatter } from "./AnomalyWordScatter";
 
 /**
@@ -35,11 +31,9 @@ import { AnomalyWordScatter } from "./AnomalyWordScatter";
  * Modeled directly on skribbl.io's landing page (full-bleed hero -> big
  * primary actions -> About / How to play), reskinned into this app's dark
  * purple/theme-accent surface language instead of skribbl's flat
- * primary-color blocks, and swapping skribbl's static "News" column for
- * an "Inside a round" walkthrough + feature grid, since Anomaly doesn't
- * have a devlog to show off but does have mechanics worth explaining.
- * Since there's no sidebar here to navigate away with, the top-left back
- * link is this page's only way back to the Game Hub.
+ * primary-color blocks. Since there's no sidebar here to navigate away
+ * with, the top-left back link is this page's only way back to the Game
+ * Hub.
  */
 const HOW_TO_PLAY = [
   {
@@ -64,29 +58,6 @@ const HOW_TO_PLAY = [
   },
 ];
 
-const FEATURES = [
-  {
-    icon: Mic01Icon,
-    title: "Built-in voice & video",
-    body: "No third-party call link — everyone talks in the same room they're playing in.",
-  },
-  {
-    icon: HashtagIcon,
-    title: "Private rooms",
-    body: "Spin up a room, share a 6-character code, and only the people you invite can get in.",
-  },
-  {
-    icon: PlayCircleIcon,
-    title: "Public matchmaking",
-    body: "Don't feel like waiting on friends? Play Online drops you straight into an open lobby.",
-  },
-  {
-    icon: CrownIcon,
-    title: "Live leaderboard",
-    body: "Points carry across rounds so the group always knows who's actually good at this.",
-  },
-];
-
 export function AnomalyLandingPage() {
   const router = useRouter();
   const setModal = useUIStore((s) => s.setModal);
@@ -99,10 +70,6 @@ export function AnomalyLandingPage() {
           game-themed words in mixed fonts, a few hand-circled in the
           accent color (see `AnomalyWordScatter`). */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="absolute -top-40 left-1/2 -translate-x-1/2 h-[32rem] w-[32rem] rounded-full blur-3xl opacity-20"
-          style={{ backgroundColor: "var(--theme-accent-color)" }}
-        />
         <AnomalyWordScatter />
       </div>
 
@@ -121,47 +88,45 @@ export function AnomalyLandingPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center text-center gap-6 pt-10"
+          className="flex flex-col items-center text-center gap-5 pt-16"
         >
-          <AnomalyLogo className="w-20 h-20" glow />
-
-          <div className="flex flex-col gap-3">
-            <h1 className="text-4xl font-semibold text-white tracking-tight">Anomaly</h1>
-            <p className="text-base text-gray-400 max-w-lg mx-auto leading-relaxed">
-              A word-based imposter game. Everyone gets a word, one of you
-              doesn&apos;t — talk it out over voice, then vote before the
-              anomaly gets away with it.
+          <div className="flex flex-col gap-2">
+            <h1 className="text-4xl font-semibold text-white tracking-tight -translate-y-2">Anomaly</h1>
+            <p className="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
+              One imposter. One word off.
+              <br />
+              Talk, then vote them out.
             </p>
           </div>
 
-          <div className="w-full max-w-xs flex flex-col gap-2 mt-2">
-            <Button
-              variant="primary"
-              size="lg"
-              className="w-full justify-center gap-2"
+          <div className="w-full max-w-xs grid grid-cols-3 gap-2.5 mt-3">
+            <button
+              type="button"
               onClick={() => setModal("CREATE_GAME_ROOM")}
+              className="group aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-colors"
+              style={{ backgroundColor: "var(--theme-accent-color)" }}
             >
-              <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-              Create Room
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full justify-center gap-2"
+              <HugeiconsIcon icon={Add01Icon} className="w-5 h-5 text-black/80" />
+              <span className="text-xs font-medium text-black/80 text-center leading-tight px-1">
+                Create
+              </span>
+            </button>
+            <button
+              type="button"
               onClick={() => setModal("JOIN_GAME_ROOM")}
+              className="aspect-square rounded-2xl border border-theme-border flex flex-col items-center justify-center gap-2 text-gray-300 hover:text-white hover:bg-theme-hover transition-colors"
             >
-              <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
-              Join Room
-            </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              className="w-full justify-center gap-2"
+              <HugeiconsIcon icon={HashtagIcon} className="w-5 h-5" />
+              <span className="text-xs font-medium text-center leading-tight px-1">Join</span>
+            </button>
+            <button
+              type="button"
               onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
+              className="aspect-square rounded-2xl border border-theme-border flex flex-col items-center justify-center gap-2 text-gray-300 hover:text-white hover:bg-theme-hover transition-colors"
             >
-              <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
-              Play Online
-            </Button>
+              <HugeiconsIcon icon={PlayCircleIcon} className="w-5 h-5" />
+              <span className="text-xs font-medium text-center leading-tight px-1">Online</span>
+            </button>
           </div>
         </motion.section>
 
@@ -179,19 +144,13 @@ export function AnomalyLandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {HOW_TO_PLAY.map((step, i) => (
+            {HOW_TO_PLAY.map((step) => (
               <div
                 key={step.title}
                 className="bg-theme-surface border border-theme-border rounded-2xl p-5 flex gap-4"
               >
-                <div className="shrink-0 w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center relative">
+                <div className="shrink-0 w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center">
                   <HugeiconsIcon icon={step.icon} className="w-4 h-4 text-white" />
-                  <span
-                    className="absolute -top-2 -left-2 w-5 h-5 rounded-full text-[10px] font-medium flex items-center justify-center text-white"
-                    style={{ backgroundColor: "var(--theme-accent-color)" }}
-                  >
-                    {i + 1}
-                  </span>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-white">{step.title}</h3>
@@ -200,61 +159,6 @@ export function AnomalyLandingPage() {
               </div>
             ))}
           </div>
-        </motion.section>
-
-        {/* Feature grid */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col gap-6"
-        >
-          <div className="flex flex-col gap-1 text-center">
-            <h2 className="text-xl font-medium text-white">Why Anomaly</h2>
-            <p className="text-sm text-gray-400">Everything you need is already in the room.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-theme-surface border border-theme-border rounded-2xl p-5 flex flex-col gap-3"
-              >
-                <div className="w-9 h-9 rounded-xl bg-theme-hover flex items-center justify-center">
-                  <HugeiconsIcon icon={feature.icon} className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-white">{feature.title}</h3>
-                  <p className="text-sm text-gray-400 mt-1 leading-relaxed">{feature.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Closing CTA */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="flex flex-col items-center text-center gap-4 bg-theme-surface border border-theme-border rounded-2xl px-8 py-10"
-        >
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Tick01Icon} className="w-4 h-4" style={{ color: "var(--theme-accent-color)" }} />
-            <span className="text-sm text-gray-400">No download, no setup — just a room code.</span>
-          </div>
-          <h2 className="text-xl font-medium text-white">Think you can spot the anomaly?</h2>
-          <Button
-            variant="primary"
-            size="lg"
-            className="gap-2 px-8"
-            onClick={() => router.push(ROUTES.ORBITAL_ANOMALY)}
-          >
-            <HugeiconsIcon icon={PlayCircleIcon} className="w-4 h-4" />
-            Play Online
-          </Button>
         </motion.section>
       </div>
     </div>
