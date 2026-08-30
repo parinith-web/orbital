@@ -11,18 +11,6 @@ import { defaultRandomSource } from "./wordAssignment";
 export const DEFAULT_TURN_DURATION_MS = 30_000;
 
 /**
- * Default time the group gets to vote once speaking ends, before the
- * server force-reveals with whatever votes exist. Mirrors
- * `DEFAULT_TURN_DURATION_MS` — same "someone can always stall it, so the
- * server needs its own deadline" reasoning, just for the voting phase
- * instead of the speaking phase. `computeTurnExpiry`/`hasTurnExpired` below
- * are generic over "a deadline `durationMs` out from `now`" and are reused
- * as-is for this timer rather than duplicated — nothing about them is
- * actually turn-specific despite the file/name.
- */
-export const DEFAULT_VOTING_DURATION_MS = 60_000;
-
-/**
  * Fisher-Yates shuffle using an injected RNG, so tests can use a seeded/fake
  * source instead of Math.random. Does not mutate the input array.
  */

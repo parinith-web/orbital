@@ -206,6 +206,141 @@ body {
   background-size: 4px 4px;
 }
 
+/* ==========================================================================
+   ARCADE CABINET TREATMENT (landing page only)
+   Comic-bold outlines, hard offset color shadows (no blur), and a halftone
+   dot texture — like a cabinet marquee panel rather than a printed circuit.
+   Scoped by usage to the landing page components; the rest of the app never
+   references these classes.
+   ========================================================================== */
+
+/* A thick, comic-panel outline. Pair with an .arcade-shadow for the classic
+   "chunky button/card" look. */
+.arcade-outline {
+  border: 3px solid #0b0b10;
+}
+
+/* Flat, hard-edged offset shadow in place of soft blurred drop-shadows —
+   the shadow color is the "ink" of the panel it sits on. Press states
+   (see .arcade-press) collapse the offset so the element looks physically
+   pressed into the cabinet. */
+.arcade-shadow {
+  box-shadow: 6px 6px 0 0 #0b0b10;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.arcade-shadow-blue {
+  box-shadow: 6px 6px 0 0 #2e6ff2;
+}
+
+.arcade-shadow-pink {
+  box-shadow: 6px 6px 0 0 #ff3d8a;
+}
+
+.arcade-shadow-yellow {
+  box-shadow: 6px 6px 0 0 #ffd23f;
+}
+
+.arcade-shadow-green {
+  box-shadow: 6px 6px 0 0 #38d66b;
+}
+
+.arcade-press:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 0 #0b0b10;
+}
+
+.arcade-press.arcade-shadow-blue:hover {
+  box-shadow: 3px 3px 0 0 #2e6ff2;
+}
+.arcade-press.arcade-shadow-pink:hover {
+  box-shadow: 3px 3px 0 0 #ff3d8a;
+}
+.arcade-press.arcade-shadow-yellow:hover {
+  box-shadow: 3px 3px 0 0 #ffd23f;
+}
+
+/* Comic-book halftone dot field, used as a decorative texture behind
+   panels instead of a flat color. */
+.halftone {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+}
+
+@keyframes rays-spin-kf {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.rays-spin {
+  animation: rays-spin-kf 90s linear infinite;
+}
+
+/* A scattered field of small stars, standing in for the old circular
+   sunburst pattern — reads as "space", not "target/logo mark". */
+.starfield {
+  background-image:
+    radial-gradient(1.6px 1.6px at 6% 14%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 13% 48%, #fff, transparent),
+    radial-gradient(2px 2px at 21% 76%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 28% 22%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 34% 60%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 41% 9%, #fff, transparent),
+    radial-gradient(2px 2px at 47% 40%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 53% 84%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 59% 30%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 66% 65%, #fff, transparent),
+    radial-gradient(2px 2px at 72% 12%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 78% 52%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 84% 88%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 90% 25%, #fff, transparent),
+    radial-gradient(2px 2px at 96% 70%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 9% 92%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 18% 5%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 38% 95%, #fff, transparent),
+    radial-gradient(2px 2px at 62% 96%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 88% 5%, #fff, transparent);
+  background-repeat: no-repeat;
+}
+
+.starfield-twinkle {
+  animation: twinkle-kf 4.5s ease-in-out infinite;
+}
+
+.starfield-twinkle-delayed {
+  animation: twinkle-kf 4.5s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+
+@keyframes twinkle-kf {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* A row of glowing "marquee bulbs", like the light strip on an arcade
+   cabinet header. Render 2rem-apart dots and stagger their twinkle via
+   inline animation-delay on each span. */
+.marquee-lights {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.marquee-lights span {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: fade-slow 2.4s ease-in-out infinite;
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
