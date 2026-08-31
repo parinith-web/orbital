@@ -65,7 +65,14 @@ export default function Page() {
   return (
     <div
       ref={containerRef}
-      className="h-screen selection:bg-white/10 bg-[#0a080b] overflow-y-auto overflow-x-hidden relative"
+      className="selection:bg-white/10 bg-[#0a080b] overflow-y-auto overflow-x-hidden relative"
+      // Landing page only: the whole marketing page is intentionally
+      // rendered at a 0.9 CSS zoom so the default (100%) view matches
+      // what previously only looked right at 90% browser zoom. Height is
+      // compensated (100vh / 0.9) so the zoomed-down box still fills the
+      // real viewport exactly. This never touches the real app — every
+      // other route uses its own layout untouched.
+      style={{ zoom: 0.9, height: "calc(100vh / 0.9)" }}
     >
       <div ref={contentRef} className="w-full">
         {/* Comic-book stage spotlight + halftone texture standing in for

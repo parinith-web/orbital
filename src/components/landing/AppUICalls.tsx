@@ -2,18 +2,20 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ShieldKeyIcon, BubbleChatIcon, Menu01Icon } from "@hugeicons/core-free-icons";
-import { ParticipantCard } from "@/components/features/calls/ParticipantCard";
+import { LandingParticipantTile } from "@/components/landing/LandingParticipantTile";
 import { CallControls } from "@/components/features/calls/CallControls";
 import { MessageItem } from "@/components/features/messaging/MessageItem";
 import type { MessageWithSender, User } from "@/lib/types";
 import type { Id } from "@/convex/_generated/dataModel";
 
 /**
- * `ParticipantCard` is pure presentational (video/avatar tile, props in —
- * no store, no query). `CallControls` reads `useCallStore` directly, but
- * with no active call its mute/video buttons just flip local UI state and
- * its leave button no-ops on a missing `callId` — safe to mount live,
- * no wrapping needed.
+ * `LandingParticipantTile` is a landing-page-only presentational tile
+ * (square avatar, whole-tile speaking outline) — intentionally separate
+ * from the real, shared `ParticipantCard` so this marketing redesign never
+ * touches the live call feature. `CallControls` reads `useCallStore`
+ * directly, but with no active call its mute/video buttons just flip local
+ * UI state and its leave button no-ops on a missing `callId` — safe to
+ * mount live, no wrapping needed.
  *
  * The chat column on the right is `ChatPanel.tsx`'s real header markup
  * (`BubbleChatIcon` + title + kebab, `h-14 border-b`) plus the real
@@ -84,10 +86,9 @@ export function AppUICalls({ className }: { className?: string }) {
           <div className="grid grid-cols-2 gap-2 p-3">
             {PARTICIPANTS.map((p) => (
               <div key={p.userId} className="aspect-[4/3]">
-                <ParticipantCard
-                  userId={p.userId}
-                  profile={{ username: p.username, avatar: p.avatar }}
-                  isVideoOn={false}
+                <LandingParticipantTile
+                  username={p.username}
+                  avatar={p.avatar}
                   isMuted={!!p.isMuted}
                   isSpeaking={!!p.isSpeaking}
                 />
@@ -99,7 +100,7 @@ export function AppUICalls({ className }: { className?: string }) {
       </div>
 
       {/* Group chat column — ChatPanel.tsx's real header markup */}
-      <div className="hidden w-64 flex-none flex-col border-l border-theme-border bg-theme-surface sm:flex">
+      <div className="hidden w-80 flex-none flex-col border-l border-theme-border bg-theme-surface sm:flex">
         <div className="flex h-14 flex-none items-center justify-between gap-2 border-b border-theme-border px-4">
           <div className="flex min-w-0 items-center gap-2">
             <HugeiconsIcon icon={BubbleChatIcon} className="h-4 w-4 flex-none text-theme-accent" />
