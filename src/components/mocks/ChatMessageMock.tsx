@@ -13,7 +13,7 @@ import Image from "next/image";
  */
 export const ChatMessageMock = ({
   name = "Sam",
-  avatar = "/assets/ch.png",
+  avatar,
   message = "Hey! Have you seen the new design?",
   secondMessage,
   className,
@@ -27,7 +27,11 @@ export const ChatMessageMock = ({
   className?: string;
   showDate?: boolean;
   isCurrentUser?: boolean;
-}) => (
+}) => {
+  const resolvedAvatar =
+    avatar ?? (isCurrentUser ? "/assets/bu.png" : "/assets/ch.png");
+
+  return (
   <div className={`w-full overflow-hidden pb-4 text-left ${className}`}>
     {showDate && (
       <div className="flex items-center justify-center py-4 px-4 md:px-10">
@@ -43,7 +47,7 @@ export const ChatMessageMock = ({
         className={`flex gap-2 ${isCurrentUser ? "flex-row-reverse" : "flex-row"}`}
       >
         <Image
-          src={avatar}
+          src={resolvedAvatar}
           width={40}
           height={40}
           alt=""
@@ -95,4 +99,5 @@ export const ChatMessageMock = ({
       </div>
     )}
   </div>
-);
+  );
+};
