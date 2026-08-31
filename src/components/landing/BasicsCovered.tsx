@@ -69,14 +69,14 @@ export function BasicsCovered() {
                 <ChatMessageMock
                   name="Wave"
                   avatar="/assets/sq.png"
-                  message="the black one... back row, near the window"
+                  message="ok mine's something you'd find in a kitchen"
                   showDate={false}
                   className="pointer-events-none pb-2"
                 />
                 <ChatMessageMock
                   name="Volt"
                   avatar="/assets/pi.png"
-                  message="nahhh that has my notes for tomorrow"
+                  message="wait that's literally what I got"
                   showDate={false}
                   isCurrentUser
                   className="pointer-events-none pb-2"
@@ -84,7 +84,7 @@ export function BasicsCovered() {
                 <ChatMessageMock
                   name="Wave"
                   avatar="/assets/sq.png"
-                  message="relax, I gave it to the guard at the gate"
+                  message="then one of us is off-signal 👀"
                   showDate={false}
                   className="pointer-events-none"
                 />
@@ -117,7 +117,7 @@ export function BasicsCovered() {
             <div className="flex flex-col items-center justify-start relative h-32">
               <div className="flex items-center mb-4 text-sm gap-2">
                 {[
-                  { name: "@Chip", color: "bg-[#FF3D8A]" },
+                  { name: "@Ember", color: "bg-[#FF3D8A]" },
                   { name: "@Wave", color: "bg-[#2E6FF2]" },
                   { name: "@Volt", color: "bg-[#FFD23F]" },
                 ].map((tag, idx) => (
@@ -178,7 +178,7 @@ export function BasicsCovered() {
                 transition={{ delay: 0.6, duration: 0.5 }}
               >
                 <ChatMessageMock
-                  message="zap zap!"
+                  message="no way it's that obvious 👀"
                   name="Ember"
                   avatar="/assets/ch.png"
                   showDate={false}
