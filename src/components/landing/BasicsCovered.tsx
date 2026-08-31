@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   MentionsAutocompleteMock,
   ChatMessageMock,
+  ChatInputBarMock,
   TypingIndicatorMock,
 } from "@/components/mocks";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
@@ -55,7 +56,7 @@ export function BasicsCovered() {
                 damping: 20,
                 delay: 0.3,
               }}
-              className="arcade-outline arcade-shadow arcade-shadow-yellow absolute -bottom-[200px] left-6 w-[260px] overflow-hidden rounded-2xl bg-[#0a0a0d] transition-all duration-500 md:block hidden"
+              className="arcade-outline arcade-shadow arcade-shadow-yellow absolute -bottom-[70px] left-4 w-[300px] overflow-hidden rounded-2xl bg-[#0a0a0d] transition-all duration-500 md:block hidden"
             >
               <div className="flex items-center gap-2 border-b-2 border-[#0b0b10] bg-[#141418] px-3 py-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-arcade-pink" />
@@ -89,6 +90,9 @@ export function BasicsCovered() {
                   className="pointer-events-none"
                 />
               </div>
+              <div className="px-2 pb-3 pt-1">
+                <ChatInputBarMock accent={false} className="pointer-events-none" />
+              </div>
             </motion.div>
           </motion.div>
           <motion.div
@@ -112,9 +116,62 @@ export function BasicsCovered() {
               }}
             />
             <div className="space-y-4 mb-6 relative z-10">
-              <h3 className="text-xl font-medium text-white">Mentions</h3>
+              <h3 className="text-xl font-medium text-white">
+                Typing Indicators
+              </h3>
             </div>
             <div className="flex flex-col items-center justify-start relative h-32">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                <ChatMessageMock
+                  message="no way it's that obvious 👀"
+                  name="Ember"
+                  avatar="/assets/ch.png"
+                  showDate={false}
+                  className="w-full md:flex hidden pointer-events-none"
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                <TypingIndicatorMock
+                  name="Volt"
+                  avatar="/assets/pi.png"
+                  className="scale-110 md:mt-0 mt-6"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{
+              duration: 0.8,
+              ease: [0.21, 0.47, 0.32, 0.98],
+              delay: 0.2,
+            }}
+            className="flex-1 bg-[#0f0f0f] rounded-[24px] p-8 px-2 flex flex-col justify-between relative cursor-default"
+          >
+            <div
+              className="absolute inset-0 rounded-[24px] border border-white/10 pointer-events-none"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 0%, transparent 15%)",
+                maskImage:
+                  "linear-gradient(to bottom, black 0%, transparent 15%)",
+              }}
+            />
+            <div className="space-y-0 px-6 relative z-10">
+              <h3 className="text-xl font-medium text-white">Mentions</h3>
+            </div>
+            <div className="flex flex-col items-center justify-start relative">
               <div className="flex items-center mb-4 text-sm gap-2">
                 {[
                   { name: "@Ember", color: "bg-[#FF3D8A]" },
@@ -141,60 +198,7 @@ export function BasicsCovered() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
               >
-                <MentionsAutocompleteMock className="md:scale-110 scale-[0.75] z-20 shadow-2xl" />
-              </motion.div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{
-              duration: 0.8,
-              ease: [0.21, 0.47, 0.32, 0.98],
-              delay: 0.2,
-            }}
-            className="flex-1 bg-[#0f0f0f] rounded-[24px] p-8 px-2 flex flex-col justify-between relative cursor-default"
-          >
-            <div
-              className="absolute inset-0 rounded-[24px] border border-white/10 pointer-events-none"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black 0%, transparent 15%)",
-                maskImage:
-                  "linear-gradient(to bottom, black 0%, transparent 15%)",
-              }}
-            />
-            <div className="space-y-0 px-6 relative z-10">
-              <h3 className="text-xl font-medium text-white">
-                Typing Indicators
-              </h3>
-            </div>
-            <div className="flex flex-col mr-4 items-center justify-start">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                <ChatMessageMock
-                  message="no way it's that obvious 👀"
-                  name="Ember"
-                  avatar="/assets/ch.png"
-                  showDate={false}
-                  className="w-full md:flex hidden pointer-events-none"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                <TypingIndicatorMock
-                  name="Volt"
-                  avatar="/assets/pi.png"
-                  className="scale-110 md:mt-0 mt-6"
-                />
+                <MentionsAutocompleteMock className="scale-[0.6] z-20 shadow-2xl" />
               </motion.div>
             </div>
           </motion.div>
