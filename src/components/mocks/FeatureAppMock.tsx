@@ -8,10 +8,10 @@ import { AppUIGameNight } from "@/components/landing/AppUIGameNight";
 import { AppUIFriendsDM } from "@/components/landing/AppUIFriendsDM";
 
 const panels = [
-  { activeNav: "rooms" as const, Panel: AppUICalls },
-  { activeNav: "rooms" as const, Panel: AppUIRooms },
   { activeNav: "game-hub" as const, Panel: AppUIGameNight },
   { activeNav: "friends" as const, Panel: AppUIFriendsDM },
+  { activeNav: "rooms" as const, Panel: AppUIRooms },
+  { activeNav: "rooms" as const, Panel: AppUICalls },
 ];
 
 export function FeatureAppMock({

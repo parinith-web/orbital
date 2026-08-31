@@ -13,16 +13,6 @@ import { FeatureAppMock } from "@/components/mocks";
 
 const features = [
   {
-    title: "Encrypted Calls",
-    description: "Every call is end-to-end encrypted, start to finish.",
-    icon: ShieldKeyIcon,
-  },
-  {
-    title: "Private Rooms",
-    description: "Your own space for your people — organized, just yours.",
-    icon: Home09Icon,
-  },
-  {
     title: "Game Nights",
     description: "Jump into Anomaly with friends, right from the app.",
     icon: GameController01Icon,
@@ -31,6 +21,16 @@ const features = [
     title: "Friends",
     description: "1:1 chats with the people you keep close.",
     icon: BubbleChatIcon,
+  },
+  {
+    title: "Private Rooms",
+    description: "Your own space for your people — organized, just yours.",
+    icon: Home09Icon,
+  },
+  {
+    title: "Encrypted Calls",
+    description: "Every call is end-to-end encrypted, start to finish.",
+    icon: ShieldKeyIcon,
   },
 ];
 
@@ -51,7 +51,7 @@ export function Privacy() {
           }}
           viewport={{ once: true }}
         >
-          Feature
+          Inside
         </motion.span>
         <motion.span
           initial={{ opacity: 0, x: 100, filter: "blur(10px)" }}
@@ -65,11 +65,11 @@ export function Privacy() {
           }}
           viewport={{ once: true }}
         >
-          Complete
+          Out
         </motion.span>
       </h2>
 
-      <div className="md:mt-20 mt-8 max-w-4xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="md:mt-20 mt-8 max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {features.map((feature, i) => {
           const isActive = active === i;
           return (
@@ -85,7 +85,7 @@ export function Privacy() {
                 ease: [0.21, 0.47, 0.32, 0.98],
               }}
               viewport={{ once: true }}
-              className={`arcade-outline arcade-press relative h-36 md:h-40 w-full rounded-3xl flex flex-col items-center justify-center gap-2 text-center px-4 transition-colors ${
+              className={`arcade-outline arcade-press relative h-32 md:h-36 w-full rounded-3xl flex flex-col items-center justify-center gap-2 text-center px-4 transition-colors ${
                 isActive
                   ? "arcade-shadow arcade-shadow-pink bg-[#141018]"
                   : "arcade-shadow arcade-shadow-blue bg-[#0a0a0d] hover:bg-[#141018]"
