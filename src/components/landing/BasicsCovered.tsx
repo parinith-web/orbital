@@ -128,8 +128,9 @@ export function BasicsCovered() {
               >
                 <ChatMessageMock
                   message="no way it's that obvious 👀"
-                  name="Ember"
-                  avatar="/assets/ch.png"
+                  name="Volt"
+                  avatar="/assets/pi.png"
+                  isCurrentUser
                   showDate={false}
                   className="w-full md:flex hidden pointer-events-none"
                 />
@@ -140,8 +141,8 @@ export function BasicsCovered() {
                 transition={{ delay: 0.6, duration: 0.5 }}
               >
                 <TypingIndicatorMock
-                  name="Volt"
-                  avatar="/assets/pi.png"
+                  name="Ember"
+                  avatar="/assets/ch.png"
                   className="scale-110 md:mt-0 mt-6"
                 />
               </motion.div>

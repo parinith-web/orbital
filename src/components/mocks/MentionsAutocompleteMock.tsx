@@ -28,7 +28,7 @@ export const MentionsAutocompleteMock = ({
   return (
     <div
       className={`bg-[#121214] border border-white/5 rounded-xl ${className}`}
-      style={{ width: "350px" }}
+      style={{ width: "220px" }}
     >
       {users.map((user, index) => (
         <div
@@ -46,7 +46,7 @@ export const MentionsAutocompleteMock = ({
               className="rounded-[12px] object-cover"
             />
           </div>
-          <span className="text-sm text-gray-200 font-medium">
+          <span className="text-base text-gray-200 font-semibold">
             {user.username}
           </span>
         </div>
