@@ -1,9 +1,9 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
-  Add01Icon,
-  UserAdd01Icon,
+  HashtagIcon,
   Home01Icon,
+  Settings01Icon,
   Menu01Icon,
   Search01Icon,
   Image01Icon,
@@ -24,17 +24,21 @@ export const FullAppMock = ({ className }: { className?: string }) => (
     {/* Left Sidebar */}
     <div className="w-[240px] flex-none bg-theme-surface border-theme-border border-r select-none hidden md:flex flex-col py-2 px-1 md:px-1 text-white items-center font-sans">
       <div className="flex flex-col gap-1 mt-2 text-sm items-center w-full">
-        <div className="bg-theme-hover text-white ease-in-out duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={Home01Icon} className="w-4 h-4" />
+          <span>Game Hub</span>
+        </div>
+        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
           <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
-          <span>Friends</span>
+          <span>Social</span>
+        </div>
+        <div className="bg-theme-hover text-white ease-in-out duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
+          <span>Rooms</span>
         </div>
         <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-          <span>Create Room</span>
-        </div>
-        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4" />
-          <span>Join Room</span>
+          <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
+          <span>Settings</span>
         </div>
       </div>
 
@@ -144,8 +148,7 @@ export const FullAppMock = ({ className }: { className?: string }) => (
           secondMessage="Thought you had it at one point."
         />
         <ChatMessageMock
-          name="Ember"
-          avatar="/assets/ch.png"
+          isCurrentUser
           message="Yeah, misplayed the last turn."
           showDate={false}
         />
@@ -157,8 +160,7 @@ export const FullAppMock = ({ className }: { className?: string }) => (
           showDate={false}
         />
         <ChatMessageMock
-          name="Volt"
-          avatar="/assets/pi.png"
+          isCurrentUser
           message="Fair. I rushed it."
           showDate={false}
         />

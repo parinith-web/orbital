@@ -157,7 +157,7 @@ export function BeautifullyCrafted({
             <div className="-ml-[50px] flex md:hidden flex-row gap-2 items-end">
               <CallEndedNotificationMock className="min-w-[250px]" />
               <MessageNotificationMock className="min-w-[300px]" />
-              <ChatInputBarMock accent={false} className="w-72 min-w-[350px]" />
+              <ChatInputBarMock className="w-72 min-w-[350px]" />
             </div>
 
             {/* Desktop only */}
@@ -166,7 +166,7 @@ export function BeautifullyCrafted({
               <ProfileButtonMock />
             </div>
             <div className="hidden md:flex flex-shrink-0">
-              <ChatInputBarMock accent={false} className="min-w-[350px]" />
+              <ChatInputBarMock className="min-w-[350px]" />
             </div>
             <div className="hidden md:flex flex-shrink-0">
               <AvatarStatusMock />
@@ -181,7 +181,7 @@ export function BeautifullyCrafted({
                   <HugeiconsIcon icon={Upload01Icon} className="w-7 h-7" />
                 </Button>
                 <div className="flex flex-col gap-2 flex-shrink-0 items-center">
-                  <button className="flex text-sm items-center gap-1 ease-in-out hover:brightness-110 hover:opacity-90 px-4 py-1 rounded-[8px] bg-white text-black">
+                  <button className="flex text-sm items-center gap-1 ease-in-out hover:brightness-110 hover:opacity-90 px-4 py-1.5 rounded-[8px] bg-theme-accent text-theme-text">
                     <HugeiconsIcon icon={UserAdd01Icon} className="w-4 h-4" />
                     <span>Add friend</span>
                   </button>
