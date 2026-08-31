@@ -50,8 +50,9 @@ const DEMO_MESSAGES: MessageWithSender[] = [
 
 export function AppUIFriendsDM({ className }: { className?: string }) {
   return (
+    <div className={`flex h-full w-full items-center justify-center p-6 ${className || ""}`}>
     <div
-      className={`flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-theme-border bg-theme-base ${className || ""}`}
+      className="flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-theme-border bg-theme-base"
     >
       {/* DirectChatThread's own header markup, verbatim */}
       <div className="flex-none flex items-center gap-2 px-3 h-12 border-b border-theme-border">
@@ -86,6 +87,7 @@ export function AppUIFriendsDM({ className }: { className?: string }) {
       <div className="flex-none w-full flex justify-center pb-3 pt-1 px-3">
         <ChatInputBarMock className="w-full md:max-w-full" />
       </div>
+    </div>
     </div>
   );
 }

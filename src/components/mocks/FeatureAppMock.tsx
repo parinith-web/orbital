@@ -32,7 +32,7 @@ export function FeatureAppMock({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="flex w-full items-center justify-center"
+          className="flex h-full w-full items-stretch justify-center"
         >
           <Panel />
         </motion.div>

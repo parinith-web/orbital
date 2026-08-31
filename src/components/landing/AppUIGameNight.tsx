@@ -55,8 +55,9 @@ const DEMO_SPEAKER = { username: "Wave", avatar: "/assets/sq.png" };
 
 export function AppUIGameNight({ className }: { className?: string }) {
   return (
-    <div className={`flex w-full flex-col items-center gap-5 max-w-md mx-auto ${className || ""}`}>
-      <div className="flex items-center gap-2 rounded-full border border-theme-border bg-theme-hover px-3.5 py-1.5">
+    <div className={`flex h-full w-full items-center justify-center p-6 ${className || ""}`}>
+      <div className="flex w-full flex-col items-center gap-5 max-w-md mx-auto">
+        <div className="flex items-center gap-2 rounded-full border border-theme-border bg-theme-hover px-3.5 py-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
         <span className="text-xs font-semibold tracking-wide text-gray-300">Round 2</span>
       </div>
@@ -87,6 +88,7 @@ export function AppUIGameNight({ className }: { className?: string }) {
           </div>
         </div>
         <CountdownRing secondsLeft={12} percent={40} />
+      </div>
       </div>
     </div>
   );

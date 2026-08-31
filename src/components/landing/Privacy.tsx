@@ -51,7 +51,7 @@ export function Privacy() {
           }}
           viewport={{ once: true }}
         >
-          Privacy
+          Feature
         </motion.span>
         <motion.span
           initial={{ opacity: 0, x: 100, filter: "blur(10px)" }}
@@ -65,7 +65,7 @@ export function Privacy() {
           }}
           viewport={{ once: true }}
         >
-          First
+          Complete
         </motion.span>
       </h2>
 

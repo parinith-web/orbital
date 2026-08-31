@@ -41,7 +41,7 @@ export function AppShellFrame({
 }) {
   return (
     <div
-      className={`arcade-outline arcade-shadow arcade-shadow-blue flex w-full max-w-3xl overflow-hidden rounded-2xl bg-theme-base ${className || ""}`}
+      className={`arcade-outline arcade-shadow arcade-shadow-blue flex w-full max-w-5xl overflow-hidden rounded-2xl bg-theme-base ${className || ""}`}
     >
       {/* LeftSidebar's exact signed-in markup */}
       <div className="bg-theme-surface border-theme-border border-r select-none flex flex-col py-2 px-1 text-white items-center font-sans flex-none">
@@ -65,7 +65,11 @@ export function AppShellFrame({
         </div>
       </div>
 
-      <div className="flex flex-1 min-h-[340px] items-center justify-center overflow-hidden p-6 sm:p-8">
+      {/* Fixed-size content slot: every panel renders inside this same
+          box, so switching features never resizes the card. Panels that
+          need to fill it (the room detail view, the call+chat layout) use
+          h-full w-full; simpler panels just center within it. */}
+      <div className="flex-1 min-w-0 h-[440px] sm:h-[500px] overflow-hidden flex items-stretch justify-center">
         {children}
       </div>
     </div>
