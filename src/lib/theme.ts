@@ -1,5 +1,11 @@
 const STORAGE_KEY = "chatColor";
-const DEFAULT_CHAT_COLOR = "#ffffff";
+// Was flat white — barely visible as an accent (bubbles, active states,
+// highlights all rely on --theme-accent-color for tint/contrast). Default
+// new users to the same electric blue used across the landing page's
+// arcade-cabinet branding (see .arcade-shadow-blue in globals.css) so the
+// in-app accent feels intentional out of the box, not like an unset
+// placeholder. Still fully overridable from the in-app color picker.
+const DEFAULT_CHAT_COLOR = "#2e6ff2";
 
 export function hexToHsl(hex: string): [number, number, number] {
   let value = hex.trim();

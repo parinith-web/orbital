@@ -5,12 +5,12 @@
 @tailwind utilities;
 
 :root {
-  --theme-bg-base: 252 56% 6.5%;
-  --theme-bg-surface: 252 42% 4%;
-  --theme-bg-hover: 252 70% 15%;
-  --theme-border: 252 42% 14%;
-  --theme-accent-color: #4a31b0;
-  --theme-accent-hsl: 252 56% 44%;
+  --theme-bg-base: 220 35% 6.5%;
+  --theme-bg-surface: 220 26% 4%;
+  --theme-bg-hover: 220 44% 15%;
+  --theme-border: 220 26% 14%;
+  --theme-accent-color: #2e6ff2;
+  --theme-accent-hsl: 220 88% 56%;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);

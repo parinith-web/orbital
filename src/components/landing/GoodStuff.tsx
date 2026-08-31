@@ -12,7 +12,7 @@ import {
 const goodstuff = [
   {
     title: "Personal & Group Chats",
-    desc: "Chat with friends or join a room to connect in one place.",
+    desc: "Message a friend one-on-one or drop into a room with everyone — same chat, same message bar, just more people in it.",
     component: (
       <div className="mx-auto grid mt-4 w-full max-w-[560px] grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 lg:max-w-[640px]">
         <RoomItemMock name="Projects" id="4567" className="w-full" />
@@ -38,7 +38,7 @@ const goodstuff = [
   },
   {
     title: "Voice & Video Calls",
-    desc: "Make individual or group calls and switch between them seamlessly.",
+    desc: "Start a call with one friend or the whole room, and switch between them without ever hanging up.",
     component: (
       <div className="flex mt-8 w-full items-center justify-center">
         <ActiveCallMock className="origin-center " />
@@ -47,7 +47,7 @@ const goodstuff = [
   },
   {
     title: "Notifications",
-    desc: "Stay updated with real-time notifications and never miss a beat.",
+    desc: "Get pinged the moment a message lands or someone @mentions you — nothing to refresh, nothing to miss.",
     component: (
       <div className="w-full max-w-[350px]">
         <MessageNotificationMock
@@ -63,7 +63,7 @@ const goodstuff = [
   },
   {
     title: "Game Hub",
-    desc: "Jump into Anomaly, a word-based imposter game, without ever leaving the room. Everyone gets a word, one of you doesn't — talk it out over voice, then vote.",
+    desc: "Jump into Anomaly, a word-based imposter game. Everyone gets a word, one of you doesn't — talk it out over voice, then vote them out.",
     component: (
       <div className="flex mt-8 w-full items-center justify-center">
         <AnomalyGameMock />

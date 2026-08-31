@@ -78,6 +78,7 @@ export function BasicsCovered() {
                   avatar="/assets/pi.png"
                   message="nahhh that has my notes for tomorrow"
                   showDate={false}
+                  isCurrentUser
                   className="pointer-events-none pb-2"
                 />
                 <ChatMessageMock
