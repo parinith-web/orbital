@@ -31,7 +31,14 @@ export function Hero({}: HeroProps) {
   };
 
   return (
-    <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden">
+    <section
+      className="relative flex w-full items-center justify-center overflow-hidden"
+      // Landing page renders at a 0.9 CSS zoom (see app/page.tsx), so a
+      // plain `100vh`/`min-h-screen` here would only fill ~90% of the
+      // actual viewport once scaled down. Compensate the same way the
+      // outer container does, so the hero fills the full page exactly.
+      style={{ minHeight: "calc(100vh / 0.9)" }}
+    >
       {/* Deep-space backdrop: dark gradient sky, twinkling starfield,
           scattered comic stars, and a crescent moon. The old comet/ringed
           planet/satellite/earth decor in SpaceDecor.tsx is left untouched

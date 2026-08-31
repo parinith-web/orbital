@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Mic01Icon } from "@hugeicons/core-free-icons";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { getAvatarUrl } from "@/lib/utils/avatar";
+import { AnomalyWordScatter, HandCircle } from "@/components/features/anomaly/AnomalyWordScatter";
 
 /**
  * This panel doesn't call Convex — no live game session on the marketing
@@ -13,6 +14,11 @@ import { getAvatarUrl } from "@/lib/utils/avatar";
  * `CountdownRing` treatment), just fed a fixed word/speaker instead of a
  * live query. See `RoundView.tsx`'s own "speaking" branch for the source
  * of truth this mirrors.
+ *
+ * The header strip above the round card is the real Game Hub's own cover
+ * art (`AnomalyWordScatter` + the hand-circled "Anomaly" title, same as
+ * `AnomalyArtwork.tsx`) so this "Game Nights" tile is unmistakably the
+ * same game, not a generic round-in-progress screenshot.
  */
 
 function CountdownRing({
@@ -57,6 +63,19 @@ export function AppUIGameNight({ className }: { className?: string }) {
   return (
     <div className={`flex h-full w-full items-center justify-center p-6 ${className || ""}`}>
       <div className="flex w-full flex-col items-center gap-5 max-w-md mx-auto">
+        <div className="relative w-full h-20 overflow-hidden rounded-2xl bg-black">
+          <AnomalyWordScatter />
+          <div className="relative flex h-full items-center justify-center">
+            <span
+              className="relative text-2xl font-semibold text-white tracking-tight -rotate-2"
+              style={{ fontFamily: "var(--font-pop, inherit)" }}
+            >
+              <HandCircle rotate={2} />
+              <span className="relative">Anomaly</span>
+            </span>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 rounded-full border border-theme-border bg-theme-hover px-3.5 py-1.5">
         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
         <span className="text-xs font-semibold tracking-wide text-gray-300">Round 2</span>
