@@ -7,6 +7,7 @@ import {
   Hero,
   Privacy,
   GoodStuff,
+  AvatarShowcase,
   BeautifullyCrafted,
   BasicsCovered,
   Theming,
@@ -97,6 +98,8 @@ export default function Page() {
       <Privacy />
 
       <GoodStuff />
+
+      <AvatarShowcase />
 
       <BeautifullyCrafted
         beautifullyCraftedRef={beautifullyCraftedRef}

@@ -2,6 +2,7 @@ export * from "./Navbar";
 export * from "./Hero";
 export * from "./Privacy";
 export * from "./GoodStuff";
+export * from "./AvatarShowcase";
 export * from "./BeautifullyCrafted";
 export * from "./BasicsCovered";
 export * from "./Theming";
