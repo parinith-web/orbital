@@ -35,8 +35,12 @@ export function AnomalyArtwork({ onClick, className = "" }: AnomalyArtworkProps)
       aria-label="Open Anomaly — a word-based imposter game"
       className={`group relative w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 rounded-3xl ${className}`}
     >
-      {/* Cover — the title is part of the artwork, not text over it */}
-      <div className="relative w-full h-52 overflow-hidden rounded-3xl bg-black">
+      {/* Cover — the title is part of the artwork, not text over it.
+          aspect-[4/3] keeps this rectangular at any container width,
+          matching the marketing mock's reference cover in
+          `AppUIGameNight.tsx` instead of the old fixed h-52, which read
+          squarish on narrower panes. */}
+      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-3xl bg-black">
         <AnomalyWordScatter />
         <div className="relative flex h-full items-center justify-center">
           <span
