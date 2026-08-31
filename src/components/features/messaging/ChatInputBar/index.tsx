@@ -134,6 +134,7 @@ export function ChatInputBar(props: ChatInputBarProps) {
             <TooltipWrapper content="Cancel">
               <button
                 onClick={file.onCancel}
+                aria-label="Cancel attachment"
                 className="absolute top-2 right-2 p-2 hover:bg-theme-hover rounded-lg text-gray-400 hover:text-white transition-all"
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
@@ -156,6 +157,7 @@ export function ChatInputBar(props: ChatInputBarProps) {
             <TooltipWrapper content="Cancel editing">
               <button
                 onClick={editing.onCancel}
+                aria-label="Cancel editing"
                 className="absolute top-2 right-2 p-1 hover:bg-theme-hover rounded-lg text-gray-400 hover:text-white transition-all"
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
@@ -216,6 +218,7 @@ export function ChatInputBar(props: ChatInputBarProps) {
             <TooltipWrapper content="Attach file">
               <button
                 onClick={() => file.ref.current?.click()}
+                aria-label="Attach file"
                 className="border border-theme-border py-2 px-2 rounded-[12px] text-white hover:bg-theme-border disabled:opacity-50"
                 disabled={file.upload.isUploading && !input.value.trim()}
               >
@@ -236,6 +239,7 @@ export function ChatInputBar(props: ChatInputBarProps) {
             <button
               onClick={actions.onSend}
               style={{ backgroundColor: color, color: textColor }}
+              aria-label="Send message"
               className="py-3 px-3 rounded-[12px] disabled:opacity-50"
               disabled={!input.value.trim() && !file.upload.file}
             >

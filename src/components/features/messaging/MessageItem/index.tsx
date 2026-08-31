@@ -216,7 +216,7 @@ export const MessageItem = React.memo(
                     : isFile
                       ? "text-white"
                       : isCurrentUser
-                        ? "text-white rounded-xl rounded-tr-none border border-theme-accent/30 bg-theme-accent/10"
+                        ? "text-white rounded-xl rounded-tr-none bg-theme-accent/20"
                         : "text-white rounded-xl rounded-tl-none bg-theme-hover"
                 }`}
               >

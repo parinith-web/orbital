@@ -65,7 +65,7 @@ export const ChatMessageMock = ({
           <div
             className={`text-sm text-white mt-1 px-3 py-1.5 max-w-[220px] ${
               isCurrentUser
-                ? "rounded-xl rounded-tr-none border border-theme-accent/30 bg-theme-accent/10 text-right"
+                ? "rounded-xl rounded-tr-none bg-theme-accent/20 text-right"
                 : "rounded-xl rounded-tl-none bg-theme-hover text-left"
             }`}
           >
@@ -85,7 +85,7 @@ export const ChatMessageMock = ({
           <div
             className={`text-sm text-white px-3 py-1.5 max-w-[220px] ${
               isCurrentUser
-                ? "rounded-xl rounded-tr-none border border-theme-accent/30 bg-theme-accent/10 text-right"
+                ? "rounded-xl rounded-tr-none bg-theme-accent/20 text-right"
                 : "rounded-xl rounded-tl-none bg-theme-hover text-left"
             }`}
           >

@@ -19,7 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           <input
             className={cn(
-              "outline-none border border-theme-border rounded-xl text-[#e3e3e3] bg-theme-hover w-full placeholder-[#c7c7c7] disabled:opacity-70",
+              "outline-none border border-theme-border rounded-xl text-[#e3e3e3] bg-theme-hover w-full placeholder-[#c7c7c7] disabled:opacity-70 focus-visible:ring-2 focus-visible:ring-theme-accent focus-visible:border-theme-accent",
               inputSize === "sm" ? "py-2 px-3 text-sm" : "py-2 px-3 text-sm",
               rightElement ? "pr-10" : "",
               error && "border-red-500",

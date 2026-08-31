@@ -439,3 +439,21 @@ body {
 .font-display {
   font-weight: 900;
 }
+
+/* Respect the OS-level "reduce motion" preference. This covers every plain
+   CSS animation/transition in the app (the arcade press/hover states,
+   fade-slow, rays-spin, halftone, etc.) — it can't reach into Framer
+   Motion's JS-driven animations used throughout the landing page and
+   modals, so those still run; catching the CSS layer here is still a real
+   reduction for anyone with vestibular sensitivity, at zero cost to
+   everyone else. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
