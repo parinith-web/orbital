@@ -15,6 +15,9 @@ export default {
         sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
         pop: ["var(--font-poppins)", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"], // optional
+        // Matches the hero's SVG wordmark ("ORBITAL GAMES" in
+        // ControllerArt.tsx), which uses this exact stack at weight 900.
+        display: ['"Arial Black"', "Arial", "sans-serif"],
       },
 
       colors: {

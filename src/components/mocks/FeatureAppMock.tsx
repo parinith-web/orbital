@@ -4,35 +4,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
 import { AppUICalls } from "@/components/landing/AppUICalls";
-import { AppUISignIn } from "@/components/landing/AppUISignIn";
-import { AppUIAccount } from "@/components/landing/AppUIAccount";
+import { AppUIRooms } from "@/components/landing/AppUIRooms";
 import { AppUIGameNight } from "@/components/landing/AppUIGameNight";
-import { AppUIFriendsRooms } from "@/components/landing/AppUIFriendsRooms";
+import { AppUIFriendsDM } from "@/components/landing/AppUIFriendsDM";
 
 function CallsPanel() {
   return <AppUICalls />;
 }
 
-function SignInPanel() {
-  return <AppUISignIn />;
-}
-
-function AccountPanel() {
-  return <AppUIAccount />;
+function RoomsPanel() {
+  // The real app UI, not a mock: the unmodified `RoomMembersList`
+  // component, fed static demo data since there's no signed-in session
+  // on the marketing page.
+  return <AppUIRooms />;
 }
 
 function GamePanel() {
   return <AppUIGameNight />;
 }
 
-function SocialPanel() {
-  // The real app UI, not a mock: FriendsListView's exact row markup plus
-  // the unmodified RoomMembersList component, fed static demo data since
-  // there's no signed-in session on the marketing page.
-  return <AppUIFriendsRooms />;
+function FriendsPanel() {
+  // The real app UI, not a mock: `DirectChatThread`'s exact header markup
+  // plus the unmodified `MessageItem` bubble component, fed a static demo
+  // conversation.
+  return <AppUIFriendsDM />;
 }
 
-const panels = [CallsPanel, SignInPanel, AccountPanel, GamePanel, SocialPanel];
+const panels = [CallsPanel, RoomsPanel, GamePanel, FriendsPanel];
 
 export function FeatureAppMock({
   active,

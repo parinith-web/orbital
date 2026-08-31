@@ -429,3 +429,13 @@ body {
     @apply font-sans;
   }
 }
+
+/* The landing page's headings and wordmark use `font-display`, matched to
+   the same "Arial Black, Arial, sans-serif" (weight 900) the hero's SVG
+   controller art uses for its "ORBITAL GAMES" wordmark — see
+   ControllerArt.tsx. `fontFamily.display` in tailwind.config.ts covers the
+   family; this covers the weight, since Tailwind's fontFamily utility
+   doesn't set font-weight. */
+.font-display {
+  font-weight: 900;
+}

@@ -5,10 +5,9 @@ import { motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ShieldKeyIcon,
-  FingerAccessIcon,
-  Settings02Icon,
+  Home09Icon,
   GameController01Icon,
-  UserGroupIcon,
+  BubbleChatIcon,
 } from "@hugeicons/core-free-icons";
 import { FeatureAppMock } from "@/components/mocks";
 
@@ -19,14 +18,9 @@ const features = [
     icon: ShieldKeyIcon,
   },
   {
-    title: "Secure Sign-In",
-    description: "Passkeys and verified devices — no passwords to leak.",
-    icon: FingerAccessIcon,
-  },
-  {
-    title: "Full Account Control",
-    description: "Two-factor auth, session control, and data export.",
-    icon: Settings02Icon,
+    title: "Private Rooms",
+    description: "Your own space for your people — organized, just yours.",
+    icon: Home09Icon,
   },
   {
     title: "Game Nights",
@@ -34,9 +28,9 @@ const features = [
     icon: GameController01Icon,
   },
   {
-    title: "Friends & Rooms",
-    description: "Keep your people and your spaces organized.",
-    icon: UserGroupIcon,
+    title: "Friends",
+    description: "1:1 chats with the people you keep close.",
+    icon: BubbleChatIcon,
   },
 ];
 
@@ -75,7 +69,7 @@ export function Privacy() {
         </motion.span>
       </h2>
 
-      <div className="md:mt-20 mt-8 max-w-6xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+      <div className="md:mt-20 mt-8 max-w-4xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {features.map((feature, i) => {
           const isActive = active === i;
           return (
