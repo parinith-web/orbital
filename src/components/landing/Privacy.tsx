@@ -69,7 +69,7 @@ export function Privacy() {
         </motion.span>
       </h2>
 
-      <div className="md:mt-20 mt-8 max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="md:mt-14 mt-6 max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {features.map((feature, i) => {
           const isActive = active === i;
           return (
@@ -103,13 +103,13 @@ export function Privacy() {
         })}
       </div>
 
-      <div className="mt-8 md:mt-12 max-w-2xl mx-auto px-6 text-center">
+      <div className="mt-5 md:mt-6 max-w-2xl mx-auto px-6 text-center">
         <p className="text-sm md:text-base text-white/60">
           {features[active].description}
         </p>
       </div>
 
-      <div className="mt-6 px-6 flex justify-center">
+      <div className="mt-12 md:mt-16 px-6 flex justify-center">
         <FeatureAppMock active={active} />
       </div>
     </section>
