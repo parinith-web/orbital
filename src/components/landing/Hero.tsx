@@ -48,11 +48,13 @@ export function Hero({}: HeroProps) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_65%_60%_at_50%_45%,transparent_35%,rgba(0,0,0,0.55)_100%)]" />
 
       {/* Orbital game controller — the uploaded orbital-controller_1.svg,
-          now centered as the single hero visual, large and unobstructed
+          now the single hero visual, sized up to fill the hero section
+          now that the moon/rocket/satellite are gone and it no longer
+          needs to share the space with them
           (also kept as a real file at /public/assets/svg/orbital-controller.svg).
           Tap/click it for the comic "POW!" hit effect. */}
       <motion.div
-        className="relative z-10 mt-40 w-[86%] max-w-[880px] cursor-pointer sm:mt-32 md:w-[70%] lg:w-[60%]"
+        className="relative z-10 mt-32 w-[96%] max-w-[1200px] cursor-pointer sm:mt-24 md:w-[88%] lg:w-[80%]"
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -82,7 +84,7 @@ export function Hero({}: HeroProps) {
         ))}
 
         {/* Floating — the console gently bobs in place, like it's drifting
-            in zero-g alongside the rocket and satellite. */}
+            in zero-g. */}
         <motion.div
           animate={{ y: [0, -16, 0] }}
           transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}

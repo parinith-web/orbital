@@ -13,7 +13,7 @@ import { AnomalyWordScatter, HandCircle } from "@/components/features/anomaly/An
 export function AppUIGameNight({ className }: { className?: string }) {
   return (
     <div className={`flex h-full w-full items-center justify-center p-6 ${className || ""}`}>
-      <div className="relative w-full max-w-md aspect-[4/3] overflow-hidden rounded-3xl bg-black">
+      <div className="relative w-full max-w-md aspect-[16/9] overflow-hidden rounded-3xl bg-black">
         <AnomalyWordScatter />
         <div className="relative flex h-full items-center justify-center">
           <span

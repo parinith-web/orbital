@@ -79,18 +79,6 @@ const DEMO_MESSAGES: MessageWithSender[] = [
     _creationTime: Date.UTC(2026, 7, 25, 13, 54),
     sender: { user_id: DEMO_FRIEND.user_id, username: DEMO_FRIEND.username, avatar: DEMO_FRIEND.avatar },
   },
-  {
-    _id: "demo-msg-4" as unknown as Id<"messages">,
-    conversation_id: "demo-convo",
-    conversation_type: "direct",
-    sender_id: DEMO_USER.user_id,
-    content: "hii, still on for later?",
-    file_url: null,
-    type: "text",
-    file_name: null,
-    _creationTime: Date.UTC(2026, 7, 25, 13, 55),
-    sender: DEMO_USER,
-  },
 ];
 
 export function AppUIFriendsDM({ className }: { className?: string }) {

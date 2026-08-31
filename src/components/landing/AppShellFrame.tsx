@@ -41,7 +41,7 @@ export function AppShellFrame({
 }) {
   return (
     <div
-      className={`arcade-outline arcade-shadow arcade-shadow-blue flex w-full max-w-5xl overflow-hidden rounded-2xl bg-theme-base ${className || ""}`}
+      className={`arcade-outline arcade-shadow flex w-full max-w-5xl overflow-hidden rounded-2xl bg-theme-base ${className || ""}`}
     >
       {/* LeftSidebar's exact signed-in markup */}
       <div className="bg-theme-surface border-theme-border border-r select-none flex flex-col py-2 px-1 text-white items-center font-sans flex-none">
