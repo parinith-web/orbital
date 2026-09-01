@@ -5,7 +5,12 @@ import { useEffect, useRef, useState } from "react";
 interface ColorWheelPickerProps {
   color: string;
   onChange: (hex: string) => void;
-  onClose: () => void;
+  onClose?: () => void;
+  /** Renders inline within the page flow instead of as an absolutely
+   * positioned popover, and hides the close button — for when this is the
+   * primary (only) way to pick a color rather than something toggled open
+   * on top of other content. */
+  embedded?: boolean;
 }
 
 function hexToHsv(hex: string): { h: number; s: number; v: number } {
@@ -49,7 +54,7 @@ function hsvToHex(h: number, s: number, v: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
-export function ColorWheelPicker({ color, onChange, onClose }: ColorWheelPickerProps) {
+export function ColorWheelPicker({ color, onChange, onClose, embedded = false }: ColorWheelPickerProps) {
   const initial = hexToHsv(color);
   const [hue, setHue] = useState(initial.h);
   const [sat, setSat] = useState(initial.s);
@@ -91,17 +96,19 @@ export function ColorWheelPicker({ color, onChange, onClose }: ColorWheelPickerP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hue, sat, val]);
 
-  // Close on outside click.
+  // Close on outside click (popover mode only — embedded mode has no
+  // overlay to dismiss).
   useEffect(() => {
+    if (embedded) return;
     const handleClick = (e: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        onClose();
+        onClose?.();
       }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [embedded]);
 
   const updateFromSquare = (clientX: number, clientY: number) => {
     const canvas = squareRef.current;
@@ -126,17 +133,23 @@ export function ColorWheelPicker({ color, onChange, onClose }: ColorWheelPickerP
   return (
     <div
       ref={popoverRef}
-      className="absolute z-50 top-full left-1/2 -translate-x-1/2 mt-3 w-[240px] rounded-2xl border border-white/10 bg-[#0f0f14] p-4 shadow-2xl"
+      className={
+        embedded
+          ? "w-full max-w-[320px] rounded-2xl border border-white/10 bg-[#0f0f14] p-5"
+          : "absolute z-50 top-full left-1/2 -translate-x-1/2 mt-3 w-[240px] rounded-2xl border border-white/10 bg-[#0f0f14] p-4 shadow-2xl"
+      }
     >
-      <button
-        onClick={onClose}
-        className="absolute top-2.5 right-2.5 h-6 w-6 rounded-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
-        aria-label="Close color picker"
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </button>
+      {!embedded && (
+        <button
+          onClick={onClose}
+          className="absolute top-2.5 right-2.5 h-6 w-6 rounded-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+          aria-label="Close color picker"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
 
       <div className="relative">
         <canvas
@@ -168,7 +181,7 @@ export function ColorWheelPicker({ color, onChange, onClose }: ColorWheelPickerP
 
       <div
         ref={hueRef}
-        className="relative mt-3 h-4 rounded-full cursor-pointer touch-none"
+        className="relative mt-6 h-4 rounded-full cursor-pointer touch-none"
         style={{
           background:
             "linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)",
@@ -191,7 +204,7 @@ export function ColorWheelPicker({ color, onChange, onClose }: ColorWheelPickerP
         />
       </div>
 
-      <div className="flex items-center gap-2 mt-3">
+      <div className="flex items-center gap-2 mt-5">
         <div
           className="h-7 w-7 rounded-full border border-white/15 shrink-0"
           style={{ backgroundColor: hex }}

@@ -59,7 +59,6 @@ export function AvatarMaker({
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<CategoryId>("color");
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   // Restore the last-saved local avatar on mount (demo persistence only —
   // no backend wired up yet, see onSave above).
@@ -154,7 +153,7 @@ export function AvatarMaker({
               onClick={handleRandomize}
               className="px-4 py-2 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors"
             >
-              🎲 Randomize
+              Randomize
             </button>
             {!hideSaveControls && (
               <button
@@ -194,7 +193,6 @@ export function AvatarMaker({
                 key={cat.id}
                 onClick={() => {
                   setActiveTab(cat.id);
-                  setColorPickerOpen(false);
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   activeTab === cat.id
@@ -211,61 +209,22 @@ export function AvatarMaker({
             <h3 className="text-sm font-semibold uppercase tracking-widest text-white/70">
               {CATEGORIES.find((c) => c.id === activeTab)?.label}
             </h3>
-            <span className="text-xs text-[#666]">
-              {CATEGORIES.find((c) => c.id === activeTab)?.count}{" "}
-              {activeTab === "color" ? "colors" : "styles"}
-            </span>
+            {activeTab !== "color" && (
+              <span className="text-xs text-[#666]">
+                {CATEGORIES.find((c) => c.id === activeTab)?.count} styles
+              </span>
+            )}
           </div>
 
           {/* Only the active category's row renders — no vertical stack of
               every feature at once, and each row scrolls horizontally
               instead of wrapping. */}
           {activeTab === "color" && (
-            <div className="relative">
-              <CategoryCarousel resetKey="color">
-                {COLOR_OPTIONS.map((c) => (
-                  <button
-                    key={c.id}
-                    title={c.label}
-                    onClick={() => update("color", c.id)}
-                    className="relative shrink-0 snap-start h-12 w-12 rounded-full transition-transform hover:scale-110 focus:outline-none"
-                    style={{
-                      backgroundColor: c.id,
-                      boxShadow:
-                        config.color === c.id
-                          ? `0 0 0 3px #0f0f0f, 0 0 0 5px ${c.id}`
-                          : "0 0 0 3px #0f0f0f, 0 0 0 5px transparent",
-                    }}
-                  >
-                    <span className="sr-only">{c.label}</span>
-                  </button>
-                ))}
-
-                {/* Custom color — opens the hue/saturation picker below */}
-                <button
-                  title="Custom color"
-                  onClick={() => setColorPickerOpen((open) => !open)}
-                  className="relative shrink-0 snap-start h-12 w-12 rounded-full transition-transform hover:scale-110 focus:outline-none"
-                  style={{
-                    background:
-                      "conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)",
-                    boxShadow: colorPickerOpen
-                      ? "0 0 0 3px #0f0f0f, 0 0 0 5px #fff"
-                      : "0 0 0 3px #0f0f0f, 0 0 0 5px transparent",
-                  }}
-                >
-                  <span className="sr-only">Custom color</span>
-                </button>
-              </CategoryCarousel>
-
-              {colorPickerOpen && (
-                <ColorWheelPicker
-                  color={config.color}
-                  onChange={(hex) => update("color", hex)}
-                  onClose={() => setColorPickerOpen(false)}
-                />
-              )}
-            </div>
+            <ColorWheelPicker
+              color={config.color}
+              onChange={(hex) => update("color", hex)}
+              embedded
+            />
           )}
 
           {activeTab === "eyes" && (

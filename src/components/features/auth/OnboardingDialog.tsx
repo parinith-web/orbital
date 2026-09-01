@@ -6,7 +6,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useUserProfileActions } from "@/hooks";
 import { toast } from "sonner";
-import { Galindo } from "next/font/google";
 import Starfield from "@/components/effects/Starfield";
 import { AvatarMaker } from "@/components/avatar";
 import {
@@ -14,13 +13,6 @@ import {
   DEFAULT_AVATAR_CONFIG,
   encodeAvatarConfig,
 } from "@/lib/avatar/options";
-
-const galindo = Galindo({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-galindo",
-  display: "swap",
-});
 
 interface OnboardingDialogProps {
   onComplete: () => void;
@@ -64,7 +56,7 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
         <div className="absolute inset-0 bg-[url('/assets/asciiHero.png')] bg-cover bg-center fade-slow opacity-40 -z-10" />
         <Starfield
           starColor={[255, 255, 255]}
-          density={1.1}
+          density={2.4}
           speed={12}
           direction={35}
           mouseRadius={110}
@@ -103,7 +95,7 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
                 <div className="flex flex-col items-center text-center px-8 gap-6">
                   <div>
                     <h1
-                      className={`${galindo.className} text-3xl font-bold text-white mb-2`}
+                      className="font-display text-3xl text-white mb-2"
                     >
                       Orbital
                     </h1>
