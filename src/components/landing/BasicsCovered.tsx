@@ -43,7 +43,7 @@ function TileHeader({
 }) {
   return (
     <div
-      className="halftone relative flex h-14 shrink-0 items-center gap-3 border-b-[3px] border-[#0b0b10] px-6"
+      className="relative flex h-14 shrink-0 items-center gap-3 border-b-[3px] border-[#0b0b10] px-6"
       style={{ backgroundColor: `${ACCENT_HEX[accent]}1a` }}
     >
       <span
