@@ -38,7 +38,7 @@ export function BeautifullyCrafted({
   return (
     <section
       ref={beautifullyCraftedRef}
-      className="relative mt-0 md:mt-36 h-screen text-white overflow-x-auto md:overflow-visible flex items-center justify-center"
+      className="relative mt-0 md:mt-12 h-screen text-white overflow-x-auto md:overflow-visible flex items-center justify-center"
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",

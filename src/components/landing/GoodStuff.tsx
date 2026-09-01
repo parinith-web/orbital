@@ -45,7 +45,6 @@ const goodstuff = [
     stats: ["1:1 or group", "Text + media"],
     rotation: -3,
     offsetY: -12,
-    pin: "left" as const,
     component: (
       <div className="mx-auto grid mt-4 w-full max-w-[560px] grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 lg:max-w-[640px]">
         <RoomItemMock name="Projects" id="4567" className="w-full" />
@@ -77,7 +76,6 @@ const goodstuff = [
     stats: ["Voice & video", "Switch anytime"],
     rotation: 2,
     offsetY: 12,
-    pin: "right" as const,
     component: (
       <div className="flex mt-4 w-full items-center justify-center">
         <ActiveCallMock className="origin-center " />
@@ -92,7 +90,6 @@ const goodstuff = [
     stats: ["Instant", "@mentions"],
     rotation: -2,
     offsetY: -12,
-    pin: "left" as const,
     component: (
       <div className="w-full max-w-[350px]">
         <MessageNotificationMock
@@ -114,7 +111,6 @@ const goodstuff = [
     stats: ["Party game", "Voice required"],
     rotation: 3,
     offsetY: 12,
-    pin: "right" as const,
     component: (
       <div className="flex mt-4 w-full items-center justify-center">
         <AnomalyGameMock />
@@ -122,24 +118,6 @@ const goodstuff = [
     ),
   },
 ];
-
-// Small screw/bolt corner accent — reads as "bolted to the arcade panel"
-// rather than a literal corkboard pushpin, matching the comic/arcade
-// language used everywhere else on the card (halftone header, hard
-// outlines). Alternates left/right per card so the bolts don't all line
-// up identically down the wall.
-function PanelBolt({ side }: { side: "left" | "right" }) {
-  return (
-    <div
-      className={`arcade-outline pointer-events-none absolute top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-[#d9d9df] sm:h-7 sm:w-7 ${
-        side === "left" ? "left-3" : "right-3"
-      }`}
-      aria-hidden="true"
-    >
-      <div className="h-[2.5px] w-3 rotate-45 rounded-full bg-[#0b0b10]" />
-    </div>
-  );
-}
 
 export function GoodStuff() {
   return (
@@ -183,8 +161,6 @@ export function GoodStuff() {
                   viewport={{ once: true }}
                   className={`arcade-outline arcade-shadow arcade-shadow-${item.accent} arcade-press relative flex h-full flex-col overflow-hidden rounded-2xl bg-[#0a0a0d]`}
                 >
-                  <PanelBolt side={item.pin} />
-
                   {/* Header strip: accent-tinted halftone band + icon badge,
                       same comic-marquee treatment as the wordmark badge in
                       Navbar.tsx, sized to sit flush against the outline. */}
