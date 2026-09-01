@@ -103,7 +103,7 @@ export function Footer() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(115deg, #2E6FF2 0%, #2E6FF2 45%, #FF3D8A 45%, #FF3D8A 100%)",
+              "linear-gradient(115deg, #2E6FF2 0%, #2E6FF2 53%, #FF3D8A 53%, #FF3D8A 100%)",
           }}
         />
         <div className="halftone absolute inset-0 opacity-20" />
