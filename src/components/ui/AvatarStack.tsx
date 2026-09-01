@@ -1,8 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { getAvatarUrl } from "@/lib/utils/avatar";
-import Image from "next/image";
+import { UserAvatar } from "@/components/avatar";
 
 interface UserProfile {
   user_id: string;
@@ -38,13 +37,11 @@ const AvatarStack = ({
             style={{ zIndex: i }}
             title={user.username}
           >
-            <Image
-              src={getAvatarUrl(user.avatar, user.username)}
+            <UserAvatar
+              avatar={user.avatar}
               alt={user.username}
-              quality={25}
-              width={size}
-              height={size}
-              className="rounded-full ring-1 ring-theme-base object-cover bg-theme-base"
+              size={size}
+              className="rounded-full ring-1 ring-theme-base object-cover bg-theme-base overflow-hidden flex items-center justify-center"
             />
           </div>
         ))}

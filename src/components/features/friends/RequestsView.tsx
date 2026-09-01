@@ -3,11 +3,10 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon, Tick01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { ListSkeleton } from "@/components/skeletons/ListSkeleton";
 import { Button } from "@/components/ui";
 
@@ -74,13 +73,11 @@ export function RequestsView() {
                 key={request.request_id}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] bg-theme-surface"
               >
-                <Image
-                  src={getAvatarUrl(request.user.avatar)}
+                <UserAvatar
+                  avatar={request.user.avatar}
                   alt={request.user.username}
-                  width={36}
-                  height={36}
-                  unoptimized
-                  className="w-9 h-9 rounded-[10px] flex-none object-cover"
+                  size={36}
+                  className="w-9 h-9 rounded-[10px] flex-none object-cover overflow-hidden flex items-center justify-center"
                 />
                 <div className="flex-1 min-w-0">
                   <span className="truncate text-white/90 block">
@@ -122,13 +119,11 @@ export function RequestsView() {
                 key={request.request_id}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-[8px] bg-theme-surface"
               >
-                <Image
-                  src={getAvatarUrl(request.user.avatar)}
+                <UserAvatar
+                  avatar={request.user.avatar}
                   alt={request.user.username}
-                  width={36}
-                  height={36}
-                  unoptimized
-                  className="w-9 h-9 rounded-[10px] flex-none object-cover"
+                  size={36}
+                  className="w-9 h-9 rounded-[10px] flex-none object-cover overflow-hidden flex items-center justify-center"
                 />
                 <div className="flex-1 min-w-0">
                   <span className="truncate text-white/90 block">

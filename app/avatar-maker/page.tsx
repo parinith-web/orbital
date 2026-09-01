@@ -1,14 +1,61 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { toast } from "sonner";
 import { AvatarMaker } from "@/components/avatar";
+import {
+  type AvatarConfig,
+  decodeAvatarConfig,
+  isAvatarConfigCode,
+} from "@/lib/avatar/options";
+import { useCurrentUser, useUserProfileActions } from "@/hooks";
+import { useUserStore } from "@/store/useUserStore";
 
-// Standalone route so the avatar maker can be built and reviewed on its
-// own, without needing it wired into the authenticated /orbital shell or
-// a real profile field yet. Once we're ready to use these as profile
-// pics, <AvatarMaker onSave={...}/> just needs a real handler passed in —
-// nothing about this page or the maker itself needs to change.
+// Doubles as two things: an unauthenticated marketing/preview page (linked
+// from the landing site, no `redirect` param — Save just persists locally
+// via AvatarMaker's own demo localStorage logic) and the real "edit my
+// avatar" screen for signed-in users, reached with `?redirect=/some/path`
+// from Settings. When a Convex profile is present, Save writes the
+// avatar-maker config to it for real and sends the user back to
+// `redirect` (defaulting to /orbital/settings).
 export default function AvatarMakerPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
+
+  const { user } = useCurrentUser();
+  const { changeAvatar } = useUserProfileActions();
+  const setStoreUser = useUserStore((s) => s.setUser);
+
+  const initialConfig: AvatarConfig | undefined = useMemo(() => {
+    if (user?.avatar && isAvatarConfigCode(user.avatar)) {
+      return decodeAvatarConfig(user.avatar);
+    }
+    return undefined;
+  }, [user?.avatar]);
+
+  const handleSave = user
+    ? async (_config: AvatarConfig, code: string) => {
+        try {
+          const res = await changeAvatar(code);
+          if (res?.error) {
+            toast.error(res.error);
+            return;
+          }
+          setStoreUser({ ...user, avatar: code });
+          toast.success("Avatar updated");
+          router.push(redirectTo || "/orbital/settings");
+        } catch {
+          toast.error("Failed to save avatar");
+        }
+      }
+    : undefined;
+
+  const backHref = redirectTo || "/";
+  const backLabel = redirectTo ? "← Back to settings" : "← Back home";
+
   return (
     <div className="min-h-screen bg-[#0a080b] text-white">
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -23,10 +70,10 @@ export default function AvatarMakerPage() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-10 md:py-16">
         <Link
-          href="/"
+          href={backHref}
           className="inline-flex items-center gap-1.5 text-sm text-[#888] hover:text-white transition-colors mb-8"
         >
-          ← Back home
+          {backLabel}
         </Link>
 
         <div className="text-center mb-4">
@@ -42,7 +89,7 @@ export default function AvatarMakerPage() {
           combinations, all yours to swap any time.
         </p>
 
-        <AvatarMaker />
+        <AvatarMaker onSave={handleSave} initialConfig={initialConfig} />
       </div>
     </div>
   );

@@ -53,7 +53,12 @@ export const createUser = mutation({
 });
 
 export const changeAvatar = mutation({
-  args: { avatarUrl: v.string() },
+  // `avatarConfig` is the avatar-maker's compact encoded config string
+  // (e.g. "h07-ef-ms-c2E6FF2"), not an uploaded-image URL — the app no
+  // longer supports uploading a profile picture. The `avatar` column keeps
+  // its existing name/type so legacy accounts with a real image URL still
+  // saved in it keep rendering via UserAvatar's fallback path.
+  args: { avatarConfig: v.string() },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthenticated");
@@ -65,7 +70,7 @@ export const changeAvatar = mutation({
 
     if (!user) return { error: "User not found" };
 
-    await ctx.db.patch(user._id, { avatar: args.avatarUrl });
+    await ctx.db.patch(user._id, { avatar: args.avatarConfig });
     return { success: true };
   },
 });

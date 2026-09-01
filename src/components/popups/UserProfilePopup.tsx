@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { getAvatarUrl } from "@/lib/utils/avatar";
-import Image from "next/image";
+import { UserAvatar } from "@/components/avatar";
 import { formatDateFull } from "@/lib/utils/date";
 
 export interface User {
@@ -40,7 +39,6 @@ export function UserProfilePopup({
   const [isOpen, setIsOpen] = useState(false);
 
   const isCurrentUser = currentUserId === user.id;
-  const avatarSrc = getAvatarUrl(user.avatarUrl, user.username);
 
   if (isCurrentUser) {
     return <>{children}</>;
@@ -60,21 +58,12 @@ export function UserProfilePopup({
         >
           <div className="flex flex-col items-center p-4 gap-3">
             <div className="relative">
-              {user.avatarUrl ? (
-                <Image
-                  src={avatarSrc}
-                  width={40}
-                  height={40}
-                  alt={user.username}
-                  className="w-16 h-16 rounded-3xl object-cover ring-1 ring-theme-border"
-                />
-              ) : (
-                <div className="w-16 h-16 rounded-full bg-theme-hover flex items-center justify-center ring-2 ring-theme-border">
-                  <span className="text-lg font-semibold text-white">
-                    {user.username}
-                  </span>
-                </div>
-              )}
+              <UserAvatar
+                avatar={user.avatarUrl}
+                alt={user.username}
+                size={64}
+                className="w-16 h-16 rounded-3xl object-cover ring-1 ring-theme-border overflow-hidden flex items-center justify-center"
+              />
             </div>
             <div className="flex flex-col items-center gap-1">
               <h3 className="text-base font-semibold text-white truncate max-w-[200px]">

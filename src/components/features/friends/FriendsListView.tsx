@@ -7,10 +7,9 @@ import {
   BubbleChatIcon,
   UserMinus01Icon,
 } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { formatDateFull } from "@/lib/utils/date";
 import { ListSkeleton } from "@/components/skeletons/ListSkeleton";
 import { Button } from "@/components/ui";
@@ -94,13 +93,11 @@ export function FriendsListView({ onFindPeople, onMessage }: FriendsListViewProp
               align="start"
             >
               <button className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                <Image
-                  src={getAvatarUrl(friend.avatar)}
+                <UserAvatar
+                  avatar={friend.avatar}
                   alt={friend.username}
-                  width={36}
-                  height={36}
-                  unoptimized
-                  className="w-9 h-9 rounded-[10px] flex-none object-cover"
+                  size={36}
+                  className="w-9 h-9 rounded-[10px] flex-none object-cover overflow-hidden flex items-center justify-center"
                 />
                 <div className="flex-1 min-w-0 flex flex-col">
                   <span className="truncate text-white/90">{friend.username}</span>

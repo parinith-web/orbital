@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CrownIcon, ViewOffIcon, Medal01Icon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 
 /**
  * C5 — reveal/results screen, wired to B5's `getRoundView().reveal`.
@@ -148,13 +147,11 @@ export const RevealPanel = ({
                 ) : (
                   <span className="text-xs text-gray-500 w-4 text-center">{index + 1}</span>
                 )}
-                <Image
-                  src={getAvatarUrl(player.avatar, name)}
+                <UserAvatar
+                  avatar={player.avatar}
                   alt={name}
-                  width={24}
-                  height={24}
-                  quality={25}
-                  className="rounded-full object-cover bg-theme-base ring-1 ring-theme-border"
+                  size={24}
+                  className="rounded-full object-cover bg-theme-base ring-1 ring-theme-border overflow-hidden flex items-center justify-center"
                 />
                 <span className="text-sm text-gray-300">{name}</span>
               </div>

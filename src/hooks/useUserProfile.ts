@@ -18,7 +18,9 @@ export function useCurrentUser() {
 
 interface UseUserProfileActionsResult {
   changeName: (username: string) => Promise<any>;
-  changeAvatar: (avatarUrl: string) => Promise<any>;
+  /** `avatarConfig` is the avatar-maker's encoded config string, not an
+   * uploaded-image URL. */
+  changeAvatar: (avatarConfig: string) => Promise<any>;
   generateUploadUrl: () => Promise<string>;
   getUrl: (storageId: string) => Promise<string | null>;
   deleteUserAccount: () => Promise<any>;
@@ -47,8 +49,8 @@ export function useUserProfileActions(): UseUserProfileActionsResult & { createU
   );
 
   const changeAvatar = useCallback(
-    async (avatarUrl: string) => {
-      return await changeAvatarMutation({ avatarUrl });
+    async (avatarConfig: string) => {
+      return await changeAvatarMutation({ avatarConfig });
     },
     [changeAvatarMutation]
   );

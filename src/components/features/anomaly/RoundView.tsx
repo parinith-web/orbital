@@ -6,12 +6,11 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { DEFAULT_TURN_DURATION_MS } from "@/convex/games/turnOrder";
 import { useUserStore } from "@/store/useUserStore";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { Button } from "@/components/ui";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Mic01Icon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { toast } from "sonner";
 import { VotingPanel } from "./VotingPanel";
 import { RevealPanel } from "./RevealPanel";
@@ -113,13 +112,11 @@ function PlayerBadge({
   return (
     <div className="flex items-center gap-2">
       <div className="relative">
-        <Image
-          src={getAvatarUrl(player?.avatar, name)}
+        <UserAvatar
+          avatar={player?.avatar}
           alt={name}
-          width={28}
-          height={28}
-          quality={25}
-          className={`rounded-full object-cover bg-theme-base ${emphasized ? "ring-2 ring-theme-accent" : "ring-1 ring-theme-border"} ${!isConnected ? "opacity-50" : ""}`}
+          size={28}
+          className={`rounded-full object-cover bg-theme-base overflow-hidden flex items-center justify-center ${emphasized ? "ring-2 ring-theme-accent" : "ring-1 ring-theme-border"} ${!isConnected ? "opacity-50" : ""}`}
         />
         <StatusIndicator isOnline={isConnected} isAway={false} />
       </div>

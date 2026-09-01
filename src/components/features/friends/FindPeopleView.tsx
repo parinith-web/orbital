@@ -3,10 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon, UserAdd01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { Button, Input } from "@/components/ui";
 import { UserProfilePopup } from "@/components/popups/UserProfilePopup";
 import { useUserStore } from "@/store/useUserStore";
@@ -131,13 +130,11 @@ export function FindPeopleView() {
                     align="start"
                   >
                     <button className="flex items-center gap-3 min-w-0 flex-1 text-left">
-                      <Image
-                        src={getAvatarUrl(result.avatar)}
+                      <UserAvatar
+                        avatar={result.avatar}
                         alt={result.username}
-                        width={36}
-                        height={36}
-                        unoptimized
-                        className="w-9 h-9 rounded-[10px] flex-none object-cover"
+                        size={36}
+                        className="w-9 h-9 rounded-[10px] flex-none object-cover overflow-hidden flex items-center justify-center"
                       />
                       <span className="truncate text-white/90">{result.username}</span>
                     </button>

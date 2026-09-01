@@ -6,6 +6,7 @@ import {
   isOnlyEmojis,
 } from "@/lib/utils/message";
 import { getSenderAvatar, getDisplayName } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { File02Icon } from "@hugeicons/core-free-icons";
@@ -151,13 +152,11 @@ export const MessageItem = React.memo(
                 <div
                   className={`flex-shrink-0 w-10 h-10 rounded-[12px] ${!isCurrentUser ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
                 >
-                  <Image
-                    src={senderAvatar}
-                    width={40}
-                    height={40}
-                    unoptimized
+                  <UserAvatar
+                    avatar={senderAvatar}
                     alt={message.sender?.username || "User"}
-                    className="w-10 h-10 rounded-[12px]"
+                    size={40}
+                    className="w-10 h-10 rounded-[12px] overflow-hidden flex items-center justify-center"
                   />
                 </div>
               </UserProfilePopup>

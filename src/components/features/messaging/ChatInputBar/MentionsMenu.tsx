@@ -8,11 +8,10 @@ import {
   type ChangeEvent,
   type KeyboardEvent,
 } from "react";
-import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUserStore } from "@/store/useUserStore";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 
 interface MentionUser {
   user_id: string;
@@ -248,12 +247,11 @@ export function MentionsDropdown({
             }`}
         >
           <div className="relative w-8 h-8 flex-shrink-0">
-            <Image
-              src={getAvatarUrl(user.avatar, user.username)}
+            <UserAvatar
+              avatar={user.avatar}
               alt={user.username}
-              fill
-              quality={25}
-              className="rounded-[12px] object-cover bg-theme-border"
+              size={32}
+              className="w-full h-full rounded-[12px] object-cover bg-theme-border overflow-hidden flex items-center justify-center"
             />
           </div>
           <span className="text-sm text-gray-200">{user.username}</span>

@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AUTOSTART_COUNTDOWN_MS } from "@/convex/games/lobbyConfig";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { useCurrentUser } from "@/hooks";
 import { Button } from "@/components/ui";
 import { ProgressCircle } from "@/components/ui/ProgressCircle";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { RoundView } from "./RoundView";
 import { PublicCallPanel } from "./PublicCallPanel";
 import { PostGameActions } from "./PostGameActions";
@@ -300,12 +299,11 @@ export const PublicLobbyScreen = ({
                     className="flex items-center gap-1.5 bg-theme-base rounded-full pl-1 pr-3 py-1"
                   >
                     <div className="relative">
-                      <Image
-                        src={getAvatarUrl(player.avatar)}
+                      <UserAvatar
+                        avatar={player.avatar}
                         alt={name}
-                        width={20}
-                        height={20}
-                        className={`rounded-full w-5 h-5 object-cover ${!isConnected ? "opacity-50" : ""}`}
+                        size={20}
+                        className={`rounded-full w-5 h-5 object-cover overflow-hidden flex items-center justify-center ${!isConnected ? "opacity-50" : ""}`}
                       />
                       <StatusIndicator isOnline={isConnected} isAway={false} />
                     </div>

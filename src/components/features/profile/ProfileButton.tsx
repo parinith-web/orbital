@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Logout01Icon } from "@hugeicons/core-free-icons";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
@@ -6,6 +5,7 @@ import type { User } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useUIStore } from "@/store/uiStore";
 import { TooltipWrapper } from "@/components/ui/tooltip";
+import { UserAvatar } from "@/components/avatar";
 
 
 export const ProfileButton = ({
@@ -29,13 +29,10 @@ export const ProfileButton = ({
     >
       <div className="flex gap-4 items-center">
         <div className="relative">
-          <Image
-            src={user?.avatar || "/defaultAvatar.png"}
-            alt="Avatar"
-            width={40}
-            height={40}
-            unoptimized
-            className="rounded-[12px] w-10 h-10"
+          <UserAvatar
+            avatar={user?.avatar}
+            size={40}
+            className="rounded-[12px] w-10 h-10 overflow-hidden flex items-center justify-center"
           />
 
           <StatusIndicator isOnline={!isAway} isAway={isAway} />

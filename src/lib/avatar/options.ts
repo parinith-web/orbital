@@ -124,6 +124,19 @@ export function encodeAvatarConfig(config: AvatarConfig): string {
   ].join("-");
 }
 
+// Matches encodeAvatarConfig's output exactly, e.g. "h07-eforward-msmile-c2E6FF2"
+// wouldn't match (that's the old verbose shape) — the real shape is
+// "h07-ef-ms-c2E6FF2". Used to tell an avatar-maker code apart from a
+// legacy uploaded-image URL/path stored in the same `avatar` field, so
+// callers can decide whether to decode-and-render an <AvatarSVG/> or just
+// use the value as an <img> src.
+const AVATAR_CONFIG_CODE_PATTERN = /^h\d{2}-e[frl]-m[sgk]-c[0-9a-fA-F]{6}$/;
+
+export function isAvatarConfigCode(value: string | undefined | null): boolean {
+  if (!value) return false;
+  return AVATAR_CONFIG_CODE_PATTERN.test(value);
+}
+
 export function decodeAvatarConfig(code: string): AvatarConfig {
   const parts = Object.fromEntries(
     code.split("-").map((part) => [part[0], part.slice(1)]),

@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
@@ -10,7 +9,7 @@ import { ChatUI } from "@/components/features/messaging/ChatUI";
 import { ChatSkeleton } from "@/components/skeletons/ChatSkeleton";
 import { useMessageActions } from "@/hooks";
 import { ConfirmDialog } from "@/components/ui/dialog";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import type { Id } from "@/convex/_generated/dataModel";
 
 interface DirectChatThreadProps {
@@ -75,13 +74,11 @@ export function DirectChatThread({
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 text-gray-300" />
         </button>
-        <Image
-          src={getAvatarUrl(other_user.avatar)}
+        <UserAvatar
+          avatar={other_user.avatar}
           alt={other_user.username}
-          width={28}
-          height={28}
-          unoptimized
-          className="w-7 h-7 rounded-[8px] flex-none object-cover"
+          size={28}
+          className="w-7 h-7 rounded-[8px] flex-none object-cover overflow-hidden flex items-center justify-center"
         />
         <span className="truncate text-white/90">{other_user.username}</span>
       </div>

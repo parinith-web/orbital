@@ -1,14 +1,14 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Upload01Icon, Moon02Icon, CopyIcon, UserGroupIcon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { Moon02Icon, CopyIcon, UserGroupIcon, ArrowRight01Icon, PencilEdit01Icon } from "@hugeicons/core-free-icons";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useUserStore } from "@/store/useUserStore";
 import { toast } from "sonner";
 import { formatToIST } from "@/lib/utils/date";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useUserProfileActions } from "@/hooks";
+import { UserAvatar } from "@/components/avatar";
 import { usePresence } from "@/contexts/presenceContext";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -53,17 +53,9 @@ export const UserInfoTab = () => {
   const [deleteDialog, setDeleteDialog] =
     useState<DeleteDialogState>(initialDeleteDialog);
   const setUser = useUserStore((s) => s.setUser);
-  const fileRef = useRef<HTMLInputElement>(null);
   const [newUsername, setNewUsername] = useState(user?.username || "");
-  const [isUploading, setIsUploading] = useState(false);
 
-  const {
-    changeName,
-    changeAvatar,
-    generateUploadUrl,
-    getUrl,
-    deleteUserAccount,
-  } = useUserProfileActions();
+  const { changeName, deleteUserAccount } = useUserProfileActions();
   const { awayUsers, setStatus } = usePresence();
   const isAway = user?.user_id ? awayUsers.has(user.user_id.toString()) : false;
   const friends = useQuery(api.friends.listFriends);
@@ -87,37 +79,6 @@ export const UserInfoTab = () => {
       toast.success("Name updated successfully");
     } catch (e) {
       toast.error("An unexpected error occurred");
-    }
-  };
-
-  const onChangeAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const postUrl = await generateUploadUrl();
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
-      const { storageId } = await result.json();
-
-      const newAvatarUrl = await getUrl(storageId);
-
-      const res = await changeAvatar(newAvatarUrl || "");
-      if (res.error) {
-        toast.error(res.error);
-        return;
-      }
-
-      setUser({ ...user!, avatar: newAvatarUrl || "" });
-      toast.success("Avatar updated successfully");
-    } catch (e) {
-      toast.error("Failed to change avatar");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -163,13 +124,10 @@ export const UserInfoTab = () => {
         <div className="flex-shrink-0">
           <span className="text-xs text-gray-300 pl-1">Avatar</span>
           <div className="group relative">
-            <Image
-              src={user?.avatar || "/assets/defaultAvatar.png"}
-              alt="Profile"
-              width={120}
-              height={120}
-              unoptimized
-              className="rounded-[12px] w-24 h-24"
+            <UserAvatar
+              avatar={user?.avatar}
+              size={96}
+              className="rounded-[12px] w-24 h-24 overflow-hidden flex items-center justify-center"
             />
           </div>
           <div className="mt-2">
@@ -220,27 +178,15 @@ export const UserInfoTab = () => {
           </div>
         </div>
         <div className="flex flex-col items-center gap-2 md:items-start w-full">
-          <TooltipWrapper content={isUploading ? "Uploading..." : "Upload"}>
+          <TooltipWrapper content="Edit avatar">
             <Button
               variant="other"
               size="iconLg"
-              onClick={() => !isUploading && fileRef?.current?.click()}
-              disabled={isUploading}
+              onClick={() => router.push("/avatar-maker?redirect=/orbital/settings")}
             >
-              {isUploading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <HugeiconsIcon icon={Upload01Icon} className="w-5 h-5" />
-              )}
+              <HugeiconsIcon icon={PencilEdit01Icon} className="w-5 h-5" />
             </Button>
           </TooltipWrapper>
-          <input
-            ref={fileRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={onChangeAvatar}
-          />
           <div className="flex flex-col gap-1 w-full">
             <span className="text-xs text-gray-300">Username</span>
             <Input

@@ -1,21 +1,21 @@
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserIcon } from "@hugeicons/core-free-icons";
 import type { User } from "@/lib/types";
 import type { RoomMemberWithUser } from "@/lib/types";
 import { UserProfilePopup } from "@/components/popups/UserProfilePopup";
+import { UserAvatar } from "@/components/avatar";
 
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 
 function getMemberAvatar(
   member: RoomMemberWithUser,
   currentUser: User | null,
-): string {
+): string | undefined {
   const isCurrentUser = member?.Users?.user_id === currentUser?.user_id;
   if (isCurrentUser) {
-    return currentUser?.avatar ?? "/assets/defaultAvatar.png";
+    return currentUser?.avatar ?? undefined;
   }
-  return member?.Users?.avatar ?? "/assets/defaultAvatar.png";
+  return member?.Users?.avatar ?? undefined;
 }
 
 function getMemberDisplayName(
@@ -82,13 +82,11 @@ export const RoomMembersList = ({
                   className={`flex gap-4 items-center p-1 px-2 -ml-2 rounded-lg transition-colors ${!isCurrentUser ? "hover:bg-theme-border cursor-pointer group" : ""}`}
                 >
                   <div className="relative">
-                    <Image
-                      src={avatar}
+                    <UserAvatar
+                      avatar={avatar}
                       alt="Avatar"
-                      width={30}
-                      height={30}
-                      unoptimized
-                      className="w-10 h-10 rounded-[12px]"
+                      size={40}
+                      className="w-10 h-10 rounded-[12px] overflow-hidden flex items-center justify-center"
                     />
                     <StatusIndicator
                       isOnline={isUserOnline}

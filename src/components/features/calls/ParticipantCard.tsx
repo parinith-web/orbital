@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import Image from "next/image";
+import { UserAvatar } from "@/components/avatar";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   MicOff02Icon,
@@ -98,12 +98,11 @@ export const ParticipantCard = ({
               <div
                 className={`relative w-full h-full rounded-full overflow-hidden border-2 ${isSpeaking ? "border-theme-accent" : "border-theme-border"} transition-colors duration-300`}
               >
-                <Image
-                  src={avatarUrl}
+                <UserAvatar
+                  avatar={avatarUrl}
                   alt={name}
-                  fill
-                  sizes="(max-width: 768px) 100%, (max-width: 1024px) 100%, 100%"
-                  className="object-cover"
+                  size={128}
+                  className="w-full h-full object-cover flex items-center justify-center"
                 />
               </div>
             </div>

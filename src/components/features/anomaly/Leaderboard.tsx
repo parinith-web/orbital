@@ -3,11 +3,10 @@
 import type React from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { WINNING_SCORE } from "@/convex/games/lobbyConfig";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CrownIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 
 /**
  * H3 — the leaderboard shown once a session has `status === "ended"`
@@ -67,13 +66,11 @@ function PodiumCard({ entry, isSelf }: { entry: LeaderboardEntry; isSelf: boolea
       }`}
     >
       <div className={`text-xs font-medium ${medalTone(entry.rank)}`}>#{entry.rank}</div>
-      <Image
-        src={getAvatarUrl(entry.avatar, name)}
+      <UserAvatar
+        avatar={entry.avatar}
         alt={name}
-        width={40}
-        height={40}
-        quality={25}
-        className={`rounded-full object-cover bg-theme-base ${
+        size={40}
+        className={`rounded-full object-cover bg-theme-base overflow-hidden flex items-center justify-center ${
           entry.rank === 1 ? "ring-2 ring-theme-accent" : "ring-1 ring-theme-border"
         }`}
       />
@@ -89,13 +86,11 @@ function ListRow({ entry, isSelf }: { entry: LeaderboardEntry; isSelf: boolean }
     <div className="w-full flex items-center justify-between rounded-lg border border-theme-border px-3 py-1.5">
       <div className="flex items-center gap-2">
         <span className={`text-xs w-6 text-center ${medalTone(entry.rank)}`}>#{entry.rank}</span>
-        <Image
-          src={getAvatarUrl(entry.avatar, name)}
+        <UserAvatar
+          avatar={entry.avatar}
           alt={name}
-          width={24}
-          height={24}
-          quality={25}
-          className="rounded-full object-cover bg-theme-base ring-1 ring-theme-border"
+          size={24}
+          className="rounded-full object-cover bg-theme-base ring-1 ring-theme-border overflow-hidden flex items-center justify-center"
         />
         <span className="text-sm text-gray-300">{name}</span>
       </div>

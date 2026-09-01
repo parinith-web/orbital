@@ -1,11 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useQuery } from "convex/react";
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BubbleChatIcon, UserGroupIcon } from "@hugeicons/core-free-icons";
 import { api } from "@/convex/_generated/api";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { timeAgo } from "@/lib/utils/date";
 import { ListSkeleton } from "@/components/skeletons/ListSkeleton";
 import { Button } from "@/components/ui";
@@ -83,13 +82,11 @@ export function ChatsView({ onFindPeople, initialOpenUserId, onConsumeInitialOpe
               onClick={() => setOpenConversationId(conversation.conversation_id)}
               className={`${active ? "bg-theme-hover" : "hover:bg-theme-hover"} flex items-center gap-3 px-3 py-2.5 text-left transition-colors duration-200`}
             >
-              <Image
-                src={getAvatarUrl(conversation.other_user.avatar)}
+              <UserAvatar
+                avatar={conversation.other_user.avatar}
                 alt={conversation.other_user.username}
-                width={36}
-                height={36}
-                unoptimized
-                className="w-9 h-9 rounded-[10px] flex-none object-cover"
+                size={36}
+                className="w-9 h-9 rounded-[10px] flex-none object-cover overflow-hidden flex items-center justify-center"
               />
               <div className="flex-1 min-w-0 flex flex-col">
                 <span className="truncate text-white/90">

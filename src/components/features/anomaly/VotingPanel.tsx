@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { getAvatarUrl } from "@/lib/utils/avatar";
+import { UserAvatar } from "@/components/avatar";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Tick01Icon } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 import { toast } from "sonner";
 
 /**
@@ -130,13 +129,11 @@ export const VotingPanel = ({
             >
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Image
-                    src={getAvatarUrl(player?.avatar, name)}
+                  <UserAvatar
+                    avatar={player?.avatar}
                     alt={name}
-                    width={26}
-                    height={26}
-                    quality={25}
-                    className={`rounded-full object-cover bg-theme-base ring-1 ring-theme-border ${!isConnected ? "opacity-50" : ""}`}
+                    size={26}
+                    className={`rounded-full object-cover bg-theme-base ring-1 ring-theme-border overflow-hidden flex items-center justify-center ${!isConnected ? "opacity-50" : ""}`}
                   />
                   <StatusIndicator isOnline={isConnected} isAway={false} />
                 </div>

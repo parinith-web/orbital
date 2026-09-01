@@ -5,6 +5,10 @@ export default defineSchema({
   users: defineTable({
     user_id: v.string(),
     username: v.string(),
+    // Avatar-maker config code (e.g. "h07-ef-ms-c2E6FF2") for anyone who
+    // has customized their avatar. May still hold a legacy uploaded-image
+    // URL for older accounts — profile-picture upload has been removed, so
+    // no new rows will get one. See UserAvatar / isAvatarConfigCode.
     avatar: v.optional(v.string()),
     email: v.optional(v.string()),
   })
