@@ -22,10 +22,26 @@ interface AvatarMakerProps {
    * real profile field (Convex mutation, etc.) is the next step, not this
    * one. */
   onSave?: (config: AvatarConfig, code: string) => void;
+  /** Called on every change to the config (color/eyes/mouth/hat picks and
+   * randomize), independent of Save. For embedding the maker somewhere
+   * that persists the avatar itself later — e.g. as one step of a signup
+   * flow that saves username + avatar together at the end. */
+  onChange?: (config: AvatarConfig, code: string) => void;
   initialConfig?: AvatarConfig;
+  /** Hides the Save/copy-code/download-SVG row, which assume there's a
+   * profile (or the demo localStorage slot) to persist to right now.
+   * Useful when the maker is one step of a larger flow — pair with
+   * `onChange` to read the current config instead. Randomize stays
+   * visible either way. Defaults to false. */
+  hideSaveControls?: boolean;
 }
 
-export function AvatarMaker({ onSave, initialConfig }: AvatarMakerProps) {
+export function AvatarMaker({
+  onSave,
+  onChange,
+  initialConfig,
+  hideSaveControls = false,
+}: AvatarMakerProps) {
   const [config, setConfig] = useState<AvatarConfig>(
     initialConfig ?? DEFAULT_AVATAR_CONFIG,
   );
@@ -48,6 +64,10 @@ export function AvatarMaker({ onSave, initialConfig }: AvatarMakerProps) {
 
   useEffect(() => {
     setSaved(false);
+    onChange?.(config, encodeAvatarConfig(config));
+    // Only re-run when the config itself changes — onChange is expected to
+    // be a fresh closure each render for callers tracking local state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
   const update = <K extends keyof AvatarConfig>(key: K, value: AvatarConfig[K]) => {
@@ -123,29 +143,33 @@ export function AvatarMaker({ onSave, initialConfig }: AvatarMakerProps) {
             >
               🎲 Randomize
             </button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 rounded-full text-sm font-medium border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
-            >
-              {saved ? "Saved ✓" : "Save avatar"}
-            </button>
+            {!hideSaveControls && (
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 rounded-full text-sm font-medium border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+              >
+                {saved ? "Saved ✓" : "Save avatar"}
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center gap-2 mt-3">
-            <button
-              onClick={handleCopyCode}
-              className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
-            >
-              {copied ? "Code copied ✓" : "Copy avatar code"}
-            </button>
-            <span className="text-[#444] text-xs">·</span>
-            <button
-              onClick={handleDownload}
-              className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
-            >
-              Download SVG
-            </button>
-          </div>
+          {!hideSaveControls && (
+            <div className="flex items-center gap-2 mt-3">
+              <button
+                onClick={handleCopyCode}
+                className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
+              >
+                {copied ? "Code copied ✓" : "Copy avatar code"}
+              </button>
+              <span className="text-[#444] text-xs">·</span>
+              <button
+                onClick={handleDownload}
+                className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
+              >
+                Download SVG
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Controls */}

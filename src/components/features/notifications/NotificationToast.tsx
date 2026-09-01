@@ -1,9 +1,9 @@
 "use client";
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Notification01Icon, HashtagIcon } from "@hugeicons/core-free-icons";
 
 import type { useNotifications } from "@/hooks";
+import { UserAvatar } from "@/components/avatar";
 
 type NotificationItem = ReturnType<
   typeof useNotifications
@@ -28,12 +28,10 @@ export function NotificationToast({
       <div className="flex items-start gap-3">
         <div className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-theme-border bg-theme-base">
           {item.senderAvatar ? (
-            <Image
-              src={item.senderAvatar}
+            <UserAvatar
+              avatar={item.senderAvatar}
               alt={item.senderName}
-              width={40}
-              height={40}
-              unoptimized
+              size={40}
               className="h-full w-full object-cover"
             />
           ) : (

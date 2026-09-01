@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { useCallback } from "react";
 import type { User } from "@/lib/types";
 
@@ -21,8 +20,6 @@ interface UseUserProfileActionsResult {
   /** `avatarConfig` is the avatar-maker's encoded config string, not an
    * uploaded-image URL. */
   changeAvatar: (avatarConfig: string) => Promise<any>;
-  generateUploadUrl: () => Promise<string>;
-  getUrl: (storageId: string) => Promise<string | null>;
   deleteUserAccount: () => Promise<any>;
 }
 
@@ -30,8 +27,6 @@ export function useUserProfileActions(): UseUserProfileActionsResult & { createU
   const changeNameMutation = useMutation(api.users.changeName);
   const changeAvatarMutation = useMutation(api.users.changeAvatar);
   const createUserMutation = useMutation(api.users.createUser);
-  const generateUploadUrlMutation = useMutation(api.storage.generateUploadUrl);
-  const getUrlMutation = useMutation(api.storage.getUrlMutation);
   const deleteUserAccountMutation = useMutation(api.users.deleteUserAccount);
 
   const createUser = useCallback(
@@ -55,19 +50,6 @@ export function useUserProfileActions(): UseUserProfileActionsResult & { createU
     [changeAvatarMutation]
   );
 
-  const generateUploadUrl = useCallback(async () => {
-    const url = await generateUploadUrlMutation();
-    return url;
-  }, [generateUploadUrlMutation]);
-
-  const getUrl = useCallback(
-    async (storageId: string) => {
-      const result = await getUrlMutation({ storageId: storageId as Id<"_storage"> });
-      return result ?? null;
-    },
-    [getUrlMutation]
-  );
-
   const deleteUserAccount = useCallback(
     async () => {
       return await deleteUserAccountMutation();
@@ -78,8 +60,6 @@ export function useUserProfileActions(): UseUserProfileActionsResult & { createU
   return {
     changeName,
     changeAvatar,
-    generateUploadUrl,
-    getUrl,
     createUser,
     deleteUserAccount,
   };

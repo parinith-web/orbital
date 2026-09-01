@@ -1,14 +1,19 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Upload01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useUserProfileActions } from "@/hooks";
 import { toast } from "sonner";
 import { Galindo } from "next/font/google";
 import Dither from "@/components/effects/Dither";
+import { AvatarMaker } from "@/components/avatar";
+import {
+  type AvatarConfig,
+  DEFAULT_AVATAR_CONFIG,
+  encodeAvatarConfig,
+} from "@/lib/avatar/options";
 
 const galindo = Galindo({
   weight: "400",
@@ -24,36 +29,15 @@ interface OnboardingDialogProps {
 export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
   const [step, setStep] = useState(1);
   const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState("/assets/defaultAvatar.png");
-  const [isUploading, setIsUploading] = useState(false);
+  const [avatarCode, setAvatarCode] = useState(() =>
+    encodeAvatarConfig(DEFAULT_AVATAR_CONFIG),
+  );
   const [isFinishing, setIsFinishing] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
-  const { createUser, generateUploadUrl, getUrl } = useUserProfileActions();
+  const { createUser } = useUserProfileActions();
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const postUrl = await generateUploadUrl();
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
-      const { storageId } = await result.json();
-      const newAvatarUrl = await getUrl(storageId);
-      if (newAvatarUrl) {
-        setAvatar(newAvatarUrl);
-        toast.success("Avatar uploaded");
-      }
-    } catch (e) {
-      toast.error("Failed to upload avatar");
-    } finally {
-      setIsUploading(false);
-    }
+  const handleAvatarChange = (_config: AvatarConfig, code: string) => {
+    setAvatarCode(code);
   };
 
   const handleFinish = async () => {
@@ -64,10 +48,10 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
 
     setIsFinishing(true);
     try {
-      await createUser({ username, avatar });
+      await createUser({ username, avatar: avatarCode });
       toast.success("Welcome to Orbital!");
       onComplete();
-    } catch (e) {
+    } catch {
       toast.error("Failed to create profile");
     } finally {
       setIsFinishing(false);
@@ -88,7 +72,11 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
           waveFrequency={3}
           waveSpeed={0.01}
         /></div>
-      <div className="relative w-full max-w-lg bg-theme-surface border border-theme-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div
+        className={`relative w-full bg-theme-surface border border-theme-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 ${
+          step === 2 ? "max-w-3xl" : "max-w-lg"
+        }`}
+      >
 
         <motion.div
           layout
@@ -129,9 +117,51 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
                   </button>
                 </div>
               </motion.div>
-            ) : (
+            ) : step === 2 ? (
               <motion.div
                 key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.15 }}
+                className="p-8 max-h-[85vh] overflow-y-auto"
+              >
+                <div className="flex flex-col space-y-8">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-white mb-1">
+                      Build your avatar
+                    </h2>
+                    <p className="text-sm text-gray-300">
+                      Mix a color, eyes, mouth, and a hat. You can always
+                      change it later from Settings.
+                    </p>
+                  </div>
+
+                  <AvatarMaker
+                    initialConfig={DEFAULT_AVATAR_CONFIG}
+                    onChange={handleAvatarChange}
+                    hideSaveControls
+                  />
+
+                  <div className="flex gap-2 items-center w-full max-w-sm mx-auto">
+                    <button
+                      onClick={() => setStep(1)}
+                      className="flex-1 px-6 bg-[#272727] hover:text-gray-200 duration-200 transition-all text-sm text-white py-3 rounded-xl"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={() => setStep(3)}
+                      className="bg-white text-black justify-center flex-1 text-sm py-3 px-6 flex items-center gap-1 ease-in-out hover:brightness-110 hover:opacity-90 rounded-xl"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="step3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
@@ -149,38 +179,6 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
                   </div>
 
                   <div className="flex flex-col items-center space-y-6">
-                    <div
-                      className="relative group cursor-pointer flex flex-col gap-1"
-                      onClick={() => !isUploading && fileRef.current?.click()}
-                    >
-                      <span className="text-xs text-gray-300 pl-1">Avatar</span>
-                      <div className="relative w-24 h-24 rounded-3xl overflow-hidden border border-theme-border transition-colors">
-                        <Image
-                          src={avatar}
-                          alt="Avatar"
-                          width={96}
-                          height={96}
-                          className="w-full h-full object-cover"
-                          unoptimized
-                        />
-                        {isUploading && (
-                          <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                          <HugeiconsIcon icon={Upload01Icon} className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <input
-                        ref={fileRef}
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleAvatarUpload}
-                      />
-                    </div>
-
                     <div className="w-full space-y-2 flex flex-col">
                       <span className="text-xs text-gray-300 pl-1">Username</span>
                       <input
@@ -196,7 +194,7 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
 
                   <div className="flex gap-2 items-center w-full">
                     <button
-                      onClick={() => setStep(1)}
+                      onClick={() => setStep(2)}
                       className="flex-1 px-6 bg-[#272727] hover:text-gray-200 duration-200 transition-all text-sm text-white py-3 rounded-xl"
                     >
                       Back
