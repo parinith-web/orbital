@@ -6,9 +6,15 @@ import Image from "next/image";
 /**
  * Landing-page-only showcase of the blob-character avatar set. Pulls in
  * the same four avatars already used around the marketing page (Wave,
- * Volt, Ember, Nova — see AppUICalls.tsx / BasicsCovered.tsx) plus six
+ * Volt, Ember, Nova — see AppUICalls.tsx / BasicsCovered.tsx) plus eleven
  * new characters drawn in the same style so the roster reads as one
  * consistent set, not a mismatched add-on.
+ *
+ * Laid out as three rows of five, each row with its own eye direction +
+ * mouth shape so the set doesn't read as fifteen clones of one template:
+ *   Row 1 (Wave, Volt, Ember, Nova, Iris)        — straight eyes, soft smile
+ *   Row 2 (Blaze, Luna, Rusty, Sage, Comet)      — eyes right, open grin
+ *   Row 3 (Pixel, Cobalt, Marigold, Slate, Coral) — eyes left, cheeky smirk
  */
 
 interface AvatarEntry {
@@ -18,26 +24,24 @@ interface AvatarEntry {
 }
 
 const AVATARS: AvatarEntry[] = [
+  // Row 1 — straight eyes, soft smile
   { name: "Wave", img: "/assets/sq.png", color: "#2E6FF2" },
   { name: "Volt", img: "/assets/pi.png", color: "#FFD23F" },
   { name: "Ember", img: "/assets/ch.png", color: "#FF3D8A" },
   { name: "Nova", img: "/assets/bu.png", color: "#38D66B" },
   { name: "Iris", img: "/assets/iris.png", color: "#B073FF" },
+  // Row 2 — eyes right, open grin
   { name: "Blaze", img: "/assets/blaze.png", color: "#FF8C42" },
   { name: "Luna", img: "/assets/luna.png", color: "#22D3EE" },
   { name: "Rusty", img: "/assets/rusty.png", color: "#FF4136" },
   { name: "Sage", img: "/assets/sage.png", color: "#14B8A6" },
   { name: "Comet", img: "/assets/comet.png", color: "#FFB703" },
+  // Row 3 — eyes left, cheeky smirk
   { name: "Pixel", img: "/assets/pixel.png", color: "#E930C6" },
   { name: "Cobalt", img: "/assets/cobalt.png", color: "#1447E6" },
   { name: "Marigold", img: "/assets/marigold.png", color: "#F5A623" },
   { name: "Slate", img: "/assets/slate.png", color: "#7C8798" },
   { name: "Coral", img: "/assets/coral.png", color: "#FF7A6B" },
-  { name: "Violet", img: "/assets/violet.png", color: "#8B5CF6" },
-  { name: "Mint", img: "/assets/mint.png", color: "#5EEAD4" },
-  { name: "Crimson", img: "/assets/crimson.png", color: "#B91C1C" },
-  { name: "Lagoon", img: "/assets/lagoon.png", color: "#06B6D4" },
-  { name: "Peach", img: "/assets/peach.png", color: "#FFB4A2" },
 ];
 
 export function AvatarShowcase() {
@@ -94,7 +98,7 @@ export function AvatarShowcase() {
         </div>
 
         <p className="text-center text-[#666] text-xs sm:text-sm mt-8">
-          Twenty to start. More drop in every season.
+          Fifteen to start. More drop in every season.
         </p>
       </div>
     </section>
