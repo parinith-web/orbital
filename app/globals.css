@@ -259,6 +259,9 @@ body {
 .arcade-press.arcade-shadow-yellow:hover {
   box-shadow: 3px 3px 0 0 #ffd23f;
 }
+.arcade-press.arcade-shadow-green:hover {
+  box-shadow: 3px 3px 0 0 #38d66b;
+}
 
 /* Comic-book halftone dot field, used as a decorative texture behind
    panels instead of a flat color. */
