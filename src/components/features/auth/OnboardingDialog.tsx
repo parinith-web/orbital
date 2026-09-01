@@ -7,7 +7,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useUserProfileActions } from "@/hooks";
 import { toast } from "sonner";
 import { Galindo } from "next/font/google";
-import Dither from "@/components/effects/Dither";
+import Starfield from "@/components/effects/Starfield";
 import { AvatarMaker } from "@/components/avatar";
 import {
   type AvatarConfig,
@@ -60,18 +60,18 @@ export const OnboardingDialog = ({ onComplete }: OnboardingDialogProps) => {
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-[url('/assets/asciiHero.png')] bg-cover bg-center fade-slow opacity-40 -z-10" >
-        <Dither
-          waveColor={[0.5, 0.5, 0.5]}
-          disableAnimation={false}
-          enableMouseInteraction
-          mouseRadius={0.3}
-          colorNum={4}
-          pixelSize={2}
-          waveAmplitude={0.3}
-          waveFrequency={3}
-          waveSpeed={0.01}
-        /></div>
+      <div className="absolute inset-0 bg-black">
+        <div className="absolute inset-0 bg-[url('/assets/asciiHero.png')] bg-cover bg-center fade-slow opacity-40 -z-10" />
+        <Starfield
+          starColor={[255, 255, 255]}
+          density={1.1}
+          speed={12}
+          direction={35}
+          mouseRadius={110}
+          repelStrength={90}
+          twinkle
+        />
+      </div>
       <div
         className={`relative w-full bg-theme-surface border border-theme-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 ${
           step === 2 ? "max-w-3xl" : "max-w-lg"
