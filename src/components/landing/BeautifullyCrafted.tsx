@@ -115,7 +115,7 @@ export function BeautifullyCrafted({
           </div>
 
           {/* ROW 2: div1 (notification + friend) | Heading | div2 (callended + widget) */}
-          <div className="hidden md:flex w-full flex-col md:flex-row justify-center items-center gap-2 md:gap-2">
+          <div className="hidden md:flex w-full flex-col md:flex-row justify-center items-center gap-6 md:gap-10 lg:gap-14">
             {/* Left div: MessageNotification + FriendItem */}
             <div className="hidden md:flex flex-col gap-2 md:gap-2 flex-shrink-0 items-end">
               <MessageNotificationMock />
@@ -123,7 +123,7 @@ export function BeautifullyCrafted({
             </div>
 
             {/* Center Heading */}
-            <div className="text-center flex-shrink-0 mx-4">
+            <div className="text-center flex-shrink-0 mx-4 md:mx-6">
               <span className="font-display text-3xl md:text-6xl text-white leading-tight drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
                 Beautifully Crafted
                 <br />
