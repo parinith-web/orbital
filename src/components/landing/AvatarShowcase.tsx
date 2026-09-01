@@ -28,6 +28,16 @@ const AVATARS: AvatarEntry[] = [
   { name: "Rusty", img: "/assets/rusty.png", color: "#FF4136" },
   { name: "Sage", img: "/assets/sage.png", color: "#14B8A6" },
   { name: "Comet", img: "/assets/comet.png", color: "#FFB703" },
+  { name: "Pixel", img: "/assets/pixel.png", color: "#E930C6" },
+  { name: "Cobalt", img: "/assets/cobalt.png", color: "#1447E6" },
+  { name: "Marigold", img: "/assets/marigold.png", color: "#F5A623" },
+  { name: "Slate", img: "/assets/slate.png", color: "#7C8798" },
+  { name: "Coral", img: "/assets/coral.png", color: "#FF7A6B" },
+  { name: "Violet", img: "/assets/violet.png", color: "#8B5CF6" },
+  { name: "Mint", img: "/assets/mint.png", color: "#5EEAD4" },
+  { name: "Crimson", img: "/assets/crimson.png", color: "#B91C1C" },
+  { name: "Lagoon", img: "/assets/lagoon.png", color: "#06B6D4" },
+  { name: "Peach", img: "/assets/peach.png", color: "#FFB4A2" },
 ];
 
 export function AvatarShowcase() {
@@ -84,7 +94,7 @@ export function AvatarShowcase() {
         </div>
 
         <p className="text-center text-[#666] text-xs sm:text-sm mt-8">
-          Ten to start. More drop in every season.
+          Twenty to start. More drop in every season.
         </p>
       </div>
     </section>
