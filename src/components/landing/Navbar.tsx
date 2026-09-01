@@ -46,7 +46,7 @@ export function Navbar({ scrolled, handleEnter }: NavbarProps) {
       initial={{ opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed top-0 left-0 right-0 z-[100] w-full bg-black/75 backdrop-blur-md transition-colors duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[100] w-full bg-black/50 backdrop-blur-md transition-colors duration-300 ${
         scrolled || isOpen
           ? "border-b border-white/10 py-0"
           : "border-b border-white/5 py-1"
@@ -79,7 +79,7 @@ export function Navbar({ scrolled, handleEnter }: NavbarProps) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden bg-black/75 backdrop-blur-md overflow-hidden"
+            className="md:hidden bg-black/50 backdrop-blur-md overflow-hidden"
           >
             <div className="px-6 pb-4 flex flex-col gap-6">{navItems}</div>
           </motion.div>

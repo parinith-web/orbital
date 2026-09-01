@@ -78,7 +78,7 @@ export function Footer() {
         <span style={{ animationDelay: "1.2s" }} />
       </div>
 
-      <div className="relative z-[1001] flex flex-1 flex-col justify-between p-12 md:p-20">
+      <div className="relative z-[1001] flex flex-1 flex-col justify-between p-12 pl-16 md:p-20 md:pl-28">
         <div>
           <span className="font-display text-3xl md:text-4xl text-arcade-ink">
             Orbital
@@ -90,7 +90,7 @@ export function Footer() {
           </span>
         </div>
 
-        <span className="text-gray-400 block text-xs mt-10 md:mt-0">
+        <span className="text-gray-400 block text-xs mt-14 md:mt-8">
           &copy; {new Date().getFullYear()} Orbital. All rights reserved.
         </span>
       </div>
