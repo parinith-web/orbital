@@ -1,0 +1,278 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  AvatarConfig,
+  COLOR_OPTIONS,
+  DEFAULT_AVATAR_CONFIG,
+  EYE_OPTIONS,
+  HAT_OPTIONS,
+  MOUTH_OPTIONS,
+  decodeAvatarConfig,
+  encodeAvatarConfig,
+  randomAvatarConfig,
+} from "@/lib/avatar/options";
+import { AvatarSVG } from "./AvatarSVG";
+
+const STORAGE_KEY = "orbit.avatarMaker.savedConfig";
+
+interface AvatarMakerProps {
+  /** Called whenever the user hits Save, with both the config and its
+   * compact encoded string. Left as a no-op by default — wiring this to a
+   * real profile field (Convex mutation, etc.) is the next step, not this
+   * one. */
+  onSave?: (config: AvatarConfig, code: string) => void;
+  initialConfig?: AvatarConfig;
+}
+
+export function AvatarMaker({ onSave, initialConfig }: AvatarMakerProps) {
+  const [config, setConfig] = useState<AvatarConfig>(
+    initialConfig ?? DEFAULT_AVATAR_CONFIG,
+  );
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Restore the last-saved local avatar on mount (demo persistence only —
+  // no backend wired up yet, see onSave above).
+  useEffect(() => {
+    if (initialConfig) return;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) setConfig(decodeAvatarConfig(raw));
+    } catch {
+      // localStorage unavailable (e.g. private browsing) — just fall back
+      // to the default config, no need to surface an error for this.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setSaved(false);
+  }, [config]);
+
+  const update = <K extends keyof AvatarConfig>(key: K, value: AvatarConfig[K]) => {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleRandomize = () => setConfig(randomAvatarConfig());
+
+  const handleSave = () => {
+    const code = encodeAvatarConfig(config);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, code);
+    } catch {
+      // Non-fatal — saving is best-effort local persistence for this demo.
+    }
+    onSave?.(config, code);
+    setSaved(true);
+  };
+
+  const handleCopyCode = async () => {
+    const code = encodeAvatarConfig(config);
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // Clipboard API can be blocked (permissions, insecure context) —
+      // the code is still visible on screen for manual copy.
+    }
+  };
+
+  const handleDownload = () => {
+    const svgEl = document.getElementById("avatar-maker-preview-svg");
+    if (!svgEl) return;
+    // Clone rather than serialize the live node directly, so we can bump
+    // the exported file up to a crisp fixed resolution without resizing
+    // the on-screen preview.
+    const clone = svgEl.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute("width", "512");
+    clone.setAttribute("height", "512");
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    const serialized = new XMLSerializer().serializeToString(clone);
+    const blob = new Blob([serialized], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "avatar.svg";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="w-full max-w-5xl mx-auto text-white">
+      <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-start">
+        {/* Preview */}
+        <div className="flex flex-col items-center md:sticky md:top-8">
+          <div
+            className="relative rounded-[28px] border-[3px] border-[#0b0b10] bg-[#0f0f0f] p-8 sm:p-10 transition-shadow duration-200"
+            style={{ boxShadow: `8px 8px 0 0 ${config.color}` }}
+          >
+            <AvatarSVG
+              id="avatar-maker-preview-svg"
+              config={config}
+              size={200}
+              className="drop-shadow-sm"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-6 w-full">
+            <button
+              onClick={handleRandomize}
+              className="px-4 py-2 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors"
+            >
+              🎲 Randomize
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 rounded-full text-sm font-medium border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+            >
+              {saved ? "Saved ✓" : "Save avatar"}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 mt-3">
+            <button
+              onClick={handleCopyCode}
+              className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
+            >
+              {copied ? "Code copied ✓" : "Copy avatar code"}
+            </button>
+            <span className="text-[#444] text-xs">·</span>
+            <button
+              onClick={handleDownload}
+              className="text-xs text-[#888] hover:text-white transition-colors underline underline-offset-2 decoration-white/20"
+            >
+              Download SVG
+            </button>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-col gap-8 w-full min-w-0">
+          <PickerSection title="Color" subtitle="15 colors">
+            <div className="flex flex-wrap gap-3">
+              {COLOR_OPTIONS.map((c) => (
+                <button
+                  key={c.id}
+                  title={c.label}
+                  onClick={() => update("color", c.id)}
+                  className="relative h-10 w-10 rounded-full transition-transform hover:scale-110 focus:outline-none"
+                  style={{
+                    backgroundColor: c.id,
+                    boxShadow:
+                      config.color === c.id
+                        ? `0 0 0 3px #0f0f0f, 0 0 0 5px ${c.id}`
+                        : "0 0 0 3px #0f0f0f, 0 0 0 5px transparent",
+                  }}
+                >
+                  <span className="sr-only">{c.label}</span>
+                </button>
+              ))}
+            </div>
+          </PickerSection>
+
+          <PickerSection title="Eyes" subtitle="3 styles">
+            <div className="flex flex-wrap gap-3">
+              {EYE_OPTIONS.map((opt) => (
+                <ThumbButton
+                  key={opt.id}
+                  label={opt.label}
+                  selected={config.eyes === opt.id}
+                  onClick={() => update("eyes", opt.id)}
+                  previewConfig={{ ...config, eyes: opt.id }}
+                />
+              ))}
+            </div>
+          </PickerSection>
+
+          <PickerSection title="Mouth" subtitle="3 styles">
+            <div className="flex flex-wrap gap-3">
+              {MOUTH_OPTIONS.map((opt) => (
+                <ThumbButton
+                  key={opt.id}
+                  label={opt.label}
+                  selected={config.mouth === opt.id}
+                  onClick={() => update("mouth", opt.id)}
+                  previewConfig={{ ...config, mouth: opt.id }}
+                />
+              ))}
+            </div>
+          </PickerSection>
+
+          <PickerSection title="Hat" subtitle="15 toppers">
+            <div className="grid grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 gap-3">
+              {HAT_OPTIONS.map((opt) => (
+                <ThumbButton
+                  key={opt.id}
+                  label={opt.label}
+                  selected={config.hat === opt.id}
+                  onClick={() => update("hat", opt.id)}
+                  previewConfig={{ ...config, hat: opt.id }}
+                />
+              ))}
+            </div>
+          </PickerSection>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PickerSection({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <div className="flex items-baseline justify-between mb-3">
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-white/70">
+          {title}
+        </h3>
+        <span className="text-xs text-[#666]">{subtitle}</span>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function ThumbButton({
+  label,
+  selected,
+  onClick,
+  previewConfig,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+  previewConfig: AvatarConfig;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={label}
+      className={`group flex flex-col items-center gap-1.5 rounded-2xl border-2 p-2 transition-all ${
+        selected
+          ? "border-white bg-white/[0.06]"
+          : "border-transparent bg-white/[0.02] hover:bg-white/[0.05]"
+      }`}
+    >
+      <div
+        className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full overflow-hidden"
+        style={{ backgroundColor: `${previewConfig.color}22` }}
+      >
+        <AvatarSVG config={previewConfig} size={56} />
+      </div>
+      <span className="text-[10px] sm:text-[11px] text-[#999] group-hover:text-white transition-colors text-center leading-tight">
+        {label}
+      </span>
+    </button>
+  );
+}
+
+export default AvatarMaker;
