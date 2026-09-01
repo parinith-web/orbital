@@ -39,7 +39,7 @@ const ACCENT_HEX: Record<Accent, string> = {
 const goodstuff = [
   {
     title: "Personal & Group Chats",
-    desc: "Message a friend one-on-one or drop into a room with everyone — same chat, same message bar, just more people in it.",
+    desc: "One-on-one or a full room — same chat, just more people in it.",
     accent: "blue" as Accent,
     icon: BubbleChatIcon,
     stats: ["1:1 or group", "Text + media"],
@@ -71,7 +71,7 @@ const goodstuff = [
   },
   {
     title: "Voice & Video Calls",
-    desc: "Start a call with one friend or the whole room, and switch between them without ever hanging up.",
+    desc: "Call one friend or the whole room, and switch anytime.",
     accent: "pink" as Accent,
     icon: Mic01Icon,
     stats: ["Voice & video", "Switch anytime"],
@@ -79,14 +79,14 @@ const goodstuff = [
     offsetY: 12,
     pin: "right" as const,
     component: (
-      <div className="flex mt-8 w-full items-center justify-center">
+      <div className="flex mt-4 w-full items-center justify-center">
         <ActiveCallMock className="origin-center " />
       </div>
     ),
   },
   {
     title: "Notifications",
-    desc: "Get pinged the moment a message lands or someone @mentions you — nothing to refresh, nothing to miss.",
+    desc: "Pinged the moment something lands — nothing to miss.",
     accent: "yellow" as Accent,
     icon: Notification03Icon,
     stats: ["Instant", "@mentions"],
@@ -101,14 +101,14 @@ const goodstuff = [
           message="Hi, what's up?"
           room="orbital"
           stacked={true}
-          className="mt-8"
+          className="mt-4"
         />
       </div>
     ),
   },
   {
     title: "Game Hub",
-    desc: "Jump into Anomaly, a word-based imposter game. Everyone gets a word, one of you doesn't — talk it out over voice, then vote them out.",
+    desc: "Anomaly: a word-based imposter game. Talk it out, then vote.",
     accent: "green" as Accent,
     icon: PlayCircleIcon,
     stats: ["Party game", "Voice required"],
@@ -116,7 +116,7 @@ const goodstuff = [
     offsetY: 12,
     pin: "right" as const,
     component: (
-      <div className="flex mt-8 w-full items-center justify-center">
+      <div className="flex mt-4 w-full items-center justify-center">
         <AnomalyGameMock />
       </div>
     ),
@@ -189,11 +189,11 @@ export function GoodStuff() {
                       same comic-marquee treatment as the wordmark badge in
                       Navbar.tsx, sized to sit flush against the outline. */}
                   <div
-                    className="halftone relative flex h-16 items-center border-b-[3px] border-[#0b0b10] px-8 sm:h-[72px] lg:px-12"
+                    className="halftone relative flex h-12 items-center border-b-[3px] border-[#0b0b10] px-6 sm:h-14 lg:px-8"
                     style={{ backgroundColor: `${ACCENT_HEX[item.accent]}1a` }}
                   >
                     <span
-                      className="arcade-outline flex h-11 w-11 items-center justify-center rounded-full text-[#0b0b10] sm:h-12 sm:w-12"
+                      className="arcade-outline flex h-9 w-9 items-center justify-center rounded-full text-[#0b0b10] sm:h-10 sm:w-10"
                       style={{ backgroundColor: ACCENT_HEX[item.accent] }}
                     >
                       <motion.span
@@ -208,19 +208,19 @@ export function GoodStuff() {
                       >
                         <HugeiconsIcon
                           icon={item.icon}
-                          className="h-5 w-5 sm:h-6 sm:w-6"
+                          className="h-4 w-4 sm:h-5 sm:w-5"
                           strokeWidth={2}
                         />
                       </motion.span>
                     </span>
                   </div>
 
-                  <div className="relative flex flex-col overflow-hidden p-8 lg:p-12">
+                  <div className="relative flex flex-col overflow-hidden p-6 lg:p-8">
                     <div className="flex flex-col justify-start">
-                      <h3 className="text-xl font-medium tracking-tight text-white sm:text-2xl">
+                      <h3 className="text-lg font-medium tracking-tight text-white sm:text-xl">
                         {item.title}
                       </h3>
-                      <p className="mt-3 text-base leading-relaxed text-[#888] sm:mt-4 sm:text-lg">
+                      <p className="mt-2 text-sm leading-snug text-[#888] sm:mt-3 sm:text-base">
                         {item.desc}
                       </p>
                     </div>
@@ -228,7 +228,7 @@ export function GoodStuff() {
                     {/* Stat tags: same pill treatment as the @Ember/@Wave/@Volt
                         mention pills in BasicsCovered.tsx, reused here in the
                         card's own accent color. */}
-                    <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
+                    <div className="mt-3 flex flex-wrap items-center gap-2 sm:mt-4">
                       {item.stats.map((stat) => (
                         <span
                           key={stat}
