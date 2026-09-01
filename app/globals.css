@@ -270,6 +270,29 @@ body {
   background-size: 10px 10px;
 }
 
+/* "The Good Stuff" wall backdrop — `.halftone` reused at reduced opacity
+   behind the card cluster only, tying the wall surface to the same dot
+   texture already used inside each card's header strip. */
+.wall-backdrop {
+  opacity: 0.2;
+}
+
+/* Fixed per-card rotation + vertical offset for the "pinned to a wall"
+   card arrangement (see GoodStuff.tsx). Values come in via the
+   --card-rotate / --card-offset custom properties set inline per card.
+   Gated by a media query rather than a JS viewport check so the flat/
+   tilted decision never depends on hydration — cards render flat by
+   default (mobile) and pick up the tilt once the breakpoint matches. */
+.wall-card-tilt {
+  transform: none;
+}
+
+@media (min-width: 640px) {
+  .wall-card-tilt {
+    transform: rotate(var(--card-rotate)) translateY(var(--card-offset));
+  }
+}
+
 @keyframes rays-spin-kf {
   from {
     transform: translateY(-50%) rotate(0deg);

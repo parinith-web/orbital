@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -30,6 +31,11 @@ const ACCENT_HEX: Record<Accent, string> = {
   green: "#38d66b",
 };
 
+// Fixed per-card wall tilt + vertical offset — not randomized per page
+// load, so the "pinned to a wall" arrangement is consistent and
+// reviewable. Rotation is only ever applied at `sm:` and up (see
+// `.wall-card-tilt` in globals.css); on mobile every card sits flat in a
+// straight single-column stack regardless of these values.
 const goodstuff = [
   {
     title: "Personal & Group Chats",
@@ -37,6 +43,9 @@ const goodstuff = [
     accent: "blue" as Accent,
     icon: BubbleChatIcon,
     stats: ["1:1 or group", "Text + media"],
+    rotation: -3,
+    offsetY: -12,
+    pin: "left" as const,
     component: (
       <div className="mx-auto grid mt-4 w-full max-w-[560px] grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 lg:max-w-[640px]">
         <RoomItemMock name="Projects" id="4567" className="w-full" />
@@ -66,6 +75,9 @@ const goodstuff = [
     accent: "pink" as Accent,
     icon: Mic01Icon,
     stats: ["Voice & video", "Switch anytime"],
+    rotation: 2,
+    offsetY: 12,
+    pin: "right" as const,
     component: (
       <div className="flex mt-8 w-full items-center justify-center">
         <ActiveCallMock className="origin-center " />
@@ -78,6 +90,9 @@ const goodstuff = [
     accent: "yellow" as Accent,
     icon: Notification03Icon,
     stats: ["Instant", "@mentions"],
+    rotation: -2,
+    offsetY: -12,
+    pin: "left" as const,
     component: (
       <div className="w-full max-w-[350px]">
         <MessageNotificationMock
@@ -97,6 +112,9 @@ const goodstuff = [
     accent: "green" as Accent,
     icon: PlayCircleIcon,
     stats: ["Party game", "Voice required"],
+    rotation: 3,
+    offsetY: 12,
+    pin: "right" as const,
     component: (
       <div className="flex mt-8 w-full items-center justify-center">
         <AnomalyGameMock />
@@ -105,96 +123,131 @@ const goodstuff = [
   },
 ];
 
+// Small screw/bolt corner accent — reads as "bolted to the arcade panel"
+// rather than a literal corkboard pushpin, matching the comic/arcade
+// language used everywhere else on the card (halftone header, hard
+// outlines). Alternates left/right per card so the bolts don't all line
+// up identically down the wall.
+function PanelBolt({ side }: { side: "left" | "right" }) {
+  return (
+    <div
+      className={`arcade-outline pointer-events-none absolute top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-[#d9d9df] sm:h-7 sm:w-7 ${
+        side === "left" ? "left-3" : "right-3"
+      }`}
+      aria-hidden="true"
+    >
+      <div className="h-[2.5px] w-3 rotate-45 rounded-full bg-[#0b0b10]" />
+    </div>
+  );
+}
+
 export function GoodStuff() {
   return (
     <section className="mt-24 px-4 text-white sm:px-6 md:mt-32 lg:mt-[200px]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:gap-12">
-        <div className="md:text-start text-center w-full lg:w-1/2">
-          <div className="lg:sticky lg:top-48">
-            <h2 className="font-display text-4xl leading-tight md:text-6xl">
-              The Good <br /> Stuff
-            </h2>
-          </div>
-        </div>
+      <div className="mx-auto max-w-6xl">
+        <h2 className="font-display text-center text-4xl leading-tight md:text-6xl">
+          The Good <br className="md:hidden" /> Stuff
+        </h2>
 
-        <div className="w-full lg:w-1/2 py-0">
-          <div className="flex flex-col gap-6 md:gap-8">
+        {/* Backdrop sits behind just the card cluster (not the whole
+            section) — reuses `.halftone`, the same dot texture already
+            used inside each card's header strip, at reduced opacity so
+            the grid reads as a surface the cards are pinned to. */}
+        <div className="relative mt-16 md:mt-20">
+          <div
+            className="halftone wall-backdrop absolute -inset-x-4 -inset-y-8 -z-10 rounded-[32px] sm:-inset-x-8"
+            aria-hidden="true"
+          />
+
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-16 xl:grid-cols-4">
             {goodstuff.map((item, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -4, rotate: i % 2 === 0 ? -0.5 : 0.5 }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.21, 0.47, 0.32, 0.98],
-                  delay: i * 0.1,
-                }}
-                viewport={{ once: true }}
-                className={`arcade-outline arcade-shadow arcade-shadow-${item.accent} arcade-press relative flex flex-col overflow-hidden rounded-2xl bg-[#0a0a0d]`}
+                className="wall-card-tilt"
+                style={
+                  {
+                    "--card-rotate": `${item.rotation}deg`,
+                    "--card-offset": `${item.offsetY}px`,
+                  } as CSSProperties
+                }
               >
-                {/* Header strip: accent-tinted halftone band + icon badge,
-                    same comic-marquee treatment as the wordmark badge in
-                    Navbar.tsx, sized to sit flush against the outline. */}
-                <div
-                  className="halftone relative flex h-16 items-center border-b-[3px] border-[#0b0b10] px-8 sm:h-[72px] lg:px-12"
-                  style={{ backgroundColor: `${ACCENT_HEX[item.accent]}1a` }}
+                <motion.div
+                  initial={{ opacity: 0, y: 30, rotate: -item.rotation }}
+                  whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+                  whileHover={{ y: -4, rotate: (-item.rotation * 2) / 3 }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.21, 0.47, 0.32, 0.98],
+                    delay: i * 0.15,
+                  }}
+                  viewport={{ once: true }}
+                  className={`arcade-outline arcade-shadow arcade-shadow-${item.accent} arcade-press relative flex h-full flex-col overflow-hidden rounded-2xl bg-[#0a0a0d]`}
                 >
-                  <span
-                    className="arcade-outline flex h-11 w-11 items-center justify-center rounded-full text-[#0b0b10] sm:h-12 sm:w-12"
-                    style={{ backgroundColor: ACCENT_HEX[item.accent] }}
+                  <PanelBolt side={item.pin} />
+
+                  {/* Header strip: accent-tinted halftone band + icon badge,
+                      same comic-marquee treatment as the wordmark badge in
+                      Navbar.tsx, sized to sit flush against the outline. */}
+                  <div
+                    className="halftone relative flex h-16 items-center border-b-[3px] border-[#0b0b10] px-8 sm:h-[72px] lg:px-12"
+                    style={{ backgroundColor: `${ACCENT_HEX[item.accent]}1a` }}
                   >
-                    <motion.span
-                      className="flex items-center justify-center"
-                      animate={{ scale: [1, 1.12, 1] }}
-                      transition={{
-                        duration: 2.6,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: i * 0.3,
-                      }}
+                    <span
+                      className="arcade-outline flex h-11 w-11 items-center justify-center rounded-full text-[#0b0b10] sm:h-12 sm:w-12"
+                      style={{ backgroundColor: ACCENT_HEX[item.accent] }}
                     >
-                      <HugeiconsIcon
-                        icon={item.icon}
-                        className="h-5 w-5 sm:h-6 sm:w-6"
-                        strokeWidth={2}
-                      />
-                    </motion.span>
-                  </span>
-                </div>
-
-                <div className="relative flex flex-col overflow-hidden p-8 lg:p-12">
-                  <div className="flex flex-col justify-start">
-                    <h3 className="text-xl font-medium tracking-tight text-white sm:text-2xl">
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 text-base leading-relaxed text-[#888] sm:mt-4 sm:text-lg">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Stat tags: same pill treatment as the @Ember/@Wave/@Volt
-                      mention pills in BasicsCovered.tsx, reused here in the
-                      card's own accent color. */}
-                  <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
-                    {item.stats.map((stat) => (
-                      <span
-                        key={stat}
-                        className="arcade-outline rounded-full px-3 py-1 text-xs font-medium text-white"
-                        style={{
-                          backgroundColor: `${ACCENT_HEX[item.accent]}26`,
+                      <motion.span
+                        className="flex items-center justify-center"
+                        animate={{ scale: [1, 1.12, 1] }}
+                        transition={{
+                          duration: 2.6,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: i * 0.3,
                         }}
                       >
-                        {stat}
-                      </span>
-                    ))}
+                        <HugeiconsIcon
+                          icon={item.icon}
+                          className="h-5 w-5 sm:h-6 sm:w-6"
+                          strokeWidth={2}
+                        />
+                      </motion.span>
+                    </span>
                   </div>
 
-                  <div className={`flex w-full items-center justify-center`}>
-                    {item.component}
+                  <div className="relative flex flex-col overflow-hidden p-8 lg:p-12">
+                    <div className="flex flex-col justify-start">
+                      <h3 className="text-xl font-medium tracking-tight text-white sm:text-2xl">
+                        {item.title}
+                      </h3>
+                      <p className="mt-3 text-base leading-relaxed text-[#888] sm:mt-4 sm:text-lg">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    {/* Stat tags: same pill treatment as the @Ember/@Wave/@Volt
+                        mention pills in BasicsCovered.tsx, reused here in the
+                        card's own accent color. */}
+                    <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5">
+                      {item.stats.map((stat) => (
+                        <span
+                          key={stat}
+                          className="arcade-outline rounded-full px-3 py-1 text-xs font-medium text-white"
+                          style={{
+                            backgroundColor: `${ACCENT_HEX[item.accent]}26`,
+                          }}
+                        >
+                          {stat}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className={`flex w-full items-center justify-center`}>
+                      {item.component}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
             ))}
           </div>
         </div>
