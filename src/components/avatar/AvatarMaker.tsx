@@ -133,9 +133,9 @@ export function AvatarMaker({
 
   return (
     <div className="w-full max-w-5xl mx-auto text-white">
-      <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-start">
+      <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-center">
         {/* Preview */}
-        <div className="flex flex-col items-center md:sticky md:top-8">
+        <div className="flex flex-col items-center">
           <div
             className="relative rounded-[28px] border-[3px] border-[#0b0b10] bg-[#0f0f0f] p-8 sm:p-10 transition-shadow duration-200"
             style={{ boxShadow: `8px 8px 0 0 ${config.color}` }}
