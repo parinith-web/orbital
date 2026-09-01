@@ -16,7 +16,7 @@ export function Navbar({ scrolled, handleEnter }: NavbarProps) {
     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3">
       <button
         onClick={() =>
-          window.open("https://github.com/vmridul/orbital", "_blank")
+          window.open("https://github.com/parinith-web/orbital", "_blank")
         }
         className="arcade-outline arcade-shadow arcade-shadow-blue arcade-press flex items-center gap-2 px-3 py-2 text-sm rounded-xl transition-all bg-[#1a1a20] hover:bg-arcade-pink hover:text-white text-gray-200 w-full md:w-auto justify-center"
       >

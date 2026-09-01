@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 
 /**
- * Comic-style Satellite illustration, matching the ink outline + flat
- * arcade-palette style used in SpaceDecor.tsx, so the footer's orbit motif
- * ties back visually to the rest of the brand.
+ * Comic-style Satellite + Rocket illustrations, matching the ink outline +
+ * flat arcade-palette style used in SpaceDecor.tsx, so the footer's orbit
+ * motif ties back visually to the rest of the brand.
  */
 function Satellite({ className }: { className?: string }) {
   return (
@@ -20,6 +20,47 @@ function Satellite({ className }: { className?: string }) {
       <line x1="128" y1="62" x2="153" y2="62" stroke="#0b0b10" strokeWidth="6" />
       <rect x="70" y="40" width="60" height="45" rx="10" fill="#FFD23F" stroke="#0b0b10" strokeWidth="8" />
       <circle cx="100" cy="62" r="12" fill="#FF3D8A" stroke="#0b0b10" strokeWidth="6" />
+    </svg>
+  );
+}
+
+function Rocket({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 120 200" className={className}>
+      {/* exhaust flame */}
+      <path
+        d="M60 158 L44 190 Q60 178 76 190 Z"
+        fill="#FFD23F"
+        stroke="#0b0b10"
+        strokeWidth="6"
+        strokeLinejoin="round"
+      />
+      {/* fins */}
+      <path
+        d="M32 120 L2 158 L34 148 Z"
+        fill="#2E6FF2"
+        stroke="#0b0b10"
+        strokeWidth="7"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M88 120 L118 158 L86 148 Z"
+        fill="#2E6FF2"
+        stroke="#0b0b10"
+        strokeWidth="7"
+        strokeLinejoin="round"
+      />
+      {/* body */}
+      <path
+        d="M60 6 C86 34 92 78 88 132 L32 132 C28 78 34 34 60 6 Z"
+        fill="#fff"
+        stroke="#0b0b10"
+        strokeWidth="8"
+        strokeLinejoin="round"
+      />
+      {/* window */}
+      <circle cx="60" cy="70" r="20" fill="#fff" stroke="#0b0b10" strokeWidth="7" />
+      <circle cx="60" cy="70" r="10" fill="#2E6FF2" />
     </svg>
   );
 }
@@ -54,42 +95,18 @@ export function Footer() {
         </span>
       </div>
 
-      {/* Color-blocked, halftone-textured side panel, now a two-tone
-          diagonal (blue/pink) parallelogram — its own left edge slants the
-          same way the internal blue/pink divider does, like a cut cabinet
-          side-art panel rather than a plain rectangle — with a satellite
-          drifting around the oval "thanks for playing" badge. */}
-      <div className="relative z-[1000] flex h-72 w-full items-center justify-center overflow-hidden border-t-4 border-[#0b0b10] md:h-auto md:w-[58%] md:border-t-0">
+      {/* Color-blocked, halftone-textured side panel — blue/pink diagonal
+          split, straight outer edge, with a satellite and rocket orbiting
+          the "thanks for playing" badge. */}
+      <div className="relative z-[1000] flex h-72 w-full items-center justify-center overflow-hidden border-t-4 border-[#0b0b10] md:h-auto md:w-[58%] md:border-l-4 md:border-t-0">
         <div
           className="absolute inset-0"
           style={{
             background:
               "linear-gradient(115deg, #2E6FF2 0%, #2E6FF2 45%, #FF3D8A 45%, #FF3D8A 100%)",
-            clipPath: "polygon(14% 0%, 100% 0%, 100% 100%, 0% 100%)",
           }}
         />
-        {/* Ink-stroked left edge of the panel, following the same
-            clip-path line, since a CSS clip-path can't itself carry a
-            visible stroke. */}
-        <svg
-          className="pointer-events-none absolute inset-0 h-full w-full"
-          preserveAspectRatio="none"
-          viewBox="0 0 100 100"
-        >
-          <line
-            x1="14"
-            y1="0"
-            x2="0"
-            y2="100"
-            stroke="#0b0b10"
-            strokeWidth="1.4"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-        <div
-          className="halftone absolute inset-0 opacity-20"
-          style={{ clipPath: "polygon(14% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
-        />
+        <div className="halftone absolute inset-0 opacity-20" />
 
         {/* dashed oval orbit ring around the badge */}
         <svg
@@ -109,11 +126,19 @@ export function Footer() {
         </svg>
 
         <motion.div
-          className="absolute left-[10%] top-[16%] w-28 md:w-36"
-          animate={{ y: [0, -12, 0], rotate: [-8, 4, -8] }}
+          className="absolute left-[6%] top-[10%] w-36 md:w-48"
+          animate={{ y: [0, -14, 0], rotate: [-8, 4, -8] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         >
           <Satellite className="h-auto w-full drop-shadow-[2px_2px_0_#0b0b10]" />
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-[6%] right-[10%] w-14 md:w-20"
+          animate={{ y: [0, -16, 0] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Rocket className="h-auto w-full drop-shadow-[2px_2px_0_#0b0b10]" />
         </motion.div>
 
         <motion.div
@@ -123,7 +148,7 @@ export function Footer() {
           transition={{ type: "spring", stiffness: 140, damping: 12 }}
           className="arcade-outline relative flex h-32 w-44 items-center justify-center rounded-full bg-white text-center md:h-40 md:w-56"
         >
-          <span className="font-display text-xs leading-tight text-arcade-ink md:text-sm">
+          <span className="font-display text-sm leading-tight text-arcade-ink md:text-lg">
             THANKS
             <br />
             FOR
