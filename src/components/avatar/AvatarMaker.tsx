@@ -216,58 +216,63 @@ export function AvatarMaker({
             )}
           </div>
 
-          {/* Only the active category's row renders — no vertical stack of
-              every feature at once, and each row scrolls horizontally
-              instead of wrapping. */}
-          {activeTab === "color" && (
-            <ColorWheelPicker
-              color={config.color}
-              onChange={(hex) => update("color", hex)}
-              embedded
-            />
-          )}
+          {/* Fixed-height wrapper so switching tabs never resizes the card —
+              sized to the tallest tab content (the color picker); shorter
+              tabs (eyes/mouth/hat) just top-align within it. */}
+          <div className="min-h-[300px] flex flex-col">
+            {/* Only the active category's row renders — no vertical stack of
+                every feature at once, and each row scrolls horizontally
+                instead of wrapping. */}
+            {activeTab === "color" && (
+              <ColorWheelPicker
+                color={config.color}
+                onChange={(hex) => update("color", hex)}
+                embedded
+              />
+            )}
 
-          {activeTab === "eyes" && (
-            <CategoryCarousel resetKey="eyes">
-              {EYE_OPTIONS.map((opt) => (
-                <ThumbButton
-                  key={opt.id}
-                  label={opt.label}
-                  selected={config.eyes === opt.id}
-                  onClick={() => update("eyes", opt.id)}
-                  previewConfig={{ ...config, eyes: opt.id }}
-                />
-              ))}
-            </CategoryCarousel>
-          )}
+            {activeTab === "eyes" && (
+              <CategoryCarousel resetKey="eyes">
+                {EYE_OPTIONS.map((opt) => (
+                  <ThumbButton
+                    key={opt.id}
+                    label={opt.label}
+                    selected={config.eyes === opt.id}
+                    onClick={() => update("eyes", opt.id)}
+                    previewConfig={{ ...config, eyes: opt.id }}
+                  />
+                ))}
+              </CategoryCarousel>
+            )}
 
-          {activeTab === "mouth" && (
-            <CategoryCarousel resetKey="mouth">
-              {MOUTH_OPTIONS.map((opt) => (
-                <ThumbButton
-                  key={opt.id}
-                  label={opt.label}
-                  selected={config.mouth === opt.id}
-                  onClick={() => update("mouth", opt.id)}
-                  previewConfig={{ ...config, mouth: opt.id }}
-                />
-              ))}
-            </CategoryCarousel>
-          )}
+            {activeTab === "mouth" && (
+              <CategoryCarousel resetKey="mouth">
+                {MOUTH_OPTIONS.map((opt) => (
+                  <ThumbButton
+                    key={opt.id}
+                    label={opt.label}
+                    selected={config.mouth === opt.id}
+                    onClick={() => update("mouth", opt.id)}
+                    previewConfig={{ ...config, mouth: opt.id }}
+                  />
+                ))}
+              </CategoryCarousel>
+            )}
 
-          {activeTab === "hat" && (
-            <CategoryCarousel resetKey="hat">
-              {HAT_OPTIONS.map((opt) => (
-                <ThumbButton
-                  key={opt.id}
-                  label={opt.label}
-                  selected={config.hat === opt.id}
-                  onClick={() => update("hat", opt.id)}
-                  previewConfig={{ ...config, hat: opt.id }}
-                />
-              ))}
-            </CategoryCarousel>
-          )}
+            {activeTab === "hat" && (
+              <CategoryCarousel resetKey="hat">
+                {HAT_OPTIONS.map((opt) => (
+                  <ThumbButton
+                    key={opt.id}
+                    label={opt.label}
+                    selected={config.hat === opt.id}
+                    onClick={() => update("hat", opt.id)}
+                    previewConfig={{ ...config, hat: opt.id }}
+                  />
+                ))}
+              </CategoryCarousel>
+            )}
+          </div>
         </div>
       </div>
     </div>
