@@ -46,7 +46,7 @@ export const MentionsAutocompleteMock = ({
               className="rounded-[12px] object-cover"
             />
           </div>
-          <span className="text-xl text-gray-200 font-semibold">
+          <span className="text-2xl text-gray-200 font-semibold">
             {user.username}
           </span>
         </div>

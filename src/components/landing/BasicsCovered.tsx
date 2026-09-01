@@ -73,7 +73,7 @@ export function BasicsCovered() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="arcade-outline arcade-shadow arcade-shadow-blue md:flex hidden md:col-span-2 row-span-2 bg-[#0a0a0d] rounded-2xl overflow-hidden justify-center items-end flex-col relative cursor-default"
+            className="arcade-outline arcade-shadow arcade-shadow-blue md:flex hidden md:col-span-2 row-span-2 bg-[#0a0a0d] rounded-2xl overflow-hidden flex-col relative cursor-default"
           >
             <TileHeader
               icon={SmartPhone01Icon}
@@ -91,7 +91,7 @@ export function BasicsCovered() {
                   damping: 20,
                   delay: 0.3,
                 }}
-                className="arcade-outline arcade-shadow arcade-shadow-yellow absolute -bottom-[70px] left-4 w-[300px] overflow-hidden rounded-2xl bg-[#0a0a0d] transition-all duration-500 md:block hidden"
+                className="arcade-outline arcade-shadow arcade-shadow-blue absolute -bottom-[70px] left-4 w-[300px] overflow-hidden rounded-2xl bg-[#0a0a0d] transition-all duration-500 md:block hidden"
               >
                 <div className="flex items-center gap-2 border-b-2 border-[#0b0b10] bg-[#141418] px-3 py-2">
                   <span
@@ -159,7 +159,7 @@ export function BasicsCovered() {
               title="Typing Indicators"
               accent="pink"
             />
-            <div className="flex flex-col items-center justify-start relative h-32 p-6 pt-8">
+            <div className="flex flex-1 flex-col items-center justify-center relative px-6 py-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
