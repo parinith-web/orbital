@@ -67,7 +67,7 @@ function Rocket({ className }: { className?: string }) {
 
 export function Footer() {
   return (
-    <section className="relative flex w-full flex-col overflow-hidden bg-white md:flex-row">
+    <section className="relative mt-16 flex w-full flex-col overflow-hidden bg-white md:mt-28 md:flex-row">
       {/* Marquee light strip along the top edge, like the bulb row on an
           arcade cabinet header. */}
       <div className="marquee-lights absolute left-1/2 top-0 z-[1002] -translate-x-1/2 translate-y-[-50%] text-arcade-yellow">
@@ -83,7 +83,7 @@ export function Footer() {
           <span className="font-display text-3xl md:text-4xl text-arcade-ink">
             Orbital
           </span>
-          <span className="text-gray-500 block text-lg md:text-xl mt-2">
+          <span className="text-gray-500 block text-sm mt-1 leading-snug">
             Chat, call, and play
             <br />
             all in one room
