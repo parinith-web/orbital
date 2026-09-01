@@ -11,7 +11,6 @@ import {
   BeautifullyCrafted,
   BasicsCovered,
   Theming,
-  CTA,
   Footer,
 } from "@/components/landing";
 import { ROUTES } from "@/lib/constants/routes";
@@ -110,8 +109,6 @@ export default function Page() {
       <BasicsCovered />
 
       <Theming colorDialog={colorDialog} setColorDialog={setColorDialog} />
-
-      <CTA handleEnter={handleEnter} />
 
       <Footer />
     </div>

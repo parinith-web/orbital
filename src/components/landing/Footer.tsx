@@ -80,10 +80,10 @@ export function Footer() {
 
       <div className="relative z-[1001] flex flex-1 flex-col justify-between p-12 md:p-20">
         <div>
-          <span className="font-display text-xl text-arcade-ink">
+          <span className="font-display text-3xl md:text-4xl text-arcade-ink">
             Orbital
           </span>
-          <span className="text-gray-500 block text-sm mt-1">
+          <span className="text-gray-500 block text-lg md:text-xl mt-2">
             Chat, call, and play
             <br />
             all in one room
