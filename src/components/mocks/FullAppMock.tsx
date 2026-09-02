@@ -85,7 +85,6 @@ export const FullAppMock = ({ className }: { className?: string }) => (
           <div className="w-8 h-8 p-2 cursor-default rounded-xl flex items-center justify-center bg-theme-hover relative">
             <HugeiconsIcon icon={CallIcon} className="w-4 h-4 text-gray-300" />
             <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500" />
-            <CallHistoryMock className="absolute right-0 top-[calc(100%+8px)] z-[70] w-72" />
           </div>
           <div className="w-8 h-8 p-2 cursor-default rounded-xl hidden md:flex items-center justify-center hover:bg-theme-hover">
             <HugeiconsIcon
@@ -154,5 +153,10 @@ export const FullAppMock = ({ className }: { className?: string }) => (
         <ChatInputBarMock accent={true} />
       </div>
     </div>
+
+    {/* Calls Sidebar — opened via the phone icon in the top bar, mirrors
+        the production Calls panel: header + close, scrollable call log,
+        "Start New Call" footer CTA. */}
+    <CallHistoryMock />
   </div>
 );
