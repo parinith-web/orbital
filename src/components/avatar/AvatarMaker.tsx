@@ -13,7 +13,7 @@ import {
   randomAvatarConfig,
 } from "@/lib/avatar/options";
 import { AvatarSVG } from "./AvatarSVG";
-import { CategoryCarousel } from "./CategoryCarousel";
+import { CategoryGrid } from "./CategoryGrid";
 import { ColorWheelPicker } from "./ColorWheelPicker";
 
 type CategoryId = "color" | "eyes" | "mouth" | "hat";
@@ -216,13 +216,15 @@ export function AvatarMaker({
             )}
           </div>
 
-          {/* Fixed-height wrapper so switching tabs never resizes the card —
-              sized to the tallest tab content (the color picker); shorter
-              tabs (eyes/mouth/hat) just top-align within it. */}
+          {/* Grown-to-fit wrapper — the color picker still gets a min
+              height so switching tabs doesn't collapse the card, but the
+              eyes/mouth/hat grids are allowed to grow past it since every
+              option is shown at once instead of scrolling horizontally. */}
           <div className="min-h-[300px] flex flex-col">
-            {/* Only the active category's row renders — no vertical stack of
-                every feature at once, and each row scrolls horizontally
-                instead of wrapping. */}
+            {/* Only the active category's content renders — no vertical
+                stack of every feature at once. Eyes/mouth/hat lay out as
+                a wrapping grid so every option is visible without
+                scrolling sideways. */}
             {activeTab === "color" && (
               <ColorWheelPicker
                 color={config.color}
@@ -232,7 +234,7 @@ export function AvatarMaker({
             )}
 
             {activeTab === "eyes" && (
-              <CategoryCarousel resetKey="eyes">
+              <CategoryGrid>
                 {EYE_OPTIONS.map((opt) => (
                   <ThumbButton
                     key={opt.id}
@@ -242,11 +244,11 @@ export function AvatarMaker({
                     previewConfig={{ ...config, eyes: opt.id }}
                   />
                 ))}
-              </CategoryCarousel>
+              </CategoryGrid>
             )}
 
             {activeTab === "mouth" && (
-              <CategoryCarousel resetKey="mouth">
+              <CategoryGrid>
                 {MOUTH_OPTIONS.map((opt) => (
                   <ThumbButton
                     key={opt.id}
@@ -256,11 +258,11 @@ export function AvatarMaker({
                     previewConfig={{ ...config, mouth: opt.id }}
                   />
                 ))}
-              </CategoryCarousel>
+              </CategoryGrid>
             )}
 
             {activeTab === "hat" && (
-              <CategoryCarousel resetKey="hat">
+              <CategoryGrid>
                 {HAT_OPTIONS.map((opt) => (
                   <ThumbButton
                     key={opt.id}
@@ -270,7 +272,7 @@ export function AvatarMaker({
                     previewConfig={{ ...config, hat: opt.id }}
                   />
                 ))}
-              </CategoryCarousel>
+              </CategoryGrid>
             )}
           </div>
         </div>
@@ -294,7 +296,7 @@ function ThumbButton({
     <button
       onClick={onClick}
       title={label}
-      className={`group shrink-0 snap-start flex flex-col items-center gap-1.5 rounded-2xl border-2 p-2 transition-all ${
+      className={`group flex flex-col items-center gap-1.5 rounded-2xl border-2 p-2 transition-all ${
         selected
           ? "border-white bg-white/[0.06]"
           : "border-transparent bg-white/[0.02] hover:bg-white/[0.05]"
@@ -306,7 +308,7 @@ function ThumbButton({
       >
         <AvatarSVG config={previewConfig} size={64} />
       </div>
-      <span className="text-[10px] sm:text-[11px] text-[#999] group-hover:text-white transition-colors text-center leading-tight whitespace-nowrap">
+      <span className="text-[10px] sm:text-[11px] text-[#999] group-hover:text-white transition-colors text-center leading-tight">
         {label}
       </span>
     </button>
