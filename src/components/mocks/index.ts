@@ -10,6 +10,7 @@ export * from "./CallEndedNotificationMock";
 export * from "./ChatInputBarMock";
 export * from "./UserProfilePopupMock";
 export * from "./RecentCallItemMock";
+export * from "./CallHistoryMock";
 export * from "./ChatMessageMock";
 export * from "./ActiveCallMock";
 export * from "./TypingIndicatorMock";

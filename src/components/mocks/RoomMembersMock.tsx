@@ -15,6 +15,9 @@ const members = [
   { name: "Ember", img: "/assets/ch.png" },
   { name: "Volt", img: "/assets/pi.png" },
   { name: "Moss", img: "/assets/bu.png" },
+  { name: "Iris", img: "/assets/iris.png" },
+  { name: "Blaze", img: "/assets/blaze.png" },
+  { name: "Luna", img: "/assets/luna.png" },
 ];
 
 export const RoomMembersMock = ({
