@@ -45,7 +45,15 @@ const initialDeleteDialog: DeleteDialogState = {
   isDeleting: false,
 };
 
-export const UserInfoTab = () => {
+interface UserInfoTabProps {
+  /** Called when the user hits the avatar edit button. When provided (the
+   * Settings page passes this to jump straight to the Avatar tab), it
+   * replaces the old behavior of navigating to the standalone
+   * /avatar-maker route. */
+  onEditAvatar?: () => void;
+}
+
+export const UserInfoTab = ({ onEditAvatar }: UserInfoTabProps = {}) => {
   const router = useRouter();
   const { signOut } = useClerk();
   const user = useUserStore((s) => s.user);
@@ -182,7 +190,11 @@ export const UserInfoTab = () => {
             <Button
               variant="other"
               size="iconLg"
-              onClick={() => router.push("/avatar-maker?redirect=/orbital/settings")}
+              onClick={() =>
+                onEditAvatar
+                  ? onEditAvatar()
+                  : router.push("/avatar-maker?redirect=/orbital/settings")
+              }
             >
               <HugeiconsIcon icon={PencilEdit01Icon} className="w-5 h-5" />
             </Button>

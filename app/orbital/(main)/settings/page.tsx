@@ -1,21 +1,25 @@
 "use client";
 import { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Settings01Icon, Menu01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { Settings01Icon, Menu01Icon, UserIcon, UserSquareIcon } from "@hugeicons/core-free-icons";
 import { useUIStore } from "@/store/uiStore";
 import { UserInfoTab } from "@/components/features/profile/ProfilePage/UserInfoTab";
 import { PreferencesTab } from "@/components/features/profile/ProfilePage/PreferencesTab";
+import { AvatarTab } from "@/components/features/profile/ProfilePage/AvatarTab";
 
 // Settings route — merges the former standalone Profile (`/orbital/profile`)
-// and Preferences (`/orbital/preferences`) destinations into a single tab.
-// UserInfoTab and PreferencesTab are both fully self-contained (they read/
-// write the user store and colorContext/PreferencesContext respectively),
-// so this page just supplies the shared header chrome plus a small
-// sub-tab switcher between the two, and mounts whichever is active.
-type SettingsSubTab = "profile" | "preferences";
+// and Preferences (`/orbital/preferences`) destinations into a single tab,
+// plus a dedicated Avatar tab. UserInfoTab, AvatarTab, and PreferencesTab
+// are all fully self-contained (they read/write the user store and
+// colorContext/PreferencesContext respectively), so this page just
+// supplies the shared header chrome plus a small sub-tab switcher between
+// them, and mounts whichever is active. The "Edit avatar" action in
+// UserInfoTab hops straight to the Avatar tab via `setActiveTab`.
+type SettingsSubTab = "profile" | "avatar" | "preferences";
 
 const SUB_TABS: { key: SettingsSubTab; label: string; icon: typeof UserIcon }[] = [
   { key: "profile", label: "Profile", icon: UserIcon },
+  { key: "avatar", label: "Avatar", icon: UserSquareIcon },
   { key: "preferences", label: "Preferences", icon: Settings01Icon },
 ];
 
@@ -55,7 +59,11 @@ export default function SettingsPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {activeTab === "profile" ? <UserInfoTab /> : <PreferencesTab />}
+        {activeTab === "profile" && (
+          <UserInfoTab onEditAvatar={() => setActiveTab("avatar")} />
+        )}
+        {activeTab === "avatar" && <AvatarTab />}
+        {activeTab === "preferences" && <PreferencesTab />}
       </div>
     </div>
   );
