@@ -68,11 +68,7 @@ export const CallHistoryMock = ({ className }: { className?: string }) => (
           className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-theme-hover"
         >
           <div
-            className={`flex-none w-8 h-8 rounded-lg flex items-center justify-center ${
-              call.type === "video"
-                ? "bg-blue-500/15 text-blue-400"
-                : "bg-emerald-500/15 text-emerald-400"
-            }`}
+            className="flex-none w-8 h-8 rounded-lg flex items-center justify-center bg-white/10 text-white"
           >
             <HugeiconsIcon
               icon={call.type === "video" ? Video01Icon : CallIcon}
