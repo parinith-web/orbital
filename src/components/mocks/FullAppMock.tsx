@@ -21,63 +21,31 @@ export const FullAppMock = ({ className }: { className?: string }) => (
   <div
     className={`flex w-full md:max-w-[1200px] h-[640px] sm:h-[560px] md:aspect-video md:h-auto overflow-hidden bg-[#0a080b] rounded-2xl border border-white/5 ${className}`}
   >
-    {/* Left Sidebar */}
-    <div className="w-[240px] flex-none bg-theme-surface border-theme-border border-r select-none hidden md:flex flex-col py-2 px-1 md:px-1 text-white items-center font-sans">
-      <div className="flex flex-col gap-1 mt-2 text-sm items-center w-full">
-        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={Home01Icon} className="w-4 h-4" />
-          <span>Game Hub</span>
-        </div>
-        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
-          <span>Social</span>
-        </div>
-        <div className="bg-theme-hover text-white ease-in-out duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
-          <span>Rooms</span>
-        </div>
-        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
-          <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
-          <span>Settings</span>
-        </div>
-      </div>
-
-      <div className="mt-3 flex-1 flex flex-col min-h-0 w-full overflow-hidden">
-        <div className="flex justify-between items-center px-3 text-[#aaaaaa] mb-2">
-          <span className="text-xs font-medium">Rooms</span>
-          <div className="bg-theme-hover rounded-[8px] px-2 py-1 flex text-white/60 text-[10px] items-center gap-1">
-            <HugeiconsIcon icon={Home01Icon} className="w-3 h-3" />3
+    {/* Right Sidebar (moved to left position; border flipped to sit against Main Area) */}
+    <div className="w-[280px] flex-none bg-theme-surface border-theme-border border-r hidden md:flex flex-col overflow-hidden text-white select-none">
+      <div className="relative w-[268px] flex-none flex items-center justify-between mt-2 rounded-[8px] py-2 px-3 mx-1">
+        <div className="flex gap-3 items-center">
+          <div className="rounded-[12px] font-medium text-lg text-[#585858] flex items-center justify-center bg-white opacity-90 w-10 h-10">
+            P
+          </div>
+          <div className="flex flex-col items-start">
+            <span className="truncate max-w-[120px] text-sm">Projects</span>
+            <span className="text-white/40 text-[10px]">ID: 4369</span>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto no-scrollbar pr-1 px-1">
-          <RoomItemMock
-            name="Projects"
-            id="4369"
-            className="w-full bg-theme-hover border-none shadow-none mt-1"
-          />
-          <RoomItemMock
-            name="Design"
-            id="1034"
-            className="w-full hover:bg-theme-hover bg-transparent border-none shadow-none  mt-1"
-          />
-          <RoomItemMock
-            name="Engineering"
-            id="9450"
-            className="w-full hover:bg-theme-hover bg-transparent border-none shadow-none  mt-1"
-          />
+        <div className="w-8 h-8 flex items-center justify-center hover:bg-theme-hover rounded-[12px]">
+          <HugeiconsIcon icon={Menu01Icon} className="w-4 h-4 text-white/90" />
         </div>
       </div>
 
-      <div className="mt-auto w-full flex flex-col p-1 bg-theme-surface/50">
-        <CallWidgetMock
-          name="Projects"
-          className="w-full bg-theme-hover border-none shadow-none mb-2"
-        />
-        <ProfileButtonMock
-          name="Wave"
-          avatar="/assets/sq.png"
-          className="w-full bg-theme-hover"
-        />
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        <div className="px-3 ">
+          <div className="flex justify-between items-center  text-white/40 px-1"></div>
+          <RoomMembersMock
+            memberCount={4}
+            className="bg-transparent border-none p-0"
+          />
+        </div>
       </div>
     </div>
 
@@ -191,31 +159,63 @@ export const FullAppMock = ({ className }: { className?: string }) => (
       </div>
     </div>
 
-    {/* Right Sidebar */}
-    <div className="w-[280px] flex-none bg-theme-surface border-theme-border border-l hidden md:flex flex-col overflow-hidden text-white select-none">
-      <div className="relative w-[268px] flex-none flex items-center justify-between mt-2 rounded-[8px] py-2 px-3 mx-1">
-        <div className="flex gap-3 items-center">
-          <div className="rounded-[12px] font-medium text-lg text-[#585858] flex items-center justify-center bg-white opacity-90 w-10 h-10">
-            P
-          </div>
-          <div className="flex flex-col items-start">
-            <span className="truncate max-w-[120px] text-sm">Projects</span>
-            <span className="text-white/40 text-[10px]">ID: 4369</span>
-          </div>
+    {/* Left Sidebar (moved to right position; border flipped to sit against Main Area) */}
+    <div className="w-[240px] flex-none bg-theme-surface border-theme-border border-l select-none hidden md:flex flex-col py-2 px-1 md:px-1 text-white items-center font-sans">
+      <div className="flex flex-col gap-1 mt-2 text-sm items-center w-full">
+        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={Home01Icon} className="w-4 h-4" />
+          <span>Game Hub</span>
         </div>
-        <div className="w-8 h-8 flex items-center justify-center hover:bg-theme-hover rounded-[12px]">
-          <HugeiconsIcon icon={Menu01Icon} className="w-4 h-4 text-white/90" />
+        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4" />
+          <span>Social</span>
+        </div>
+        <div className="bg-theme-hover text-white ease-in-out duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={HashtagIcon} className="w-4 h-4" />
+          <span>Rooms</span>
+        </div>
+        <div className="ease-in-out bg-theme-surface hover:bg-theme-hover text-gray-200 hover:text-white duration-200 flex items-center px-3 gap-2 w-[224px] py-2 rounded-[8px] cursor-default">
+          <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
+          <span>Settings</span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar">
-        <div className="px-3 ">
-          <div className="flex justify-between items-center  text-white/40 px-1"></div>
-          <RoomMembersMock
-            memberCount={4}
-            className="bg-transparent border-none p-0"
+      <div className="mt-3 flex-1 flex flex-col min-h-0 w-full overflow-hidden">
+        <div className="flex justify-between items-center px-3 text-[#aaaaaa] mb-2">
+          <span className="text-xs font-medium">Rooms</span>
+          <div className="bg-theme-hover rounded-[8px] px-2 py-1 flex text-white/60 text-[10px] items-center gap-1">
+            <HugeiconsIcon icon={Home01Icon} className="w-3 h-3" />3
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto no-scrollbar pr-1 px-1">
+          <RoomItemMock
+            name="Projects"
+            id="4369"
+            className="w-full bg-theme-hover border-none shadow-none mt-1"
+          />
+          <RoomItemMock
+            name="Design"
+            id="1034"
+            className="w-full hover:bg-theme-hover bg-transparent border-none shadow-none  mt-1"
+          />
+          <RoomItemMock
+            name="Engineering"
+            id="9450"
+            className="w-full hover:bg-theme-hover bg-transparent border-none shadow-none  mt-1"
           />
         </div>
+      </div>
+
+      <div className="mt-auto w-full flex flex-col p-1 bg-theme-surface/50">
+        <CallWidgetMock
+          name="Projects"
+          className="w-full bg-theme-hover border-none shadow-none mb-2"
+        />
+        <ProfileButtonMock
+          name="Wave"
+          avatar="/assets/sq.png"
+          className="w-full bg-theme-hover"
+        />
       </div>
     </div>
   </div>

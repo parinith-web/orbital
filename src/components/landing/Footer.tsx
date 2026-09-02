@@ -150,11 +150,11 @@ export function Footer() {
           className="arcade-outline relative flex h-32 w-44 items-center justify-center rounded-full bg-white text-center md:h-40 md:w-56"
         >
           <span className="font-display text-sm leading-tight text-arcade-ink md:text-lg">
-            THANKS
+            READY
             <br />
-            FOR
+            TO
             <br />
-            PLAYING
+            REVOLVE?
           </span>
         </motion.div>
       </div>

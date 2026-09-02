@@ -121,7 +121,7 @@ const goodstuff = [
 
 export function GoodStuff() {
   return (
-    <section className="mt-32 px-4 text-white sm:px-6 md:mt-44 lg:mt-[260px]">
+    <section className="mt-28 px-4 text-white sm:px-6 md:mt-36 lg:mt-[230px]">
       <div className="mx-auto max-w-6xl">
         <h2 className="font-display text-center text-4xl leading-tight md:text-6xl">
           The Good <br className="md:hidden" /> Stuff
