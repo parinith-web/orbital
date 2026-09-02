@@ -48,7 +48,7 @@ const AVATARS: AvatarEntry[] = [
 
 export function AvatarShowcase() {
   return (
-    <section className="relative mt-16 py-12 md:mt-24 md:py-24 text-white">
+    <section className="relative mt-28 py-12 md:mt-40 md:py-24 text-white">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-4">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-white/50">

@@ -15,7 +15,7 @@ export function Theming({ colorDialog, setColorDialog }: ThemingProps) {
   const { color, setColor } = useColor();
 
   return (
-    <section className="relative py-16 text-white">
+    <section className="relative pt-32 pb-16 md:pt-44 md:pb-16 text-white">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col items-center text-center">
           <div className="max-w-3xl mb-6 flex flex-col ">

@@ -98,7 +98,7 @@ export function Footer() {
       {/* Color-blocked, halftone-textured side panel — blue/pink diagonal
           split, straight outer edge, with a satellite and rocket orbiting
           the "thanks for playing" badge. */}
-      <div className="relative z-[1000] flex h-72 w-full items-center justify-center overflow-hidden border-t-4 border-[#0b0b10] md:h-auto md:w-[58%] md:border-l-4 md:border-t-0">
+      <div className="relative z-[1000] flex h-72 w-full items-center justify-center overflow-hidden border-t-4 border-[#0b0b10] md:h-auto md:w-[65%] md:border-l-4 md:border-t-0">
         <div
           className="absolute inset-0"
           style={{
@@ -126,7 +126,7 @@ export function Footer() {
         </svg>
 
         <motion.div
-          className="absolute left-[6%] top-[10%] w-36 md:w-48"
+          className="absolute left-[6%] top-[10%] w-44 md:w-60"
           animate={{ y: [0, -14, 0], rotate: [-8, 4, -8] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -134,7 +134,8 @@ export function Footer() {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-[6%] right-[10%] w-14 md:w-20"
+          className="absolute bottom-[6%] right-[10%] w-20 md:w-28"
+          style={{ rotate: -18 }}
           animate={{ y: [0, -16, 0] }}
           transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
         >
