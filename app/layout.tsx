@@ -25,7 +25,10 @@ export const metadata: Metadata = {
   title: "Orbital",
   description: "Realtime chat application",
   icons: {
-    icon: "/assets/favicon.ico",
+    icon: [
+      { url: "/assets/favicon.ico" },
+      { url: "/assets/favicon.png", type: "image/png", sizes: "256x256" },
+    ],
   },
 };
 
